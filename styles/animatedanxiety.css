@@ -1,0 +1,51 @@
+:root {
+    --anxiety-opacity: 0;
+    --anxiety-duration: 3s;
+}
+
+.anxiety-effect::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 12px solid rgba(255, 0, 0, 0.8);
+    box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.5);
+    pointer-events: none;
+    animation: anxiety-pulse var(--anxiety-duration) infinite;
+    opacity: var(--anxiety-opacity);
+    z-index: 999999;
+}
+
+@keyframes anxiety-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+#interface {
+    --anxiety-opacity: 0;
+    --anxiety-duration: 2s;
+    --anxiety-blur: 200px;
+}
+
+#interface.anxiety-effect::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    border: 0;
+    box-shadow: inset 0 0 var(--anxiety-blur) calc(var(--anxiety-blur) * 0.2) rgba(255, 0, 0, var(--anxiety-opacity));
+    animation: anxiety-pulse var(--anxiety-duration) ease-in-out infinite;
+    z-index: 999999;
+}
+
+@keyframes anxiety-pulse {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "animatedanxiety",
+  "title": "AnimatedAnxiety",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "12"
+  },
+  "description": "Give your players anxiety!!! A Foundry vtt module that changes the players HUD based on current status of their character.",
+  "authors": [
+    {
+      "name": "TheDeckOfManyStrings",
+      "email": "dshackel5+dnd@gmail.com",
+      "discord": "tdoms",
+      "flags": {}
+    }
+  ],
+  "scripts": ["scripts/animatedAnxiety.js"],
+  "styles": ["styles/animatedanxiety.css"]
+}
