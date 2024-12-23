@@ -1,6 +1,8 @@
 :root {
     --anxiety-opacity: 0;
     --anxiety-duration: 3s;
+    --poison-opacity: 0;
+    --poison-duration: 3s;
 }
 
 .anxiety-effect::before {
@@ -28,6 +30,9 @@
     --anxiety-opacity: 0;
     --anxiety-duration: 2s;
     --anxiety-blur: 200px;
+    --poison-opacity: 0;
+    --poison-duration: 2s;
+    --poison-blur: 200px;
 }
 
 #interface.anxiety-effect::after {
@@ -44,8 +49,28 @@
     z-index: 999999;
 }
 
+#interface.poison-effect::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    border: 0;
+    box-shadow: inset 0 0 var(--poison-blur) calc(var(--poison-blur) * 0.2) rgba(0, 255, 0, var(--poison-opacity));
+    animation: poison-pulse var(--poison-duration) ease-in-out infinite;
+    z-index: 999998;
+}
+
 @keyframes anxiety-pulse {
     0% { opacity: 0.3; }
     50% { opacity: 1; }
     100% { opacity: 0.3; }
+}
+
+@keyframes poison-pulse {
+    0% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.01); }
+    100% { opacity: 0.3; transform: scale(1); }
 }
