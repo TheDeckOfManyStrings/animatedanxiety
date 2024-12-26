@@ -148,7 +148,6 @@ class AnimatedAnxiety {
       } else if (isBleeding) {
         this.createBloodStreaks();
       }
-
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
     }
@@ -173,10 +172,10 @@ class AnimatedAnxiety {
     }
 
     // Remove all animated elements
-    document.querySelectorAll(".bubble").forEach(el => el.remove());
-    document.querySelectorAll(".blood-streak").forEach(el => el.remove());
-    document.querySelectorAll(".curse-symbol").forEach(el => el.remove());
-    document.querySelectorAll(".charm-heart").forEach(el => el.remove());
+    document.querySelectorAll(".bubble").forEach((el) => el.remove());
+    document.querySelectorAll(".blood-streak").forEach((el) => el.remove());
+    document.querySelectorAll(".curse-symbol").forEach((el) => el.remove());
+    document.querySelectorAll(".charm-heart").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -330,108 +329,113 @@ class AnimatedAnxiety {
 
   static checkBlindedStatus(actor) {
     if (!actor?.effects) return false;
-    return actor.effects.some(e => {
+    return actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
-      return !e.disabled && (
-          name.includes("blind") || 
-          name.includes("blinded")
+      return (
+        !e.disabled && (name.includes("blind") || name.includes("blinded"))
       );
     });
   }
 
   static checkCursedStatus(actor) {
     if (!actor?.effects) return false;
-    return actor.effects.some(e => {
-        const name = e.name?.toLowerCase() || "";
-        return !e.disabled && (
-            name.includes("curse") || 
-            name.includes("cursed") ||
-            name.includes("hex")
-        );
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return (
+        !e.disabled &&
+        (name.includes("curse") ||
+          name.includes("cursed") ||
+          name.includes("hex"))
+      );
     });
   }
 
   static checkCharmedStatus(actor) {
     if (!actor?.effects) return false;
-    return actor.effects.some(e => {
-        const name = e.name?.toLowerCase() || "";
-        return !e.disabled && (name.includes("charm") || name.includes("charmed"));
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return (
+        !e.disabled && (name.includes("charm") || name.includes("charmed"))
+      );
     });
   }
 
   static createCurseSymbols() {
     if (!this.curseInterval) {
-        this.clearEffects();
-        const symbols = ['X', 'O', '+', '-', ''];
-        
-        this.curseInterval = setInterval(() => {
-            const numSymbols = Math.random() < 0.3 ? 2 : 1;
-            
-            for (let i = 0; i < numSymbols; i++) {
-                const symbol = document.createElement("div");
-                symbol.className = "curse-symbol";
-                symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-                
-                const orbitRadius = 45 + Math.random() * 25; // 45-70% from center
-                const startAngle = Math.random() * Math.PI * 2;
-                
-                const startX = 50;
-                const startY = 50;
+      this.clearEffects();
+      const symbols = ["X", "O", "☠", "⚰", "⚖", "⚗", "⚙", "🕸", "🕷", "⛧"];
 
-                symbol.style.left = `${startX}%`;
-                symbol.style.top = `${startY}%`;
-                symbol.style.setProperty('--orbit-radius', `${orbitRadius}vh`);
+      this.curseInterval = setInterval(() => {
+        // Reduced number of symbols by half
+        const numSymbols = Math.random() < 0.15 ? 2 : 1;
 
-                const rotations = 2 + Math.random();
-                const endAngle = startAngle + Math.PI * 2 * rotations;
-                const endRadius = orbitRadius * (0.6 + Math.random() * 0.2);
+        for (let i = 0; i < numSymbols; i++) {
+          const symbol = document.createElement("div");
+          symbol.className = "curse-symbol";
+          symbol.textContent =
+            symbols[Math.floor(Math.random() * symbols.length)];
 
-                const moveX = Math.cos(endAngle) * endRadius;
-                const moveY = Math.sin(endAngle) * endRadius;
+          const orbitRadius = 45 + Math.random() * 25; // 45-70% from center
+          const startAngle = Math.random() * Math.PI * 2;
 
-                symbol.style.setProperty('--curse-x', `${moveX}vh`);
-                symbol.style.setProperty('--curse-y', `${moveY}vh`);
-                symbol.style.setProperty('--curse-rotate', `${rotations * 720}deg`);
+          const startX = 50;
+          const startY = 50;
 
-                const duration = 30 + Math.random() * 20;
-                symbol.style.animation = `curse-float ${duration}s ease-in-out forwards`;
+          symbol.style.left = `${startX}%`;
+          symbol.style.top = `${startY}%`;
+          symbol.style.setProperty("--orbit-radius", `${orbitRadius}vh`);
 
-                document.getElementById("interface").appendChild(symbol);
-                setTimeout(() => symbol.remove(), duration * 1000);
-            }
-        }, 750);
+          const rotations = 2 + Math.random();
+          const endAngle = startAngle + Math.PI * 2 * rotations;
+          const endRadius = orbitRadius * (0.6 + Math.random() * 0.2);
+
+          const moveX = Math.cos(endAngle) * endRadius;
+          const moveY = Math.sin(endAngle) * endRadius;
+
+          symbol.style.setProperty("--curse-x", `${moveX}vh`);
+          symbol.style.setProperty("--curse-y", `${moveY}vh`);
+          symbol.style.setProperty("--curse-rotate", `${rotations * 720}deg`);
+
+          const duration = 30 + Math.random() * 20;
+          symbol.style.animation = `curse-float ${duration}s ease-in-out forwards`;
+
+          document.getElementById("interface").appendChild(symbol);
+          setTimeout(() => symbol.remove(), duration * 1000);
+        }
+      }, 1500); // Increased interval to 1500ms to reduce frequency
     }
   }
 
   static createHearts() {
     if (!this.heartInterval) {
-        this.clearEffects();
-        
-        this.heartInterval = setInterval(() => {
-            const heart = document.createElement("div");
-            heart.className = "charm-heart";
-            heart.textContent = "♥";
+      this.clearEffects();
 
-            const angle = Math.random() * Math.PI * 2;
-            const startRadius = 60;
-            const startX = 50 + Math.cos(angle) * startRadius;
-            const startY = 50 + Math.sin(angle) * startRadius;
+      this.heartInterval = setInterval(() => {
+        // Reduced number of hearts by half
+        const heart = document.createElement("div");
+        heart.className = "charm-heart";
+        heart.textContent = "♥";
 
-            heart.style.left = `${startX}%`;
-            heart.style.top = `${startY}%`;
+        const angle = Math.random() * Math.PI * 2;
+        const startRadius = 60;
+        const startX = 50 + Math.cos(angle) * startRadius;
+        const startY = 50 + Math.sin(angle) * startRadius;
 
-            const moveX = (Math.random() * 20 - 10 - (startX - 50)) * 1.2;
-            const moveY = (Math.random() * 20 - 10 - (startY - 50)) * 1.2;
+        heart.style.left = `${startX}%`;
+        heart.style.top = `${startY}%`;
 
-            heart.style.setProperty('--move-x', `${moveX}vh`);
-            heart.style.setProperty('--move-y', `${moveY}vh`);
+        const moveX = (Math.random() * 20 - 10 - (startX - 50)) * 1.2;
+        const moveY = (Math.random() * 20 - 10 - (startY - 50)) * 1.2;
 
-            const duration = 4 + Math.random() * 2;
-            heart.style.animation = `heart-float ${duration}s ease-in-out forwards`;
+        heart.style.setProperty("--move-x", `${moveX}vh`);
+        heart.style.setProperty("--move-y", `${moveY}vh`);
 
-            document.getElementById("interface").appendChild(heart);
-            setTimeout(() => heart.remove(), duration * 1000);
-        }, 300);
+        const duration = 4 + Math.random() * 2;
+        heart.style.animation = `heart-float ${duration}s ease-in-out forwards`;
+
+        document.getElementById("interface").appendChild(heart);
+        setTimeout(() => heart.remove(), duration * 1000);
+      }, 600); // Increased interval to 600ms to reduce frequency
     }
   }
 
@@ -441,12 +445,12 @@ class AnimatedAnxiety {
       this.bloodInterval = setInterval(() => {
         const streak = document.createElement("div");
         streak.className = "blood-streak";
-        
+
         // Random position and properties
         streak.style.left = `${Math.random() * 100}%`;
         streak.style.opacity = (Math.random() * 0.4 + 0.4).toString();
         streak.style.width = `${Math.random() * 3 + 1}px`;
-        
+
         // Random animation duration 1.5-3s
         const duration = Math.random() * 1.5 + 1.5;
         streak.style.animation = `blood-drip ${duration}s linear forwards`;
