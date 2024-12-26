@@ -97,12 +97,7 @@ class AnimatedAnxiety {
   static updateAnxietyEffect(actor) {
     try {
       if (!game.settings.get("animatedanxiety", "enabled")) {
-        const appElement = document.getElementById("interface");
-        if (appElement) {
-          appElement.classList.remove("anxiety-effect");
-          appElement.classList.remove("poison-effect");
-          this.clearBubbles();
-        }
+        this.clearEffects();
         return;
       }
 
@@ -111,6 +106,8 @@ class AnimatedAnxiety {
       const isUnconscious = this.checkUnconsciousStatus(actor);
       const isBleeding = this.checkBleedingStatus(actor);
       const isBlinded = this.checkBlindedStatus(actor);
+      const isCursed = this.checkCursedStatus(actor);
+      const isCharmed = this.checkCharmedStatus(actor);
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -118,60 +115,68 @@ class AnimatedAnxiety {
         return;
       }
 
-      const blurAmount = game.settings.get("animatedanxiety", "blurAmount");
-
-      // Handle health-based anxiety effect
-      appElement.style.setProperty(
-        "--anxiety-opacity",
-        this.getOpacity(healthPercent)
-      );
-      appElement.style.setProperty(
-        "--anxiety-duration",
-        this.getDuration(healthPercent)
-      );
-      appElement.style.setProperty("--anxiety-blur", `${blurAmount}px`);
-
-      // Handle poison effect
-      appElement.style.setProperty(
-        "--poison-opacity",
-        isPoisoned ? "0.5" : "0"
-      );
-      appElement.style.setProperty("--poison-duration", "2s");
-      appElement.style.setProperty("--poison-blur", `${blurAmount}px`);
-
-      // Remove existing effects
+      // Clear all existing effects first
+      this.clearEffects();
       appElement.classList.remove(
         "anxiety-effect",
         "poison-effect",
         "unconscious-effect",
         "blinded-effect"
       );
-      // Force DOM reflow
-      void appElement.offsetWidth;
 
-      // Add effects as needed
+      // Handle static effects
       if (healthPercent < 50) {
         appElement.classList.add("anxiety-effect");
       }
+      if (isBlinded) {
+        appElement.classList.add("blinded-effect");
+      }
+
+      // Handle animated effects in order of priority
       if (isUnconscious) {
         appElement.classList.add("unconscious-effect");
         this.createBubbles("black-inward");
       } else if (isPoisoned) {
         appElement.classList.add("poison-effect");
         this.createBubbles("sway");
+      } else if (isCursed) {
+        console.log("AnimatedAnxiety | Creating curse symbols");
+        this.createCurseSymbols();
+      } else if (isCharmed) {
+        console.log("AnimatedAnxiety | Creating heart symbols");
+        this.createHearts();
       } else if (isBleeding) {
         this.createBloodStreaks();
-      } else {
-        this.clearEffects();
       }
-      
-      // Apply blinded effect independently (can stack with other effects)
-      if (isBlinded) {
-        appElement.classList.add("blinded-effect");
-      }
+
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
     }
+  }
+
+  static clearEffects() {
+    if (this.bubbleInterval) {
+      clearInterval(this.bubbleInterval);
+      this.bubbleInterval = null;
+    }
+    if (this.bloodInterval) {
+      clearInterval(this.bloodInterval);
+      this.bloodInterval = null;
+    }
+    if (this.curseInterval) {
+      clearInterval(this.curseInterval);
+      this.curseInterval = null;
+    }
+    if (this.heartInterval) {
+      clearInterval(this.heartInterval);
+      this.heartInterval = null;
+    }
+
+    // Remove all animated elements
+    document.querySelectorAll(".bubble").forEach(el => el.remove());
+    document.querySelectorAll(".blood-streak").forEach(el => el.remove());
+    document.querySelectorAll(".curse-symbol").forEach(el => el.remove());
+    document.querySelectorAll(".charm-heart").forEach(el => el.remove());
   }
 
   // New check for unconscious
@@ -334,6 +339,102 @@ class AnimatedAnxiety {
     });
   }
 
+  static checkCursedStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some(e => {
+        const name = e.name?.toLowerCase() || "";
+        return !e.disabled && (
+            name.includes("curse") || 
+            name.includes("cursed") ||
+            name.includes("hex")
+        );
+    });
+  }
+
+  static checkCharmedStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some(e => {
+        const name = e.name?.toLowerCase() || "";
+        return !e.disabled && (name.includes("charm") || name.includes("charmed"));
+    });
+  }
+
+  static createCurseSymbols() {
+    if (!this.curseInterval) {
+        this.clearEffects();
+        const symbols = ['X', 'O', '+', '-', ''];
+        
+        this.curseInterval = setInterval(() => {
+            const numSymbols = Math.random() < 0.3 ? 2 : 1;
+            
+            for (let i = 0; i < numSymbols; i++) {
+                const symbol = document.createElement("div");
+                symbol.className = "curse-symbol";
+                symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                
+                const orbitRadius = 45 + Math.random() * 25; // 45-70% from center
+                const startAngle = Math.random() * Math.PI * 2;
+                
+                const startX = 50;
+                const startY = 50;
+
+                symbol.style.left = `${startX}%`;
+                symbol.style.top = `${startY}%`;
+                symbol.style.setProperty('--orbit-radius', `${orbitRadius}vh`);
+
+                const rotations = 2 + Math.random();
+                const endAngle = startAngle + Math.PI * 2 * rotations;
+                const endRadius = orbitRadius * (0.6 + Math.random() * 0.2);
+
+                const moveX = Math.cos(endAngle) * endRadius;
+                const moveY = Math.sin(endAngle) * endRadius;
+
+                symbol.style.setProperty('--curse-x', `${moveX}vh`);
+                symbol.style.setProperty('--curse-y', `${moveY}vh`);
+                symbol.style.setProperty('--curse-rotate', `${rotations * 720}deg`);
+
+                const duration = 30 + Math.random() * 20;
+                symbol.style.animation = `curse-float ${duration}s ease-in-out forwards`;
+
+                document.getElementById("interface").appendChild(symbol);
+                setTimeout(() => symbol.remove(), duration * 1000);
+            }
+        }, 750);
+    }
+  }
+
+  static createHearts() {
+    if (!this.heartInterval) {
+        this.clearEffects();
+        
+        this.heartInterval = setInterval(() => {
+            const heart = document.createElement("div");
+            heart.className = "charm-heart";
+            heart.textContent = "♥";
+
+            const angle = Math.random() * Math.PI * 2;
+            const startRadius = 60;
+            const startX = 50 + Math.cos(angle) * startRadius;
+            const startY = 50 + Math.sin(angle) * startRadius;
+
+            heart.style.left = `${startX}%`;
+            heart.style.top = `${startY}%`;
+
+            const moveX = (Math.random() * 20 - 10 - (startX - 50)) * 1.2;
+            const moveY = (Math.random() * 20 - 10 - (startY - 50)) * 1.2;
+
+            heart.style.setProperty('--move-x', `${moveX}vh`);
+            heart.style.setProperty('--move-y', `${moveY}vh`);
+
+            const duration = 4 + Math.random() * 2;
+            heart.style.animation = `heart-float ${duration}s ease-in-out forwards`;
+
+            document.getElementById("interface").appendChild(heart);
+            setTimeout(() => heart.remove(), duration * 1000);
+        }, 300);
+    }
+  }
+
   static createBloodStreaks() {
     if (!this.bloodInterval) {
       this.clearEffects();
@@ -354,15 +455,6 @@ class AnimatedAnxiety {
         setTimeout(() => streak.remove(), duration * 1000);
       }, 200);
     }
-  }
-
-  static clearEffects() {
-    this.clearBubbles();
-    if (this.bloodInterval) {
-      clearInterval(this.bloodInterval);
-      this.bloodInterval = null;
-    }
-    document.querySelectorAll(".blood-streak").forEach(streak => streak.remove());
   }
 }
 
