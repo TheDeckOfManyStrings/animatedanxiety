@@ -1,76 +1,383 @@
 :root {
-    --anxiety-opacity: 0;
-    --anxiety-duration: 3s;
-    --poison-opacity: 0;
-    --poison-duration: 3s;
+  --anxiety-opacity: 0;
+  --anxiety-duration: 2s;
+  --unconscious-opacity: 0;
+  --unconscious-duration: 2s;
 }
 
 .anxiety-effect::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border: 12px solid rgba(255, 0, 0, 0.8);
-    box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.5);
-    pointer-events: none;
-    animation: anxiety-pulse var(--anxiety-duration) infinite;
-    opacity: var(--anxiety-opacity);
-    z-index: 999999;
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 12px solid rgba(255, 0, 0, 0.8);
+  box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.5);
+  pointer-events: none;
+  animation: anxiety-pulse var(--anxiety-duration) infinite;
+  opacity: var(--anxiety-opacity);
+  z-index: 999999;
 }
 
 @keyframes anxiety-pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 #interface {
-    --anxiety-opacity: 0;
-    --anxiety-duration: 2s;
-    --anxiety-blur: 200px;
-    --poison-opacity: 0;
-    --poison-duration: 2s;
-    --poison-blur: 200px;
+  --anxiety-opacity: 0;
+  --anxiety-duration: 2s;
+  --anxiety-blur: 200px;
+  --unconscious-opacity: 0;
+  --unconscious-duration: 2s;
+  --unconscious-blur: 200px;
 }
 
 #interface.anxiety-effect::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    border: 0;
-    box-shadow: inset 0 0 var(--anxiety-blur) calc(var(--anxiety-blur) * 0.2) rgba(255, 0, 0, var(--anxiety-opacity));
-    animation: anxiety-pulse var(--anxiety-duration) ease-in-out infinite;
-    z-index: 999999;
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  border: 0;
+  box-shadow: inset 0 0 var(--anxiety-blur) calc(var(--anxiety-blur) * 0.2)
+    rgba(255, 0, 0, var(--anxiety-opacity));
+  animation: anxiety-pulse var(--anxiety-duration) ease-in-out infinite;
+  z-index: 999999;
 }
 
-#interface.poison-effect::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    border: 0;
-    box-shadow: inset 0 0 var(--poison-blur) calc(var(--poison-blur) * 0.2) rgba(0, 255, 0, var(--poison-opacity));
-    animation: poison-pulse var(--poison-duration) ease-in-out infinite;
-    z-index: 999998;
+#interface.unconscious-effect::after {
+  content: none;
+}
+
+/* Add bubbles container */
+#interface.unconscious-effect::before {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100vh;
+  pointer-events: none;
+  opacity: var(--unconscious-opacity);
+  z-index: 999997;
+  background: rgba(0, 0, 0, 0.4); /* black color */
+}
+
+/* Create multiple bubble layers */
+.bubble {
+  position: fixed;
+  bottom: -20px;
+  background: rgba(0, 255, 0, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999997;
+  opacity: var(--unconscious-opacity);
+}
+
+/* Generate 15 unique bubble animations */
+@keyframes float-1 {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(-15px, -33vh) rotate(-5deg);
+  }
+  66% {
+    transform: translate(15px, -66vh) rotate(5deg);
+  }
+  100% {
+    transform: translate(-5px, -100vh) rotate(0deg);
+  }
+}
+
+@keyframes float-2 {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(20px, -33vh) rotate(8deg);
+  }
+  66% {
+    transform: translate(-10px, -66vh) rotate(-8deg);
+  }
+  100% {
+    transform: translate(5px, -100vh) rotate(0deg);
+  }
+}
+
+@keyframes float-3 {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(-25px, -33vh) rotate(-12deg);
+  }
+  66% {
+    transform: translate(25px, -66vh) rotate(12deg);
+  }
+  100% {
+    transform: translate(0, -100vh) rotate(0deg);
+  }
 }
 
 @keyframes anxiety-pulse {
-    0% { opacity: 0.3; }
-    50% { opacity: 1; }
-    100% { opacity: 0.3; }
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+  }
 }
 
-@keyframes poison-pulse {
-    0% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.01); }
-    100% { opacity: 0.3; transform: scale(1); }
+@keyframes unconscious-pulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.01);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+}
+
+@keyframes bubble-rise {
+  0% {
+    background-position: 20% 120%, 40% 120%, 60% 120%, 80% 120%;
+  }
+  100% {
+    background-position: 20% -20%, 40% -20%, 60% -20%, 80% -20%;
+  }
+}
+
+/* Add more bubble layers with different speeds */
+#interface.unconscious-effect::after {
+  content: none;
+}
+
+@keyframes bubble-rise-slow {
+  0% {
+    background-position: 30% 120%, 50% 120%, 70% 120%;
+  }
+  100% {
+    background-position: 30% -30%, 50% -30%, 70% -30%;
+  }
+}
+
+@keyframes bubble-from-top {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(30vh);
+    opacity: 0;
+  }
+}
+
+@keyframes bubble-from-bottom {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-30vh);
+    opacity: 0;
+  }
+}
+
+@keyframes bubble-from-left {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(30vw);
+    opacity: 0;
+  }
+}
+
+@keyframes bubble-from-right {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-30vw);
+    opacity: 0;
+  }
+}
+
+@keyframes bubble-from-center {
+  0% {
+    transform: rotate(var(--bubble-angle)) translate(0) scale(0.2);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--bubble-angle)) translate(var(--bubble-dist))
+      scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes bubble-to-center {
+  0% {
+    transform: rotate(var(--bubble-angle)) translate(var(--bubble-dist))
+      scale(2);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--bubble-angle)) translate(0) scale(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes bubble-inward {
+  0% {
+    top: var(--start-top);
+    left: var(--start-left);
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    top: 50%;
+    left: 50%;
+    transform: scale(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes bubble-inward-curved {
+  0% {
+    top: var(--start-top);
+    left: var(--start-left);
+    transform: scale(1);
+    opacity: 1;
+  }
+  33% {
+    /* drift partway toward the center */
+    top: calc(var(--start-top) * 0.6 + 50% * 0.4);
+    left: calc(var(--start-left) * 0.6 + 50% * 0.4);
+    transform: rotate(20deg) scale(0.9);
+    opacity: 0.9;
+  }
+  66% {
+    /* swirl more */
+    top: calc(var(--start-top) * 0.3 + 50% * 0.7);
+    left: calc(var(--start-left) * 0.3 + 50% * 0.7);
+    transform: rotate(-20deg) scale(0.6);
+    opacity: 0.8;
+  }
+  100% {
+    top: 50%;
+    left: 50%;
+    transform: scale(0.3) rotate(40deg);
+    opacity: 0;
+  }
+}
+
+/* New side-to-side keyframe for unconscious */
+@keyframes bubble-inward-sway {
+  0% {
+    top: var(--start-top);
+    left: var(--start-left);
+    transform: scale(1);
+    opacity: 1;
+  }
+  30% {
+    transform: translateX(40px) scale(0.8);
+    opacity: 0.8;
+  }
+  70% {
+    transform: translateX(-40px) scale(0.6);
+    opacity: 0.3;
+  }
+  100% {
+    top: 50%;
+    left: 50%;
+    transform: scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* Blood streak styling */
+.blood-streak {
+  position: fixed;
+  top: -20px;
+  background: rgba(139, 0, 0, 0.6);
+  border-radius: 0 0 4px 4px;
+  pointer-events: none;
+  z-index: 999997;
+  width: 2px;
+  transform-origin: top;
+}
+
+@keyframes blood-drip {
+  0% {
+    height: 0;
+    opacity: 0.9;
+    transform: translateY(0) scaleY(1);
+  }
+  90% {
+    height: 100px;
+    opacity: 0.7;
+    transform: translateY(100vh) scaleY(1.2);
+  }
+  100% {
+    height: 10px;
+    opacity: 0;
+    transform: translateY(100vh) scaleY(0.1);
+  }
+}
+
+#interface.blinded-effect::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 999998;
+  background: radial-gradient(
+    circle at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.3) 20%,
+    rgba(0, 0, 0, 0.6) 60%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  animation: blind-pulse 3s ease-in-out infinite;
+  backdrop-filter: blur(2px);
+}
+
+@keyframes blind-pulse {
+  0% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
 }
