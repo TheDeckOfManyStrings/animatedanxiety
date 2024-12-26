@@ -108,6 +108,7 @@ class AnimatedAnxiety {
       const isBlinded = this.checkBlindedStatus(actor);
       const isCursed = this.checkCursedStatus(actor);
       const isCharmed = this.checkCharmedStatus(actor);
+      const isConcentrating = this.checkConcentrationStatus(actor);
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -121,7 +122,8 @@ class AnimatedAnxiety {
         "anxiety-effect",
         "poison-effect",
         "unconscious-effect",
-        "blinded-effect"
+        "blinded-effect",
+        "concentration-effect"
       );
 
       // Handle static effects
@@ -148,8 +150,42 @@ class AnimatedAnxiety {
       } else if (isBleeding) {
         this.createBloodStreaks();
       }
+
+      // Apply concentration effect independently (can stack with other effects)
+      if (isConcentrating) {
+        console.log("AnimatedAnxiety | Applying concentration effect");
+        appElement.classList.add("concentration-effect");
+        this.createConcentrationParticles();
+      }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
+    }
+  }
+
+  static createConcentrationParticles() {
+    if (!this.particleInterval) {
+      this.clearEffects();
+      this.particleInterval = setInterval(() => {
+        const particle = document.createElement("div");
+        particle.className = "concentration-particle";
+
+        const angle = Math.random() * Math.PI * 2;
+        const startRadius = 50;
+        const startX = 50 + Math.cos(angle) * startRadius;
+        const startY = 50 + Math.sin(angle) * startRadius;
+
+        particle.style.left = `${startX}%`;
+        particle.style.top = `${startY}%`;
+
+        const moveX = (Math.random() * 20 - 10 - (startX - 50)) * 0.5;
+        const moveY = (Math.random() * 20 - 10 - (startY - 50)) * 0.5;
+
+        particle.style.setProperty('--move-x', `${moveX}vh`);
+        particle.style.setProperty('--move-y', `${moveY}vh`);
+
+        document.getElementById("interface").appendChild(particle);
+        setTimeout(() => particle.remove(), 3000);
+      }, 500);
     }
   }
 
@@ -170,12 +206,17 @@ class AnimatedAnxiety {
       clearInterval(this.heartInterval);
       this.heartInterval = null;
     }
+    if (this.particleInterval) {
+      clearInterval(this.particleInterval);
+      this.particleInterval = null;
+    }
 
     // Remove all animated elements
     document.querySelectorAll(".bubble").forEach((el) => el.remove());
     document.querySelectorAll(".blood-streak").forEach((el) => el.remove());
     document.querySelectorAll(".curse-symbol").forEach((el) => el.remove());
     document.querySelectorAll(".charm-heart").forEach((el) => el.remove());
+    document.querySelectorAll(".concentration-particle").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -358,6 +399,16 @@ class AnimatedAnxiety {
         !e.disabled && (name.includes("charm") || name.includes("charmed"))
       );
     });
+  }
+
+  static checkConcentrationStatus(actor) {
+    if (!actor?.effects) return false;
+    const isConcentrating = actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return !e.disabled && name.includes("concentrating");
+    });
+    console.log("AnimatedAnxiety | Concentration status:", isConcentrating);
+    return isConcentrating;
   }
 
   static createCurseSymbols() {
