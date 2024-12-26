@@ -64,14 +64,21 @@
 #interface.unconscious-effect::before {
   content: "";
   position: fixed;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 100vh;
   pointer-events: none;
-  opacity: var(--unconscious-opacity);
-  z-index: 999997;
-  background: rgba(0, 0, 0, 0.4); /* black color */
+  z-index: 999998;
+  background: radial-gradient(
+    circle at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.3) 20%,
+    rgba(0, 0, 0, 0.6) 60%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  animation: unconscious-pulse 3s ease-in-out infinite;
+  backdrop-filter: blur(2px);
 }
 
 /* Create multiple bubble layers */
@@ -145,15 +152,15 @@
 
 @keyframes unconscious-pulse {
   0% {
-    opacity: 0.3;
+    opacity: 0.85;
     transform: scale(1);
   }
   50% {
     opacity: 1;
-    transform: scale(1.01);
+    transform: scale(1.05);
   }
   100% {
-    opacity: 0.3;
+    opacity: 0.85;
     transform: scale(1);
   }
 }
@@ -347,6 +354,7 @@
   }
 }
 
+/* New blinded effect - just blur */
 #interface.blinded-effect::before {
   content: "";
   position: fixed;
@@ -356,28 +364,19 @@
   bottom: 0;
   pointer-events: none;
   z-index: 999998;
-  background: radial-gradient(
-    circle at center,
-    transparent 0%,
-    rgba(0, 0, 0, 0.3) 20%,
-    rgba(0, 0, 0, 0.6) 60%,
-    rgba(0, 0, 0, 0.8) 100%
-  );
-  animation: blind-pulse 3s ease-in-out infinite;
-  backdrop-filter: blur(2px);
+  background: transparent;
+  backdrop-filter: blur(4px);
+  animation: blind-pulse 4s ease-in-out infinite;
 }
 
 @keyframes blind-pulse {
   0% {
-    opacity: 0.85;
-    transform: scale(1);
+    backdrop-filter: blur(1px);
   }
   50% {
-    opacity: 1;
-    transform: scale(1.05);
+    backdrop-filter: blur(3px);
   }
   100% {
-    opacity: 0.85;
-    transform: scale(1);
+    backdrop-filter: blur(1px);
   }
 }
