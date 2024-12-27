@@ -111,6 +111,7 @@ class AnimatedAnxiety {
       const isConcentrating = this.checkConcentratingStatus(actor);
       const isDeafened = this.checkDeafenedStatus(actor); // Add this line
       const isDiseased = this.checkDiseasedStatus(actor); // Add this line
+      const isFrightened = this.checkFrightenedStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -127,7 +128,8 @@ class AnimatedAnxiety {
         "blinded-effect",
         "concentration-effect",
         "deafened-effect", // Add this line
-        "diseased-effect" // Add this line
+        "diseased-effect", // Add this line
+        "frightened-effect" // Add this line
       );
 
       // Handle static effects
@@ -154,6 +156,10 @@ class AnimatedAnxiety {
         // Add this block
         appElement.classList.add("diseased-effect");
         this.createDiseaseParticles();
+      } else if (isFrightened) {
+        // Add this block
+        appElement.classList.add("frightened-effect");
+        this.createFrightenedMarks();
       } else if (isCursed) {
         console.log("AnimatedAnxiety | Creating curse symbols");
         this.createCurseSymbols();
@@ -201,6 +207,10 @@ class AnimatedAnxiety {
       clearInterval(this.diseaseInterval);
       this.diseaseInterval = null;
     }
+    if (this.frightenedInterval) {
+      clearInterval(this.frightenedInterval);
+      this.frightenedInterval = null;
+    }
 
     // Remove all animated elements
     document.querySelectorAll(".bubble").forEach((el) => el.remove());
@@ -212,6 +222,7 @@ class AnimatedAnxiety {
       .forEach((el) => el.remove());
     document.querySelectorAll(".deafened-ripple").forEach((el) => el.remove());
     document.querySelectorAll(".disease-particle").forEach((el) => el.remove());
+    document.querySelectorAll(".frightened-mark").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -427,6 +438,19 @@ class AnimatedAnxiety {
     });
   }
 
+  static checkFrightenedStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return (
+        !e.disabled &&
+        (name.includes("frightened") ||
+          name.includes("afraid") ||
+          name.includes("fear"))
+      );
+    });
+  }
+
   static createCurseSymbols() {
     if (!this.curseInterval) {
       this.clearEffects();
@@ -583,6 +607,35 @@ class AnimatedAnxiety {
         document.getElementById("interface").appendChild(particle);
         setTimeout(() => particle.remove(), duration * 1000);
       }, 1000); // Create particles more frequently than blood
+    }
+  }
+
+  static createFrightenedMarks() {
+    if (!this.frightenedInterval) {
+      this.clearEffects();
+      this.frightenedInterval = setInterval(() => {
+        // Create two marks - one from top, one from bottom
+        ['top', 'bottom'].forEach(direction => {
+          const mark = document.createElement("div");
+          mark.className = "frightened-mark";
+          mark.classList.add(`frightened-mark-${direction}`);
+          mark.textContent = "!";
+
+          // Random horizontal position
+          mark.style.left = `${Math.random() * 90 + 5}%`;
+
+          // Random sizes for variety
+          const size = Math.random() * 20 + 30;
+          mark.style.fontSize = `${size}px`;
+
+          // Random animation duration
+          const duration = Math.random() * 1 + 2;
+          mark.style.animation = `frightened-pop-${direction} ${duration}s ease-in-out forwards`;
+
+          document.getElementById("interface").appendChild(mark);
+          setTimeout(() => mark.remove(), duration * 1000);
+        });
+      }, 200);
     }
   }
 }
