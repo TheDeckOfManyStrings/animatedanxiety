@@ -527,3 +527,41 @@
     opacity: 0;
   }
 }
+
+/* Disease particle styling */
+.disease-particle {
+  position: fixed;
+  top: -10px;
+  background: rgba(7, 53, 0, 0.7);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999997;
+  width: 4px;
+  height: 4px;
+  transform-origin: top;
+}
+
+@keyframes disease-drip {
+  0% {
+    transform: translateY(0) scaleY(1);
+    border-radius: 50%;
+  }
+  20% {
+    transform: translateY(20vh) scaleY(5);
+    border-radius: 50%;
+  }
+  40% {
+    transform: translateY(40vh) scaleY(10);
+    border-radius: 30% 30% 0 0;
+  }
+  80% {
+    transform: translateY(80vh) scaleY(20);
+    border-radius: 20% 20% 0 0;
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(100vh) scaleY(30);
+    border-radius: 10% 10% 0 0;
+    opacity: 0;
+  }
+}

@@ -110,6 +110,7 @@ class AnimatedAnxiety {
       const isCharmed = this.checkCharmedStatus(actor);
       const isConcentrating = this.checkConcentratingStatus(actor);
       const isDeafened = this.checkDeafenedStatus(actor); // Add this line
+      const isDiseased = this.checkDiseasedStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -125,7 +126,8 @@ class AnimatedAnxiety {
         "unconscious-effect",
         "blinded-effect",
         "concentration-effect",
-        "deafened-effect"  // Add this line
+        "deafened-effect", // Add this line
+        "diseased-effect" // Add this line
       );
 
       // Handle static effects
@@ -135,7 +137,8 @@ class AnimatedAnxiety {
       if (isBlinded) {
         appElement.classList.add("blinded-effect");
       }
-      if (isDeafened) {  // Add this block
+      if (isDeafened) {
+        // Add this block
         appElement.classList.add("deafened-effect");
         this.createDeafenedRipples();
       }
@@ -147,6 +150,10 @@ class AnimatedAnxiety {
       } else if (isPoisoned) {
         appElement.classList.add("poison-effect");
         this.createBubbles("sway");
+      } else if (isDiseased) {
+        // Add this block
+        appElement.classList.add("diseased-effect");
+        this.createDiseaseParticles();
       } else if (isCursed) {
         console.log("AnimatedAnxiety | Creating curse symbols");
         this.createCurseSymbols();
@@ -190,6 +197,10 @@ class AnimatedAnxiety {
       clearInterval(this.deafenedInterval);
       this.deafenedInterval = null;
     }
+    if (this.diseaseInterval) {
+      clearInterval(this.diseaseInterval);
+      this.diseaseInterval = null;
+    }
 
     // Remove all animated elements
     document.querySelectorAll(".bubble").forEach((el) => el.remove());
@@ -200,6 +211,7 @@ class AnimatedAnxiety {
       .querySelectorAll(".concentration-particle")
       .forEach((el) => el.remove());
     document.querySelectorAll(".deafened-ripple").forEach((el) => el.remove());
+    document.querySelectorAll(".disease-particle").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -396,7 +408,22 @@ class AnimatedAnxiety {
     if (!actor?.effects) return false;
     return actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
-      return !e.disabled && (name.includes("deaf") || name.includes("deafened"));
+      return (
+        !e.disabled && (name.includes("deaf") || name.includes("deafened"))
+      );
+    });
+  }
+
+  static checkDiseasedStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return (
+        !e.disabled &&
+        (name.includes("disease") ||
+          name.includes("diseased") ||
+          name.includes("sickness"))
+      );
     });
   }
 
@@ -535,6 +562,27 @@ class AnimatedAnxiety {
           setTimeout(() => ripple.remove(), 3000);
         }
       }, 1000);
+    }
+  }
+
+  static createDiseaseParticles() {
+    if (!this.diseaseInterval) {
+      this.clearEffects();
+      this.diseaseInterval = setInterval(() => {
+        const particle = document.createElement("div");
+        particle.className = "disease-particle";
+
+        // Random position and initial properties
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.opacity = (Math.random() * 0.3 + 0.3).toString();
+
+        // Random fall duration between 2-4 seconds
+        const duration = Math.random() * 2 + 10;
+        particle.style.animation = `disease-drip ${duration}s ease-in forwards`;
+
+        document.getElementById("interface").appendChild(particle);
+        setTimeout(() => particle.remove(), duration * 1000);
+      }, 1000); // Create particles more frequently than blood
     }
   }
 }
