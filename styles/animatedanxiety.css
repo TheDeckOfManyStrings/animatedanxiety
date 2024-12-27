@@ -402,10 +402,12 @@
   }
   75% {
     opacity: 0.6;
-    transform: translate(var(--curse-x), var(--curse-y)) rotate(var(--curse-rotate)) translateY(calc(var(--orbit-radius) * 0.5));
+    transform: translate(var(--curse-x), var(--curse-y))
+      rotate(var(--curse-rotate)) translateY(calc(var(--orbit-radius) * 0.5));
   }
   100% {
-    transform: translate(var(--curse-x), var(--curse-y)) rotate(var(--curse-rotate)) translateY(0);
+    transform: translate(var(--curse-x), var(--curse-y))
+      rotate(var(--curse-rotate)) translateY(0);
     opacity: 0;
   }
 }
@@ -428,11 +430,13 @@
   }
   20% {
     opacity: 1;
-    transform: translate(calc(var(--move-x) * 0.2), calc(var(--move-y) * 0.2)) scale(1);
+    transform: translate(calc(var(--move-x) * 0.2), calc(var(--move-y) * 0.2))
+      scale(1);
   }
   80% {
     opacity: 1;
-    transform: translate(calc(var(--move-x) * 0.8), calc(var(--move-y) * 0.8)) scale(1);
+    transform: translate(calc(var(--move-x) * 0.8), calc(var(--move-y) * 0.8))
+      scale(1);
   }
   100% {
     transform: translate(var(--move-x), var(--move-y)) scale(0.8);
@@ -441,32 +445,31 @@
 }
 
 /* Deafened effect styling */
-#interface.deafened-effect::before {
-  content: "";
+.deafened-ripple {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 300px;
-  height: 300px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.2) 0%, transparent 70%);
-  transform: translate(-50%, -50%) scale(0);
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 999998;
-  animation: deafened-ripple 3s infinite;
+  animation: deafened-ripple 3s ease-out;
 }
 
 @keyframes deafened-ripple {
   0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.7;
+    width: 50px;
+    height: 50px;
+    border-width: 1px;
+    opacity: 0.8;
   }
   100% {
-    transform: translate(-50%, -50%) scale(2);
+    width: 100vh;
+    height: 100vh;
+    border-width: 0.1px;
     opacity: 0;
   }
 }
@@ -481,7 +484,11 @@
   bottom: 0;
   pointer-events: none;
   z-index: 999998;
-  background: radial-gradient(circle, transparent 40%, rgba(51, 148, 204, 0.4) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 40%,
+    rgba(51, 148, 204, 0.4) 100%
+  );
   animation: concentration-glow 5s infinite;
 }
 

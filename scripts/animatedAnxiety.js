@@ -109,6 +109,7 @@ class AnimatedAnxiety {
       const isCursed = this.checkCursedStatus(actor);
       const isCharmed = this.checkCharmedStatus(actor);
       const isConcentrating = this.checkConcentratingStatus(actor);
+      const isDeafened = this.checkDeafenedStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -123,7 +124,8 @@ class AnimatedAnxiety {
         "poison-effect",
         "unconscious-effect",
         "blinded-effect",
-        "concentration-effect"
+        "concentration-effect",
+        "deafened-effect"  // Add this line
       );
 
       // Handle static effects
@@ -132,6 +134,10 @@ class AnimatedAnxiety {
       }
       if (isBlinded) {
         appElement.classList.add("blinded-effect");
+      }
+      if (isDeafened) {  // Add this block
+        appElement.classList.add("deafened-effect");
+        this.createDeafenedRipples();
       }
 
       // Handle animated effects in order of priority
@@ -180,6 +186,10 @@ class AnimatedAnxiety {
       clearInterval(this.particleInterval);
       this.particleInterval = null;
     }
+    if (this.deafenedInterval) {
+      clearInterval(this.deafenedInterval);
+      this.deafenedInterval = null;
+    }
 
     // Remove all animated elements
     document.querySelectorAll(".bubble").forEach((el) => el.remove());
@@ -189,6 +199,7 @@ class AnimatedAnxiety {
     document
       .querySelectorAll(".concentration-particle")
       .forEach((el) => el.remove());
+    document.querySelectorAll(".deafened-ripple").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -381,6 +392,14 @@ class AnimatedAnxiety {
     });
   }
 
+  static checkDeafenedStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return !e.disabled && (name.includes("deaf") || name.includes("deafened"));
+    });
+  }
+
   static createCurseSymbols() {
     if (!this.curseInterval) {
       this.clearEffects();
@@ -503,6 +522,19 @@ class AnimatedAnxiety {
         document.getElementById("interface").appendChild(particle);
         setTimeout(() => particle.remove(), 3000);
       }, 1000); // Increased interval to reduce frequency
+    }
+  }
+
+  static createDeafenedRipples() {
+    if (!this.deafenedInterval) {
+      this.deafenedInterval = setInterval(() => {
+        for (let i = 0; i < 3; i++) {
+          const ripple = document.createElement("div");
+          ripple.className = "deafened-ripple";
+          document.getElementById("interface").appendChild(ripple);
+          setTimeout(() => ripple.remove(), 3000);
+        }
+      }, 1000);
     }
   }
 }
