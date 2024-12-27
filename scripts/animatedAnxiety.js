@@ -112,6 +112,7 @@ class AnimatedAnxiety {
       const isDeafened = this.checkDeafenedStatus(actor); // Add this line
       const isDiseased = this.checkDiseasedStatus(actor); // Add this line
       const isFrightened = this.checkFrightenedStatus(actor); // Add this line
+      const isGrappled = this.checkGrappledStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -129,7 +130,8 @@ class AnimatedAnxiety {
         "concentration-effect",
         "deafened-effect", // Add this line
         "diseased-effect", // Add this line
-        "frightened-effect" // Add this line
+        "frightened-effect", // Add this line
+        "grappled-effect" // Add this line
       );
 
       // Handle static effects
@@ -149,6 +151,10 @@ class AnimatedAnxiety {
       if (isUnconscious) {
         appElement.classList.add("unconscious-effect");
         this.createBubbles("black-inward");
+      } else if (isGrappled) {
+        // Add this block before other effects
+        appElement.classList.add("grappled-effect");
+        this.createGrappledEffect();
       } else if (isPoisoned) {
         appElement.classList.add("poison-effect");
         this.createBubbles("sway");
@@ -211,6 +217,10 @@ class AnimatedAnxiety {
       clearInterval(this.frightenedInterval);
       this.frightenedInterval = null;
     }
+    if (this.grappledInterval) {
+      clearInterval(this.grappledInterval);
+      this.grappledInterval = null;
+    }
 
     // Remove all animated elements
     document.querySelectorAll(".bubble").forEach((el) => el.remove());
@@ -223,6 +233,11 @@ class AnimatedAnxiety {
     document.querySelectorAll(".deafened-ripple").forEach((el) => el.remove());
     document.querySelectorAll(".disease-particle").forEach((el) => el.remove());
     document.querySelectorAll(".frightened-mark").forEach((el) => el.remove());
+    document.querySelectorAll(".grappled-hand").forEach((el) => el.remove());
+    document
+      .querySelectorAll(".grappled-vignette")
+      .forEach((el) => el.remove());
+    document.querySelectorAll(".grappled-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -451,6 +466,19 @@ class AnimatedAnxiety {
     });
   }
 
+  static checkGrappledStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return (
+        !e.disabled &&
+        (name.includes("grappled") ||
+          name.includes("restrained") ||
+          name.includes("grabbed"))
+      );
+    });
+  }
+
   static createCurseSymbols() {
     if (!this.curseInterval) {
       this.clearEffects();
@@ -615,7 +643,7 @@ class AnimatedAnxiety {
       this.clearEffects();
       this.frightenedInterval = setInterval(() => {
         // Create two marks - one from top, one from bottom
-        ['top', 'bottom'].forEach(direction => {
+        ["top", "bottom"].forEach((direction) => {
           const mark = document.createElement("div");
           mark.className = "frightened-mark";
           mark.classList.add(`frightened-mark-${direction}`);
@@ -636,6 +664,39 @@ class AnimatedAnxiety {
           setTimeout(() => mark.remove(), duration * 1000);
         });
       }, 200);
+    }
+  }
+
+  static createGrappledEffect() {
+    if (!this.grappledInterval) {
+      this.clearEffects();
+
+      // Create vignette effect
+      const vignette = document.createElement("div");
+      vignette.className = "grappled-vignette";
+      document.getElementById("interface").appendChild(vignette);
+
+      // Create hands overlay
+      const overlay = document.createElement("div");
+      overlay.className = "grappled-overlay";
+      
+      // Start both animations together but with a delay on the idle
+      // Use animation-fill-mode: forwards on both to prevent jumps
+      overlay.style.animation = `
+        grapple-rise 0.8s ease-out forwards,
+        grapple-idle 4s ease-in-out infinite 0.8s
+      `;
+      
+      document.getElementById("interface").appendChild(overlay);
+      
+      // Store reference to remove later and ensure cleanup
+      this.grappledInterval = setInterval(() => {
+        if (!document.querySelector(".grappled-effect")) {
+          this.clearEffects();
+          clearInterval(this.grappledInterval);
+          this.grappledInterval = null;
+        }
+      }, 1000);
     }
   }
 }
