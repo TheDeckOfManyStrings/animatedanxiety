@@ -108,7 +108,7 @@ class AnimatedAnxiety {
       const isBlinded = this.checkBlindedStatus(actor);
       const isCursed = this.checkCursedStatus(actor);
       const isCharmed = this.checkCharmedStatus(actor);
-      const isConcentrating = this.checkConcentrationStatus(actor);
+      const isConcentrating = this.checkConcentratingStatus(actor);
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -149,43 +149,13 @@ class AnimatedAnxiety {
         this.createHearts();
       } else if (isBleeding) {
         this.createBloodStreaks();
-      }
-
-      // Apply concentration effect independently (can stack with other effects)
-      if (isConcentrating) {
+      } else if (isConcentrating) {
         console.log("AnimatedAnxiety | Applying concentration effect");
         appElement.classList.add("concentration-effect");
         this.createConcentrationParticles();
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
-    }
-  }
-
-  static createConcentrationParticles() {
-    if (!this.particleInterval) {
-      this.clearEffects();
-      this.particleInterval = setInterval(() => {
-        const particle = document.createElement("div");
-        particle.className = "concentration-particle";
-
-        const angle = Math.random() * Math.PI * 2;
-        const startRadius = 50;
-        const startX = 50 + Math.cos(angle) * startRadius;
-        const startY = 50 + Math.sin(angle) * startRadius;
-
-        particle.style.left = `${startX}%`;
-        particle.style.top = `${startY}%`;
-
-        const moveX = (Math.random() * 20 - 10 - (startX - 50)) * 0.5;
-        const moveY = (Math.random() * 20 - 10 - (startY - 50)) * 0.5;
-
-        particle.style.setProperty('--move-x', `${moveX}vh`);
-        particle.style.setProperty('--move-y', `${moveY}vh`);
-
-        document.getElementById("interface").appendChild(particle);
-        setTimeout(() => particle.remove(), 3000);
-      }, 500);
     }
   }
 
@@ -216,7 +186,9 @@ class AnimatedAnxiety {
     document.querySelectorAll(".blood-streak").forEach((el) => el.remove());
     document.querySelectorAll(".curse-symbol").forEach((el) => el.remove());
     document.querySelectorAll(".charm-heart").forEach((el) => el.remove());
-    document.querySelectorAll(".concentration-particle").forEach((el) => el.remove());
+    document
+      .querySelectorAll(".concentration-particle")
+      .forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -401,24 +373,21 @@ class AnimatedAnxiety {
     });
   }
 
-  static checkConcentrationStatus(actor) {
+  static checkConcentratingStatus(actor) {
     if (!actor?.effects) return false;
-    const isConcentrating = actor.effects.some((e) => {
+    return actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       return !e.disabled && name.includes("concentrating");
     });
-    console.log("AnimatedAnxiety | Concentration status:", isConcentrating);
-    return isConcentrating;
   }
 
   static createCurseSymbols() {
     if (!this.curseInterval) {
       this.clearEffects();
-      const symbols = ["X", "O", "☠", "⚰", "⚖", "⚗", "⚙", "🕸", "🕷", "⛧"];
+      const symbols = ["X", "O", "+", "-", ""];
 
       this.curseInterval = setInterval(() => {
-        // Reduced number of symbols by half
-        const numSymbols = Math.random() < 0.15 ? 2 : 1;
+        const numSymbols = Math.random() < 0.3 ? 2 : 1;
 
         for (let i = 0; i < numSymbols; i++) {
           const symbol = document.createElement("div");
@@ -453,7 +422,7 @@ class AnimatedAnxiety {
           document.getElementById("interface").appendChild(symbol);
           setTimeout(() => symbol.remove(), duration * 1000);
         }
-      }, 1500); // Increased interval to 1500ms to reduce frequency
+      }, 750);
     }
   }
 
@@ -462,7 +431,6 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       this.heartInterval = setInterval(() => {
-        // Reduced number of hearts by half
         const heart = document.createElement("div");
         heart.className = "charm-heart";
         heart.textContent = "♥";
@@ -486,7 +454,7 @@ class AnimatedAnxiety {
 
         document.getElementById("interface").appendChild(heart);
         setTimeout(() => heart.remove(), duration * 1000);
-      }, 600); // Increased interval to 600ms to reduce frequency
+      }, 300);
     }
   }
 
@@ -509,6 +477,32 @@ class AnimatedAnxiety {
         document.getElementById("interface").appendChild(streak);
         setTimeout(() => streak.remove(), duration * 1000);
       }, 200);
+    }
+  }
+
+  static createConcentrationParticles() {
+    if (!this.particleInterval) {
+      this.particleInterval = setInterval(() => {
+        const particle = document.createElement("div");
+        particle.className = "concentration-particle";
+
+        const angle = Math.random() * Math.PI * 2;
+        const startRadius = 50;
+        const startX = 50 + Math.cos(angle) * startRadius;
+        const startY = 50 + Math.sin(angle) * startRadius;
+
+        particle.style.left = `${startX}%`;
+        particle.style.top = `${startY}%`;
+
+        const moveX = (Math.random() * 20 - 10 - (startX - 50)) * 0.5;
+        const moveY = (Math.random() * 20 - 10 - (startY - 50)) * 0.5;
+
+        particle.style.setProperty("--move-x", `${moveX}vh`);
+        particle.style.setProperty("--move-y", `${moveY}vh`);
+
+        document.getElementById("interface").appendChild(particle);
+        setTimeout(() => particle.remove(), 3000);
+      }, 1000); // Increased interval to reduce frequency
     }
   }
 }
