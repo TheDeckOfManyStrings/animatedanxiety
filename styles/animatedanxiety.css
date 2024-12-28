@@ -826,3 +826,59 @@
     transform: scale(1);
   }
 }
+
+/* Add petrified effect styling */
+.petrified-overlay {
+  position: fixed;
+  bottom: -20px; /* Move down to hide bottom edge */
+  left: -10vw; /* Extend further past screen edges */
+  width: 120vw; /* Make wider than previous */
+  height: 270px; /* Make taller to hide edges */
+  background-image: url('../assets/rocksClipped.png');
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+  filter: brightness(0.8) contrast(1.2); /* Make rocks more dramatic */
+}
+
+@keyframes petrify-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.9;
+    transform: translateY(0);
+  }
+}
+
+@keyframes petrify-quake {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-2px) translateX(3px);
+  }
+  50% {
+    transform: translateY(1px) translateX(-2px);
+  }
+  75% {
+    transform: translateY(-1px) translateX(2px);
+  }
+}
+
+@keyframes petrify-cycle {
+  0%, 5%, 10%, 100% {
+    transform: translateY(0);
+  }
+  6%, 7%, 8%, 9% {
+    transform: translateY(-2px) translateX(3px);
+  }
+  6.5%, 7.5%, 8.5%, 9.5% {
+    transform: translateY(1px) translateX(-2px);
+  }
+}

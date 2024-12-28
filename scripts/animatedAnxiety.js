@@ -114,6 +114,7 @@ class AnimatedAnxiety {
       const isFrightened = this.checkFrightenedStatus(actor); // Add this line
       const isGrappled = this.checkGrappledStatus(actor); // Add this line
       const isHiding = this.checkHidingStatus(actor);
+      const isPetrified = this.checkPetrifiedStatus(actor);
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -133,7 +134,8 @@ class AnimatedAnxiety {
         "diseased-effect", // Add this line
         "frightened-effect", // Add this line
         "grappled-effect", // Add this line
-        "hiding-effect"
+        "hiding-effect",
+        "petrified-effect"
       );
 
       // Handle static effects
@@ -157,6 +159,9 @@ class AnimatedAnxiety {
         // Add this block before other effects
         appElement.classList.add("grappled-effect");
         this.createGrappledEffect();
+      } else if (isPetrified) {
+        appElement.classList.add("petrified-effect");
+        this.createPetrifiedEffect();
       } else if (isHiding) {
         appElement.classList.add("hiding-effect");
         this.createHidingEffect();
@@ -230,6 +235,10 @@ class AnimatedAnxiety {
       clearInterval(this.hidingInterval);
       this.hidingInterval = null;
     }
+    if (this.petrifiedInterval) {
+      clearInterval(this.petrifiedInterval);
+      this.petrifiedInterval = null;
+    }
 
     // Remove all animated elements
     document.querySelectorAll(".bubble").forEach((el) => el.remove());
@@ -248,6 +257,7 @@ class AnimatedAnxiety {
       .forEach((el) => el.remove());
     document.querySelectorAll(".grappled-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".hiding-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".petrified-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -501,6 +511,18 @@ class AnimatedAnxiety {
     });
   }
 
+  static checkPetrifiedStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return !e.disabled && (
+        name.includes('petrified') || 
+        name.includes('stone') ||
+        name.includes('statue')
+      );
+    });
+  }
+
   static createCurseSymbols() {
     if (!this.curseInterval) {
       this.clearEffects();
@@ -744,6 +766,32 @@ class AnimatedAnxiety {
           this.clearEffects();
           clearInterval(this.hidingInterval);
           this.hidingInterval = null;
+        }
+      }, 1000);
+    }
+  }
+
+  static createPetrifiedEffect() {
+    if (!this.petrifiedInterval) {
+      this.clearEffects();
+
+      const overlay = document.createElement("div");
+      overlay.className = "petrified-overlay";
+      
+      // Rise animation followed by periodic shake
+      overlay.style.animation = `
+        petrify-rise 0.8s ease-out forwards,
+        petrify-cycle 10s linear infinite 0.8s
+      `;
+      
+      document.getElementById("interface").appendChild(overlay);
+      
+      // Store reference to remove later
+      this.petrifiedInterval = setInterval(() => {
+        if (!document.querySelector(".petrified-effect")) {
+          this.clearEffects();
+          clearInterval(this.petrifiedInterval);
+          this.petrifiedInterval = null;
         }
       }, 1000);
     }
