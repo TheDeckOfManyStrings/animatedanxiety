@@ -115,6 +115,8 @@ class AnimatedAnxiety {
       const isGrappled = this.checkGrappledStatus(actor); // Add this line
       const isHiding = this.checkHidingStatus(actor);
       const isPetrified = this.checkPetrifiedStatus(actor);
+      const isParalyzed = this.checkParalyzedStatus(actor);
+      const isRestrained = this.checkRestrainedStatus(actor);
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -135,7 +137,9 @@ class AnimatedAnxiety {
         "frightened-effect", // Add this line
         "grappled-effect", // Add this line
         "hiding-effect",
-        "petrified-effect"
+        "petrified-effect",
+        "paralyzed-effect",
+        "restrained-effect"
       );
 
       // Handle static effects
@@ -159,9 +163,15 @@ class AnimatedAnxiety {
         // Add this block before other effects
         appElement.classList.add("grappled-effect");
         this.createGrappledEffect();
+      } else if (isRestrained) {
+        appElement.classList.add("restrained-effect");
+        this.createRestrainedEffect();
       } else if (isPetrified) {
         appElement.classList.add("petrified-effect");
         this.createPetrifiedEffect();
+      } else if (isParalyzed) {
+        appElement.classList.add("paralyzed-effect");
+        this.createParalyzedEffect();
       } else if (isHiding) {
         appElement.classList.add("hiding-effect");
         this.createHidingEffect();
@@ -239,6 +249,20 @@ class AnimatedAnxiety {
       clearInterval(this.petrifiedInterval);
       this.petrifiedInterval = null;
     }
+    if (this.paralyzedInterval) {
+      clearInterval(this.paralyzedInterval);
+      this.paralyzedInterval = null;
+    }
+    if (this.restrainedInterval) {
+      clearInterval(this.restrainedInterval);
+      this.restrainedInterval = null;
+    }
+
+    // Clear the timeout as well
+    if (this.paralyzedTimeout) {
+      clearTimeout(this.paralyzedTimeout);
+      this.paralyzedTimeout = null;
+    }
 
     // Remove all animated elements
     document.querySelectorAll(".bubble").forEach((el) => el.remove());
@@ -257,7 +281,13 @@ class AnimatedAnxiety {
       .forEach((el) => el.remove());
     document.querySelectorAll(".grappled-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".hiding-overlay").forEach((el) => el.remove());
-    document.querySelectorAll(".petrified-overlay").forEach((el) => el.remove());
+    document
+      .querySelectorAll(".petrified-overlay")
+      .forEach((el) => el.remove());
+    document
+      .querySelectorAll(".paralyzed-overlay")
+      .forEach((el) => el.remove());
+    document.querySelectorAll(".restrained-web").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -491,22 +521,34 @@ class AnimatedAnxiety {
     return actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       return (
-        !e.disabled &&
-        (name.includes("grappled") ||
-          name.includes("restrained") ||
-          name.includes("grabbed"))
+        !e.disabled && (name.includes("grappled") || name.includes("grabbed"))
       );
     });
+  }
+
+  static checkRestrainedStatus(actor) {
+    if (!actor?.effects) return false;
+    const effect = actor.effects.find((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return !e.disabled && name.includes("restrained");
+    });
+    if (effect) {
+      this.restrainedEffectImage = effect.icon || effect.img;
+      return true;
+    }
+    this.restrainedEffectImage = null;
+    return false;
   }
 
   static checkHidingStatus(actor) {
     if (!actor?.effects) return false;
     return actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
-      return !e.disabled && (
-        name.includes('hiding') || 
-        name.includes('hidden') || 
-        name.includes('stealth')
+      return (
+        !e.disabled &&
+        (name.includes("hiding") ||
+          name.includes("hidden") ||
+          name.includes("stealth"))
       );
     });
   }
@@ -515,10 +557,24 @@ class AnimatedAnxiety {
     if (!actor?.effects) return false;
     return actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
-      return !e.disabled && (
-        name.includes('petrified') || 
-        name.includes('stone') ||
-        name.includes('statue')
+      return (
+        !e.disabled &&
+        (name.includes("petrified") ||
+          name.includes("stone") ||
+          name.includes("statue"))
+      );
+    });
+  }
+
+  static checkParalyzedStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return (
+        !e.disabled &&
+        (name.includes("paralyzed") ||
+          name.includes("paralysis") ||
+          name.includes("stunned"))
       );
     });
   }
@@ -723,16 +779,16 @@ class AnimatedAnxiety {
       // Create hands overlay
       const overlay = document.createElement("div");
       overlay.className = "grappled-overlay";
-      
+
       // Start both animations together but with a delay on the idle
       // Use animation-fill-mode: forwards on both to prevent jumps
       overlay.style.animation = `
         grapple-rise 0.8s ease-out forwards,
         grapple-idle 4s ease-in-out infinite 0.8s
       `;
-      
+
       document.getElementById("interface").appendChild(overlay);
-      
+
       // Store reference to remove later and ensure cleanup
       this.grappledInterval = setInterval(() => {
         if (!document.querySelector(".grappled-effect")) {
@@ -751,15 +807,15 @@ class AnimatedAnxiety {
       // Create bushes overlay (removed vignette)
       const overlay = document.createElement("div");
       overlay.className = "hiding-overlay";
-      
+
       // Start rise animation, then switch to subtle jiggle
       overlay.style.animation = `
         hiding-rise 0.8s ease-out forwards,
         hiding-idle 3s ease-in-out infinite 0.8s
       `;
-      
+
       document.getElementById("interface").appendChild(overlay);
-      
+
       // Store reference to remove later
       this.hidingInterval = setInterval(() => {
         if (!document.querySelector(".hiding-effect")) {
@@ -777,21 +833,119 @@ class AnimatedAnxiety {
 
       const overlay = document.createElement("div");
       overlay.className = "petrified-overlay";
-      
+
       // Rise animation followed by periodic shake
       overlay.style.animation = `
         petrify-rise 0.8s ease-out forwards,
         petrify-cycle 10s linear infinite 0.8s
       `;
-      
+
       document.getElementById("interface").appendChild(overlay);
-      
+
       // Store reference to remove later
       this.petrifiedInterval = setInterval(() => {
         if (!document.querySelector(".petrified-effect")) {
           this.clearEffects();
           clearInterval(this.petrifiedInterval);
           this.petrifiedInterval = null;
+        }
+      }, 1000);
+    }
+  }
+
+  static createParalyzedEffect() {
+    if (!this.paralyzedInterval) {
+      this.clearEffects();
+
+      const overlay = document.createElement("div");
+      overlay.className = "paralyzed-overlay";
+
+      // Remove the previous animation line
+      // overlay.style.animation = "paralyzed-flash 10s linear infinite";
+
+      // Create random lightning flashes
+      const doLightningFlash = () => {
+        // Pick a random number of flashes (2-5)
+        const flashes = 2 + Math.floor(Math.random() * 4);
+        let count = 0;
+        const flashInterval = setInterval(() => {
+          overlay.style.opacity = "0.5";
+          setTimeout(() => {
+            overlay.style.opacity = "0.15";
+          }, 100);
+          count++;
+          if (count >= flashes) clearInterval(flashInterval);
+        }, 200);
+      };
+
+      const scheduleLightning = () => {
+        doLightningFlash();
+        // Random delay between 8-12 seconds until next flash
+        const nextFlash = 8000 + Math.random() * 4000;
+        this.paralyzedTimeout = setTimeout(scheduleLightning, nextFlash);
+      };
+
+      document.getElementById("interface").appendChild(overlay);
+      scheduleLightning();
+
+      // Store reference to remove later
+      this.paralyzedInterval = setInterval(() => {
+        if (!document.querySelector(".paralyzed-effect")) {
+          this.clearEffects();
+          clearInterval(this.paralyzedInterval);
+          this.paralyzedInterval = null;
+        }
+      }, 1000);
+    }
+  }
+
+  static createRestrainedEffect() {
+    if (!this.restrainedInterval) {
+      this.clearEffects();
+
+      const corners = [
+        { position: "bottom-left", x: "0%", y: "86%", rotate: "0deg" },
+        { position: "bottom-right", x: "-14%", y: "0%", rotate: "90deg" }, //good
+        { position: "top-right", x: "77%", y: "14%", rotate: "180deg" }, //good
+        { position: "top-left", x: "90%", y: "100%", rotate: "270deg" }, //good
+      ];
+
+      corners.forEach((corner) => {
+        const web = document.createElement("div");
+        web.className = "restrained-web";
+        web.style.position = "fixed";
+        web.style.left = corner.x;
+        web.style.top = corner.y;
+
+        // Set the transform origin to the corner the web is attached to
+        switch (corner.position) {
+          case "bottom-left":
+            web.style.transformOrigin = "left bottom";
+            break;
+          case "bottom-right":
+            web.style.transformOrigin = "right bottom";
+            break;
+          case "top-right":
+            web.style.transformOrigin = "right top";
+            break;
+          case "top-left":
+            web.style.transformOrigin = "left top";
+            break;
+        }
+
+        web.style.setProperty("--initial-rotation", corner.rotate);
+        document.getElementById("interface").appendChild(web);
+
+        // Add rise and sway animations
+        web.style.animation = `web-rise 0.8s ease-out forwards, web-sway 4s ease-in-out infinite 0.8s`;
+      });
+
+      // Store reference to remove later
+      this.restrainedInterval = setInterval(() => {
+        if (!document.querySelector(".restrained-effect")) {
+          this.clearEffects();
+          clearInterval(this.restrainedInterval);
+          this.restrainedInterval = null;
         }
       }, 1000);
     }
