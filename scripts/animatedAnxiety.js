@@ -113,6 +113,7 @@ class AnimatedAnxiety {
       const isDiseased = this.checkDiseasedStatus(actor); // Add this line
       const isFrightened = this.checkFrightenedStatus(actor); // Add this line
       const isGrappled = this.checkGrappledStatus(actor); // Add this line
+      const isHiding = this.checkHidingStatus(actor);
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -131,7 +132,8 @@ class AnimatedAnxiety {
         "deafened-effect", // Add this line
         "diseased-effect", // Add this line
         "frightened-effect", // Add this line
-        "grappled-effect" // Add this line
+        "grappled-effect", // Add this line
+        "hiding-effect"
       );
 
       // Handle static effects
@@ -155,6 +157,9 @@ class AnimatedAnxiety {
         // Add this block before other effects
         appElement.classList.add("grappled-effect");
         this.createGrappledEffect();
+      } else if (isHiding) {
+        appElement.classList.add("hiding-effect");
+        this.createHidingEffect();
       } else if (isPoisoned) {
         appElement.classList.add("poison-effect");
         this.createBubbles("sway");
@@ -221,6 +226,10 @@ class AnimatedAnxiety {
       clearInterval(this.grappledInterval);
       this.grappledInterval = null;
     }
+    if (this.hidingInterval) {
+      clearInterval(this.hidingInterval);
+      this.hidingInterval = null;
+    }
 
     // Remove all animated elements
     document.querySelectorAll(".bubble").forEach((el) => el.remove());
@@ -238,6 +247,7 @@ class AnimatedAnxiety {
       .querySelectorAll(".grappled-vignette")
       .forEach((el) => el.remove());
     document.querySelectorAll(".grappled-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".hiding-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -479,6 +489,18 @@ class AnimatedAnxiety {
     });
   }
 
+  static checkHidingStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return !e.disabled && (
+        name.includes('hiding') || 
+        name.includes('hidden') || 
+        name.includes('stealth')
+      );
+    });
+  }
+
   static createCurseSymbols() {
     if (!this.curseInterval) {
       this.clearEffects();
@@ -695,6 +717,33 @@ class AnimatedAnxiety {
           this.clearEffects();
           clearInterval(this.grappledInterval);
           this.grappledInterval = null;
+        }
+      }, 1000);
+    }
+  }
+
+  static createHidingEffect() {
+    if (!this.hidingInterval) {
+      this.clearEffects();
+
+      // Create bushes overlay (removed vignette)
+      const overlay = document.createElement("div");
+      overlay.className = "hiding-overlay";
+      
+      // Start rise animation, then switch to subtle jiggle
+      overlay.style.animation = `
+        hiding-rise 0.8s ease-out forwards,
+        hiding-idle 3s ease-in-out infinite 0.8s
+      `;
+      
+      document.getElementById("interface").appendChild(overlay);
+      
+      // Store reference to remove later
+      this.hidingInterval = setInterval(() => {
+        if (!document.querySelector(".hiding-effect")) {
+          this.clearEffects();
+          clearInterval(this.hidingInterval);
+          this.hidingInterval = null;
         }
       }, 1000);
     }

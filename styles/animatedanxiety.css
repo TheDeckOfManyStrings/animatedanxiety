@@ -785,3 +785,44 @@
 .grappled-rope {
   display: none;
 }
+
+/* Add hiding effect styling */
+.hiding-overlay {
+  position: fixed;
+  bottom: 0;
+  left: -5vw;
+  width: 110vw;
+  height: 250px;
+  background-image: url('../assets/bushesTrimmed.png');
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+  filter: brightness(0.7) sepia(0.3) saturate(3) hue-rotate(45deg); /* Add dark green tint */
+}
+
+@keyframes hiding-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hiding-idle {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
