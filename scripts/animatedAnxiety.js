@@ -288,6 +288,7 @@ class AnimatedAnxiety {
       .querySelectorAll(".paralyzed-overlay")
       .forEach((el) => el.remove());
     document.querySelectorAll(".restrained-web").forEach((el) => el.remove());
+    document.querySelectorAll(".rats-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -720,21 +721,23 @@ class AnimatedAnxiety {
   static createDiseaseParticles() {
     if (!this.diseaseInterval) {
       this.clearEffects();
+
+      // Create rats overlay
+      const rats = document.createElement('div');
+      rats.className = 'rats-overlay';
+      document.getElementById('interface').appendChild(rats);
+
+      // Create falling particles
       this.diseaseInterval = setInterval(() => {
         const particle = document.createElement("div");
         particle.className = "disease-particle";
-
-        // Random position and initial properties
         particle.style.left = `${Math.random() * 100}%`;
         particle.style.opacity = (Math.random() * 0.3 + 0.3).toString();
-
-        // Random fall duration between 2-4 seconds
         const duration = Math.random() * 2 + 10;
         particle.style.animation = `disease-drip ${duration}s ease-in forwards`;
-
         document.getElementById("interface").appendChild(particle);
         setTimeout(() => particle.remove(), duration * 1000);
-      }, 1000); // Create particles more frequently than blood
+      }, 1000);
     }
   }
 
