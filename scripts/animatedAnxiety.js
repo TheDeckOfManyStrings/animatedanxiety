@@ -293,6 +293,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".poison-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".poison-aura").forEach((el) => el.remove());
     document.querySelectorAll(".cupid-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".frightened-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -788,6 +789,13 @@ class AnimatedAnxiety {
   static createFrightenedMarks() {
     if (!this.frightenedInterval) {
       this.clearEffects();
+
+      // Create frightened overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'frightened-overlay';
+      document.getElementById('interface').appendChild(overlay);
+
+      // Create frightened marks
       this.frightenedInterval = setInterval(() => {
         // Create two marks - one from top, one from bottom
         ["top", "bottom"].forEach((direction) => {
