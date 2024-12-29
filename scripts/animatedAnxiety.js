@@ -289,6 +289,10 @@ class AnimatedAnxiety {
       .forEach((el) => el.remove());
     document.querySelectorAll(".restrained-web").forEach((el) => el.remove());
     document.querySelectorAll(".rats-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".poison-bubble").forEach((el) => el.remove());
+    document.querySelectorAll(".poison-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".poison-aura").forEach((el) => el.remove());
+    document.querySelectorAll(".cupid-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -304,63 +308,97 @@ class AnimatedAnxiety {
   static createBubbles(mode) {
     if (!this.bubbleInterval) {
       this.clearBubbles();
-      this.bubbleInterval = setInterval(() => {
-        for (let i = 0; i < 3; i++) {
+
+      if (mode === "sway") {
+        // Create poison overlay and aura
+        const overlay = document.createElement('div');
+        overlay.className = 'poison-overlay';
+        document.getElementById('interface').appendChild(overlay);
+
+        const aura = document.createElement('div');
+        aura.className = 'poison-aura';
+        document.getElementById('interface').appendChild(aura);
+
+        // Create rising bubbles
+        this.bubbleInterval = setInterval(() => {
           const bubble = document.createElement("div");
-          bubble.className = "bubble";
-          bubble.style.position = "fixed";
-
-          // Random edge
-          const edge = ["top", "bottom", "left", "right"][
-            Math.floor(Math.random() * 4)
-          ];
-          let startTop = "50%",
-            startLeft = "50%";
-
-          switch (edge) {
-            case "top":
-              startTop = "0%";
-              startLeft = `${Math.random() * 100}%`;
-              break;
-            case "bottom":
-              startTop = "100%";
-              startLeft = `${Math.random() * 100}%`;
-              break;
-            case "left":
-              startLeft = "0%";
-              startTop = `${Math.random() * 100}%`;
-              break;
-            case "right":
-              startLeft = "100%";
-              startTop = `${Math.random() * 100}%`;
-              break;
-          }
-
-          bubble.style.setProperty("--start-top", startTop);
-          bubble.style.setProperty("--start-left", startLeft);
-
+          bubble.className = "poison-bubble";
+          
+          // Random starting position along bottom
+          bubble.style.left = `${Math.random() * 100}%`;
+          bubble.style.bottom = "0";
+          
           // Random size
           const size = Math.random() * 8 + 4;
           bubble.style.width = `${size}px`;
           bubble.style.height = `${size}px`;
-
-          const duration =
-            mode === "sway"
-              ? Math.random() * 2 + 5 // 3–5s for poison
-              : Math.random() * 2 + 7; // unchanged for unconscious
-          // Switch animation type
-          if (mode === "black-inward") {
-            bubble.style.background = "rgba(0, 0, 0, 0.4)";
-            bubble.style.animation = `bubble-inward-curved ${duration}s ease-in-out forwards`;
-          } else if (mode === "sway") {
-            bubble.style.background = "rgba(0, 255, 0, 0.4)";
-            bubble.style.animation = `bubble-inward-sway ${duration}s linear forwards`;
-          }
+          
+          const duration = Math.random() * 2 + 3;
+          bubble.style.animation = `poison-bubble-rise ${duration}s ease-out forwards`;
 
           document.getElementById("interface").appendChild(bubble);
           setTimeout(() => bubble.remove(), duration * 1000);
-        }
-      }, 300);
+        }, 200);
+      } else {
+        // Original unconscious bubble logic
+        this.bubbleInterval = setInterval(() => {
+          for (let i = 0; i < 3; i++) {
+            const bubble = document.createElement("div");
+            bubble.className = "bubble";
+            bubble.style.position = "fixed";
+
+            // Random edge
+            const edge = ["top", "bottom", "left", "right"][
+              Math.floor(Math.random() * 4)
+            ];
+            let startTop = "50%",
+              startLeft = "50%";
+
+            switch (edge) {
+              case "top":
+                startTop = "0%";
+                startLeft = `${Math.random() * 100}%`;
+                break;
+              case "bottom":
+                startTop = "100%";
+                startLeft = `${Math.random() * 100}%`;
+                break;
+              case "left":
+                startLeft = "0%";
+                startTop = `${Math.random() * 100}%`;
+                break;
+              case "right":
+                startLeft = "100%";
+                startTop = `${Math.random() * 100}%`;
+                break;
+            }
+
+            bubble.style.setProperty("--start-top", startTop);
+            bubble.style.setProperty("--start-left", startLeft);
+
+            // Random size
+            const size = Math.random() * 8 + 4;
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+
+            const duration =
+              mode === "sway"
+                ? Math.random() * 2 + 5 // 3–5s for poison
+                : Math.random() * 2 + 7; // unchanged for unconscious
+            // Switch animation type
+            if (mode === "black-inward") {
+              bubble.style.background = "rgba(0, 0, 0, 0.4)";
+              bubble.style.animation = `bubble-inward-curved ${duration}s ease-in-out forwards`;
+            } else if (mode === "sway") {
+              bubble.style.background = "rgba(0, 255, 0, 0.4)";
+              bubble.style.animation = `bubble-inward-sway ${duration}s linear forwards`;
+            }
+
+            document.getElementById("interface").appendChild(bubble);
+            setTimeout(() => bubble.remove(), duration * 1000);
+          }
+        }, 300);
+      }
     }
   }
 
@@ -629,6 +667,12 @@ class AnimatedAnxiety {
     if (!this.heartInterval) {
       this.clearEffects();
 
+      // Create cupid overlay
+      const cupid = document.createElement('div');
+      cupid.className = 'cupid-overlay';
+      document.getElementById('interface').appendChild(cupid);
+
+      // Create floating hearts
       this.heartInterval = setInterval(() => {
         const heart = document.createElement("div");
         heart.className = "charm-heart";

@@ -444,6 +444,34 @@
   }
 }
 
+/* Add Cupid overlay for charmed effect */
+.cupid-overlay {
+  position: fixed;
+  top: -120px; /* Start above screen */
+  left: -5vw;
+  width: 110vw;
+  height: 120px;
+  background-image: url("../assets/Cupid.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: top;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  animation: cupid-descend 0.8s ease-out forwards;
+}
+
+@keyframes cupid-descend {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(120px); /* Move down to show at top of screen */
+  }
+}
+
 /* Deafened effect styling */
 .deafened-ripple {
   position: fixed;
@@ -726,7 +754,7 @@
   bottom: 0;
   left: -5vw; /* Extend past screen edges */
   width: 110vw; /* Make wider than screen */
-  height: 250px; /* Make taller */
+  height: 120px; /* Changed from 250px */
   background-image: url("../assets/Hands.png");
   background-repeat: repeat-x;
   background-size: auto 100%;
@@ -831,7 +859,7 @@
   bottom: 0;
   left: -5vw;
   width: 110vw;
-  height: 250px;
+  height: 120px; /* Changed from 250px */
   background-image: url("../assets/bushesTrimmed.png");
   background-repeat: repeat-x;
   background-size: auto 100%;
@@ -872,7 +900,7 @@
   bottom: -20px; /* Move down to hide bottom edge */
   left: -10vw; /* Extend further past screen edges */
   width: 120vw; /* Make wider than previous */
-  height: 270px; /* Make taller to hide edges */
+  height: 120px; /* Changed from 270px */
   background-image: url("../assets/rocksClipped.png");
   background-repeat: repeat-x;
   background-size: auto 100%;
@@ -1003,4 +1031,91 @@
 @keyframes web-in-top-left,
 @keyframes web-in-top-right {
   display: none;
+}
+
+/* Updated poison effect styling */
+.poison-bubble {
+  position: fixed;
+  background: rgba(0, 255, 0, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 11;
+}
+
+.poison-overlay {
+  position: fixed;
+  bottom: 0;
+  left: -5vw;
+  width: 110vw;
+  height: 120px;
+  background-image: url("../assets/poisoned.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+  animation: poison-rise 0.8s ease-out forwards; /* Removed scroll animation */
+}
+
+.poison-aura {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: radial-gradient(
+    ellipse at bottom,
+    rgba(0, 255, 0, 0.3) 0%,
+    rgba(0, 255, 0, 0.1) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  animation: poison-glow 3s ease-in-out infinite;
+  filter: blur(8px); /* Added blur for softer effect */
+}
+
+@keyframes poison-bubble-rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-50vh) scale(0.2);
+    opacity: 0;
+  }
+}
+
+@keyframes poison-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+@keyframes poison-glow {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+}
+
+/* Remove unused animation */
+@keyframes poison-scroll {
+  /* Remove this entire keyframe as it's no longer needed */
 }
