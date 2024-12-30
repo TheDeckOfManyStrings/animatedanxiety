@@ -117,6 +117,7 @@ class AnimatedAnxiety {
       const isPetrified = this.checkPetrifiedStatus(actor);
       const isParalyzed = this.checkParalyzedStatus(actor);
       const isRestrained = this.checkRestrainedStatus(actor);
+      const isIncapacitated = this.checkIncapacitatedStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -139,7 +140,8 @@ class AnimatedAnxiety {
         "hiding-effect",
         "petrified-effect",
         "paralyzed-effect",
-        "restrained-effect"
+        "restrained-effect",
+        "incapacitated-effect" // Add this line
       );
 
       // Handle static effects
@@ -198,6 +200,10 @@ class AnimatedAnxiety {
         console.log("AnimatedAnxiety | Applying concentration effect");
         appElement.classList.add("concentration-effect");
         this.createConcentrationParticles();
+      } else if (isIncapacitated) {
+        // Add this block
+        appElement.classList.add("incapacitated-effect");
+        this.createIncapacitatedEffect();
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
@@ -293,7 +299,13 @@ class AnimatedAnxiety {
     document.querySelectorAll(".poison-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".poison-aura").forEach((el) => el.remove());
     document.querySelectorAll(".cupid-overlay").forEach((el) => el.remove());
-    document.querySelectorAll(".frightened-overlay").forEach((el) => el.remove());
+    document
+      .querySelectorAll(".frightened-overlay")
+      .forEach((el) => el.remove());
+    document.querySelectorAll(".cursed-overlay").forEach((el) => el.remove());
+    document
+      .querySelectorAll(".incapacitated-overlay")
+      .forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -312,28 +324,28 @@ class AnimatedAnxiety {
 
       if (mode === "sway") {
         // Create poison overlay and aura
-        const overlay = document.createElement('div');
-        overlay.className = 'poison-overlay';
-        document.getElementById('interface').appendChild(overlay);
+        const overlay = document.createElement("div");
+        overlay.className = "poison-overlay";
+        document.getElementById("interface").appendChild(overlay);
 
-        const aura = document.createElement('div');
-        aura.className = 'poison-aura';
-        document.getElementById('interface').appendChild(aura);
+        const aura = document.createElement("div");
+        aura.className = "poison-aura";
+        document.getElementById("interface").appendChild(aura);
 
         // Create rising bubbles
         this.bubbleInterval = setInterval(() => {
           const bubble = document.createElement("div");
           bubble.className = "poison-bubble";
-          
+
           // Random starting position along bottom
           bubble.style.left = `${Math.random() * 100}%`;
           bubble.style.bottom = "0";
-          
+
           // Random size
           const size = Math.random() * 8 + 4;
           bubble.style.width = `${size}px`;
           bubble.style.height = `${size}px`;
-          
+
           const duration = Math.random() * 2 + 3;
           bubble.style.animation = `poison-bubble-rise ${duration}s ease-out forwards`;
 
@@ -619,9 +631,24 @@ class AnimatedAnxiety {
     });
   }
 
+  static checkIncapacitatedStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return !e.disabled && name.includes("incapacitated");
+    });
+  }
+
   static createCurseSymbols() {
     if (!this.curseInterval) {
       this.clearEffects();
+
+      // Create cursed overlay
+      const overlay = document.createElement("div");
+      overlay.className = "cursed-overlay";
+      document.getElementById("interface").appendChild(overlay);
+
+      // Create floating curse symbols
       const symbols = ["X", "O", "+", "-", ""];
 
       this.curseInterval = setInterval(() => {
@@ -669,9 +696,9 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create cupid overlay
-      const cupid = document.createElement('div');
-      cupid.className = 'cupid-overlay';
-      document.getElementById('interface').appendChild(cupid);
+      const cupid = document.createElement("div");
+      cupid.className = "cupid-overlay";
+      document.getElementById("interface").appendChild(cupid);
 
       // Create floating hearts
       this.heartInterval = setInterval(() => {
@@ -768,9 +795,9 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create rats overlay
-      const rats = document.createElement('div');
-      rats.className = 'rats-overlay';
-      document.getElementById('interface').appendChild(rats);
+      const rats = document.createElement("div");
+      rats.className = "rats-overlay";
+      document.getElementById("interface").appendChild(rats);
 
       // Create falling particles
       this.diseaseInterval = setInterval(() => {
@@ -791,9 +818,9 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create frightened overlay
-      const overlay = document.createElement('div');
-      overlay.className = 'frightened-overlay';
-      document.getElementById('interface').appendChild(overlay);
+      const overlay = document.createElement("div");
+      overlay.className = "frightened-overlay";
+      document.getElementById("interface").appendChild(overlay);
 
       // Create frightened marks
       this.frightenedInterval = setInterval(() => {
@@ -1001,6 +1028,26 @@ class AnimatedAnxiety {
           this.clearEffects();
           clearInterval(this.restrainedInterval);
           this.restrainedInterval = null;
+        }
+      }, 1000);
+    }
+  }
+
+  static createIncapacitatedEffect() {
+    if (!this.incapacitatedInterval) {
+      this.clearEffects();
+
+      // Create incapacitated overlay
+      const overlay = document.createElement("div");
+      overlay.className = "incapacitated-overlay";
+      document.getElementById("interface").appendChild(overlay); // Changed from document.body
+
+      // Store reference to remove later
+      this.incapacitatedInterval = setInterval(() => {
+        if (!document.querySelector(".incapacitated-effect")) {
+          this.clearEffects();
+          clearInterval(this.incapacitatedInterval);
+          this.incapacitatedInterval = null;
         }
       }, 1000);
     }

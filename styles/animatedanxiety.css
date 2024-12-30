@@ -12,7 +12,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  border: 12px solid rgba(255, 0, 0, 0.8);
+  /* Remove or comment out the border that shifts the UI */
+  /* border: 12px solid rgba(255, 0, 0, 0.8); */
   box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.5);
   pointer-events: none;
   animation: anxiety-pulse var(--anxiety-duration) infinite;
@@ -33,6 +34,7 @@
 }
 
 #interface {
+  position: relative;
   --anxiety-opacity: 0;
   --anxiety-duration: 2s;
   --anxiety-blur: 200px;
@@ -1147,4 +1149,71 @@
 /* Remove unused animation */
 @keyframes poison-scroll {
   /* Remove this entire keyframe as it's no longer needed */
+}
+
+/* Add cursed overlay */
+.cursed-overlay {
+  position: fixed;
+  bottom: 0;
+  left: -5vw;
+  width: 110vw;
+  height: 120px;
+  background-image: url("../assets/cursed.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+  animation: cursed-rise 0.8s ease-out forwards;
+}
+
+@keyframes cursed-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+/* Add incapacitated overlay */
+.incapacitated-overlay {
+  position: fixed;
+  bottom: 0;
+  left: -5vw;
+  width: 110vw;
+  height: 120px;
+  background-image: url("../assets/incapacitated.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+  animation: incapacitated-rise 0.8s ease-out forwards;
+}
+
+@keyframes incapacitated-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+/* Add mark animations if needed */
+.incapacitated-mark {
+  position: fixed;
+  color: rgba(128, 0, 0, 0.8);
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 11;
 }
