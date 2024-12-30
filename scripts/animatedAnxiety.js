@@ -118,6 +118,7 @@ class AnimatedAnxiety {
       const isParalyzed = this.checkParalyzedStatus(actor);
       const isRestrained = this.checkRestrainedStatus(actor);
       const isIncapacitated = this.checkIncapacitatedStatus(actor); // Add this line
+      const isDead = this.checkDeadStatus(actor);
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -141,7 +142,8 @@ class AnimatedAnxiety {
         "petrified-effect",
         "paralyzed-effect",
         "restrained-effect",
-        "incapacitated-effect" // Add this line
+        "incapacitated-effect", // Add this line
+        "dead-effect"
       );
 
       // Handle static effects
@@ -158,7 +160,10 @@ class AnimatedAnxiety {
       }
 
       // Handle animated effects in order of priority
-      if (isUnconscious) {
+      if (isDead) {
+        appElement.classList.add("dead-effect");
+        this.createDeadEffect();
+      } else if (isUnconscious) {
         appElement.classList.add("unconscious-effect");
         this.createBubbles("black-inward");
       } else if (isGrappled) {
@@ -263,6 +268,10 @@ class AnimatedAnxiety {
       clearInterval(this.restrainedInterval);
       this.restrainedInterval = null;
     }
+    if (this.deadInterval) {
+      clearInterval(this.deadInterval);
+      this.deadInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -306,6 +315,7 @@ class AnimatedAnxiety {
     document
       .querySelectorAll(".incapacitated-overlay")
       .forEach((el) => el.remove());
+    document.querySelectorAll(".dead-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -639,6 +649,14 @@ class AnimatedAnxiety {
     });
   }
 
+  static checkDeadStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return !e.disabled && name.includes("dead");
+    });
+  }
+
   static createCurseSymbols() {
     if (!this.curseInterval) {
       this.clearEffects();
@@ -941,34 +959,7 @@ class AnimatedAnxiety {
 
       const overlay = document.createElement("div");
       overlay.className = "paralyzed-overlay";
-
-      // Remove the previous animation line
-      // overlay.style.animation = "paralyzed-flash 10s linear infinite";
-
-      // Create random lightning flashes
-      const doLightningFlash = () => {
-        // Pick a random number of flashes (2-5)
-        const flashes = 2 + Math.floor(Math.random() * 4);
-        let count = 0;
-        const flashInterval = setInterval(() => {
-          overlay.style.opacity = "0.5";
-          setTimeout(() => {
-            overlay.style.opacity = "0.15";
-          }, 100);
-          count++;
-          if (count >= flashes) clearInterval(flashInterval);
-        }, 200);
-      };
-
-      const scheduleLightning = () => {
-        doLightningFlash();
-        // Random delay between 8-12 seconds until next flash
-        const nextFlash = 8000 + Math.random() * 4000;
-        this.paralyzedTimeout = setTimeout(scheduleLightning, nextFlash);
-      };
-
       document.getElementById("interface").appendChild(overlay);
-      scheduleLightning();
 
       // Store reference to remove later
       this.paralyzedInterval = setInterval(() => {
@@ -1048,6 +1039,25 @@ class AnimatedAnxiety {
           this.clearEffects();
           clearInterval(this.incapacitatedInterval);
           this.incapacitatedInterval = null;
+        }
+      }, 1000);
+    }
+  }
+
+  static createDeadEffect() {
+    if (!this.deadInterval) {
+      this.clearEffects();
+
+      const overlay = document.createElement("div");
+      overlay.className = "dead-overlay";
+      document.getElementById("interface").appendChild(overlay);
+
+      // Store reference to remove later
+      this.deadInterval = setInterval(() => {
+        if (!document.querySelector(".dead-effect")) {
+          this.clearEffects();
+          clearInterval(this.deadInterval);
+          this.deadInterval = null;
         }
       }, 1000);
     }
