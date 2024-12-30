@@ -282,6 +282,7 @@ class AnimatedAnxiety {
     // Remove all animated elements
     document.querySelectorAll(".bubble").forEach((el) => el.remove());
     document.querySelectorAll(".blood-streak").forEach((el) => el.remove());
+    document.querySelectorAll(".bleeding-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".curse-symbol").forEach((el) => el.remove());
     document.querySelectorAll(".charm-heart").forEach((el) => el.remove());
     document
@@ -750,19 +751,21 @@ class AnimatedAnxiety {
   static createBloodStreaks() {
     if (!this.bloodInterval) {
       this.clearEffects();
+
+      // Create bleeding overlay
+      const overlay = document.createElement("div");
+      overlay.className = "bleeding-overlay";
+      document.getElementById("interface").appendChild(overlay);
+
+      // Keep the blood streaks effect for additional ambiance
       this.bloodInterval = setInterval(() => {
         const streak = document.createElement("div");
         streak.className = "blood-streak";
-
-        // Random position and properties
         streak.style.left = `${Math.random() * 100}%`;
         streak.style.opacity = (Math.random() * 0.4 + 0.4).toString();
         streak.style.width = `${Math.random() * 3 + 1}px`;
-
-        // Random animation duration 1.5-3s
         const duration = Math.random() * 1.5 + 1.5;
         streak.style.animation = `blood-drip ${duration}s linear forwards`;
-
         document.getElementById("interface").appendChild(streak);
         setTimeout(() => streak.remove(), duration * 1000);
       }, 200);
