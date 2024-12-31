@@ -121,6 +121,7 @@ class AnimatedAnxiety {
       const isDead = this.checkDeadStatus(actor);
       const isBurrowing = this.checkBurrowingStatus(actor); // Add this line
       const isDodging = this.checkDodgeStatus(actor); // Add this line
+      const isEthereal = this.checkEtherealStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -147,7 +148,8 @@ class AnimatedAnxiety {
         "incapacitated-effect", // Add this line
         "dead-effect",
         "burrowing-effect", // Add this line
-        "dodge-effect" // Add this line
+        "dodge-effect", // Add this line
+        "ethereal-effect" // Add this line
       );
 
       // Handle static effects
@@ -221,6 +223,10 @@ class AnimatedAnxiety {
         // Add this block
         appElement.classList.add("burrowing-effect");
         this.createBurrowingEffect();
+      } else if (isEthereal) {
+        // Add this block
+        appElement.classList.add("ethereal-effect");
+        this.createEtherealEffect();
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
@@ -292,6 +298,10 @@ class AnimatedAnxiety {
       clearInterval(this.dodgeInterval);
       this.dodgeInterval = null;
     }
+    if (this.etherealInterval) { // Add this block
+      clearInterval(this.etherealInterval);
+      this.etherealInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -343,6 +353,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".burrowing-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".dodge-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".trapeze-overlay").forEach((el) => el.remove()); // Add this line
+    document.querySelectorAll(".ethereal-overlay").forEach((el) => el.remove()); // Add this line
   }
 
   // New check for unconscious
@@ -714,6 +725,17 @@ class AnimatedAnxiety {
     });
     console.log("AnimatedAnxiety | Dodge status:", isDodging);
     return isDodging;
+  }
+
+  static checkEtherealStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return !e.disabled && (
+        name.includes("ethereal") || 
+        name.includes("etherealness")
+      );
+    });
   }
 
   static createCurseSymbols() {
@@ -1194,6 +1216,24 @@ class AnimatedAnxiety {
           this.clearEffects();
           clearInterval(this.dodgeInterval);
           this.dodgeInterval = null;
+        }
+      }, 1000);
+    }
+  }
+
+  static createEtherealEffect() {
+    if (!this.etherealInterval) {
+      this.clearEffects();
+      
+      const overlay = document.createElement("div");
+      overlay.className = "ethereal-overlay";
+      document.getElementById("interface").appendChild(overlay);
+      
+      this.etherealInterval = setInterval(() => {
+        if (!document.querySelector(".ethereal-effect")) {
+          this.clearEffects();
+          clearInterval(this.etherealInterval);
+          this.etherealInterval = null;
         }
       }, 1000);
     }
