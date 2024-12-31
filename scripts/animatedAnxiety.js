@@ -123,6 +123,7 @@ class AnimatedAnxiety {
       const isDodging = this.checkDodgeStatus(actor); // Add this line
       const isEthereal = this.checkEtherealStatus(actor); // Add this line
       const isExhausted = this.checkExhaustionStatus(actor); // Add this line
+      const isFlying = this.checkFlyingStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -151,7 +152,8 @@ class AnimatedAnxiety {
         "burrowing-effect", // Add this line
         "dodge-effect", // Add this line
         "ethereal-effect", // Add this line
-        "exhaustion-effect" // Add this line
+        "exhaustion-effect", // Add this line
+        "flying-effect" // Add this line
       );
 
       // Handle static effects
@@ -233,6 +235,10 @@ class AnimatedAnxiety {
         // Add this block
         appElement.classList.add("exhaustion-effect");
         this.createExhaustionEffect();
+      } else if (isFlying) {
+        // Add this block
+        appElement.classList.add("flying-effect");
+        this.createFlyingEffect();
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
@@ -315,6 +321,11 @@ class AnimatedAnxiety {
       clearInterval(this.exhaustionInterval);
       this.exhaustionInterval = null;
     }
+    if (this.flyingInterval) {
+      // Add this block
+      clearInterval(this.flyingInterval);
+      this.flyingInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -374,6 +385,7 @@ class AnimatedAnxiety {
     document
       .querySelectorAll(".exhaustion-overlay")
       .forEach((el) => el.remove()); // Add this line
+    document.querySelectorAll(".flying-overlay").forEach((el) => el.remove()); // Add this line
   }
 
   // New check for unconscious
@@ -774,6 +786,37 @@ class AnimatedAnxiety {
     console.log("AnimatedAnxiety | Exhaustion level:", level);
     return level;
   }
+
+  static checkFlyingStatus(actor) {
+    if (!actor?.effects) {
+        console.log("AnimatedAnxiety | No effects found for flying check");
+        return false;
+    }
+    
+    const isFlying = actor.effects.some((e) => {
+        const name = e.name?.toLowerCase() || "";
+        const statusId = e.flags?.core?.statusId || "";
+        const isActive = !e.disabled;
+        
+        console.log("AnimatedAnxiety | Checking flying effect:", {
+            name,
+            statusId,
+            isActive,
+            raw: e
+        });
+        
+        return isActive && (
+            name.includes("fly") || 
+            name.includes("flying") || 
+            name.includes("levitate") ||
+            statusId === "fly" ||
+            statusId === "flying"
+        );
+    });
+    
+    console.log("AnimatedAnxiety | Flying status:", isFlying);
+    return isFlying;
+}
 
   static createCurseSymbols() {
     if (!this.curseInterval) {
@@ -1310,6 +1353,45 @@ class AnimatedAnxiety {
       }, 1000);
     }
   }
+
+  static createFlyingEffect() {
+    if (!this.flyingInterval) {
+        this.clearEffects();
+        
+        console.log("AnimatedAnxiety | Creating flying effect");
+        
+        const overlay = document.createElement("div");
+        overlay.className = "flying-overlay";
+        
+        // Use absolute path and log any errors
+        const imagePath = "modules/animatedanxiety/assets/feathers.png";
+        overlay.style.backgroundImage = `url('${imagePath}')`;
+        
+        console.log("AnimatedAnxiety | Setting background image:", imagePath);
+        
+        // Start rise animation, then switch to subtle float
+        overlay.style.animation = `
+            flying-rise 0.8s ease-out forwards,
+            flying-float 4s ease-in-out infinite 0.8s
+        `;
+        
+        document.getElementById("interface").appendChild(overlay);
+        
+        // Verify the overlay was created and styled correctly
+        console.log("AnimatedAnxiety | Flying overlay created:", overlay);
+        
+        // Store reference to remove later
+        this.flyingInterval = setInterval(() => {
+            if (!document.querySelector(".flying-effect")) {
+                console.log("AnimatedAnxiety | Cleaning up flying effect");
+                this.clearEffects();
+                clearInterval(this.flyingInterval);
+                this.flyingInterval = null;
+            }
+        }, 1000);
+    }
+}
+
 }
 
 Hooks.once("init", () => {
