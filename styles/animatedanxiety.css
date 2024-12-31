@@ -1575,3 +1575,43 @@
     transform: translateY(0);
   }
 }
+
+/* Add hovering overlay styling */
+.hovering-overlay {
+  position: fixed;
+  bottom: -20px;
+  left: -5vw;
+  width: 110vw;
+  height: 140px;
+  background-image: url("../assets/hovering.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+@keyframes hovering-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hovering-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px); /* Smaller float distance than flying */
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

@@ -124,6 +124,7 @@ class AnimatedAnxiety {
       const isEthereal = this.checkEtherealStatus(actor); // Add this line
       const isExhausted = this.checkExhaustionStatus(actor); // Add this line
       const isFlying = this.checkFlyingStatus(actor); // Add this line
+      const isHovering = this.checkHoveringStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -153,7 +154,8 @@ class AnimatedAnxiety {
         "dodge-effect", // Add this line
         "ethereal-effect", // Add this line
         "exhaustion-effect", // Add this line
-        "flying-effect" // Add this line
+        "flying-effect", // Add this line
+        "hovering-effect" // Add this line
       );
 
       // Handle static effects
@@ -235,6 +237,9 @@ class AnimatedAnxiety {
         // Add this block
         appElement.classList.add("exhaustion-effect");
         this.createExhaustionEffect();
+      } else if (isHovering) {
+        appElement.classList.add("hovering-effect");
+        this.createHoveringEffect();
       } else if (isFlying) {
         // Add this block
         appElement.classList.add("flying-effect");
@@ -326,6 +331,11 @@ class AnimatedAnxiety {
       clearInterval(this.flyingInterval);
       this.flyingInterval = null;
     }
+    if (this.hoveringInterval) {
+      // Add this block
+      clearInterval(this.hoveringInterval);
+      this.hoveringInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -386,6 +396,7 @@ class AnimatedAnxiety {
       .querySelectorAll(".exhaustion-overlay")
       .forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".flying-overlay").forEach((el) => el.remove()); // Add this line
+    document.querySelectorAll(".hovering-overlay").forEach((el) => el.remove()); // Add this line
   }
 
   // New check for unconscious
@@ -816,6 +827,36 @@ class AnimatedAnxiety {
     
     console.log("AnimatedAnxiety | Flying status:", isFlying);
     return isFlying;
+}
+
+  static checkHoveringStatus(actor) {
+    if (!actor?.effects) {
+        console.log("AnimatedAnxiety | No effects found for hovering check");
+        return false;
+    }
+    
+    const isHovering = actor.effects.some((e) => {
+        const name = e.name?.toLowerCase() || "";
+        const statusId = e.flags?.core?.statusId || "";
+        const isActive = !e.disabled;
+        
+        console.log("AnimatedAnxiety | Checking hovering effect:", {
+            name,
+            statusId,
+            isActive,
+            raw: e
+        });
+        
+        return isActive && (
+            name.includes("hover") || 
+            name.includes("hovering") ||
+            statusId === "hover" ||
+            statusId === "hovering"
+        );
+    });
+    
+    console.log("AnimatedAnxiety | Hovering status:", isHovering);
+    return isHovering;
 }
 
   static createCurseSymbols() {
@@ -1387,6 +1428,40 @@ class AnimatedAnxiety {
                 this.clearEffects();
                 clearInterval(this.flyingInterval);
                 this.flyingInterval = null;
+            }
+        }, 1000);
+    }
+}
+
+  static createHoveringEffect() {
+    if (!this.hoveringInterval) {
+        this.clearEffects();
+        
+        console.log("AnimatedAnxiety | Creating hovering effect");
+        
+        const overlay = document.createElement("div");
+        overlay.className = "hovering-overlay";
+        
+        const imagePath = "modules/animatedanxiety/assets/hovering.png";
+        overlay.style.backgroundImage = `url('${imagePath}')`;
+        
+        console.log("AnimatedAnxiety | Setting hovering background image:", imagePath);
+        
+        overlay.style.animation = `
+            hovering-rise 0.8s ease-out forwards,
+            hovering-float 4s ease-in-out infinite 0.8s
+        `;
+        
+        document.getElementById("interface").appendChild(overlay);
+        
+        console.log("AnimatedAnxiety | Hovering overlay created:", overlay);
+        
+        this.hoveringInterval = setInterval(() => {
+            if (!document.querySelector(".hovering-effect")) {
+                console.log("AnimatedAnxiety | Cleaning up hovering effect");
+                this.clearEffects();
+                clearInterval(this.hoveringInterval);
+                this.hoveringInterval = null;
             }
         }, 1000);
     }
