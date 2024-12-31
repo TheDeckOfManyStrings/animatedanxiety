@@ -120,6 +120,7 @@ class AnimatedAnxiety {
       const isIncapacitated = this.checkIncapacitatedStatus(actor); // Add this line
       const isDead = this.checkDeadStatus(actor);
       const isBurrowing = this.checkBurrowingStatus(actor); // Add this line
+      const isDodging = this.checkDodgeStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -145,7 +146,8 @@ class AnimatedAnxiety {
         "restrained-effect",
         "incapacitated-effect", // Add this line
         "dead-effect",
-        "burrowing-effect" // Add this line
+        "burrowing-effect", // Add this line
+        "dodge-effect" // Add this line
       );
 
       // Handle static effects
@@ -208,6 +210,9 @@ class AnimatedAnxiety {
         console.log("AnimatedAnxiety | Applying concentration effect");
         appElement.classList.add("concentration-effect");
         this.createConcentrationParticles();
+      } else if (isDodging) {
+        appElement.classList.add("dodge-effect");
+        this.createDodgeEffect();
       } else if (isIncapacitated) {
         // Add this block
         appElement.classList.add("incapacitated-effect");
@@ -283,6 +288,10 @@ class AnimatedAnxiety {
       clearInterval(this.burrowingInterval);
       this.burrowingInterval = null;
     }
+    if (this.dodgeInterval) {
+      clearInterval(this.dodgeInterval);
+      this.dodgeInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -332,6 +341,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".dead-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".blinded-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".burrowing-overlay").forEach((el) => el.remove()); // Add this line
+    document.querySelectorAll(".dodge-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -679,6 +689,30 @@ class AnimatedAnxiety {
       const name = e.name?.toLowerCase() || "";
       return !e.disabled && name.includes("burrow");
     });
+  }
+
+  static checkDodgeStatus(actor) {
+    if (!actor?.effects) return false;
+    const isDodging = actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+
+      console.log("AnimatedAnxiety | Checking dodge effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e
+      });
+
+      return isActive && (
+        name === "dodging" ||
+        statusId === "dodge" ||
+        statusId === "dodging"
+      );
+    });
+    console.log("AnimatedAnxiety | Dodge status:", isDodging);
+    return isDodging;
   }
 
   static createCurseSymbols() {
@@ -1134,6 +1168,25 @@ class AnimatedAnxiety {
           this.clearEffects();
           clearInterval(this.burrowingInterval);
           this.burrowingInterval = null;
+        }
+      }, 1000);
+    }
+  }
+
+  static createDodgeEffect() {
+    if (!this.dodgeInterval) {
+      this.clearEffects();
+      
+      const overlay = document.createElement("div");
+      overlay.className = "dodge-overlay";
+      overlay.style.animation = "dodge-rise 0.8s ease-out forwards";
+      document.getElementById("interface").appendChild(overlay);
+      
+      this.dodgeInterval = setInterval(() => {
+        if (!document.querySelector(".dodge-effect")) {
+          this.clearEffects();
+          clearInterval(this.dodgeInterval);
+          this.dodgeInterval = null;
         }
       }, 1000);
     }
