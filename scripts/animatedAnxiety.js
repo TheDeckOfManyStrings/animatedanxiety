@@ -152,6 +152,7 @@ class AnimatedAnxiety {
       }
       if (isBlinded) {
         appElement.classList.add("blinded-effect");
+        this.createBlindedEffect(); // Add this line
       }
       if (isDeafened) {
         // Add this block
@@ -317,6 +318,7 @@ class AnimatedAnxiety {
       .querySelectorAll(".incapacitated-overlay")
       .forEach((el) => el.remove());
     document.querySelectorAll(".dead-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".blinded-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -1063,6 +1065,24 @@ class AnimatedAnxiety {
           this.deadInterval = null;
         }
       }, 1000);
+    }
+  }
+
+  static createBlindedEffect() {
+    if (!this.blindedInterval) {
+        this.clearEffects();
+        
+        const overlay = document.createElement("div");
+        overlay.className = "blinded-overlay";
+        document.getElementById("interface").appendChild(overlay);
+        
+        this.blindedInterval = setInterval(() => {
+            if (!document.querySelector(".blinded-effect")) {
+                this.clearEffects();
+                clearInterval(this.blindedInterval);
+                this.blindedInterval = null;
+            }
+        }, 1000);
     }
   }
 }

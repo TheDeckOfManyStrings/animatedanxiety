@@ -383,6 +383,35 @@
   }
 }
 
+/* Add blinded overlay while keeping the blur effect */
+.blinded-overlay {
+  position: fixed;
+  bottom: 0;
+  left: -5vw;
+  width: 110vw;
+  height: 120px;
+  background-image: url("../assets/blinded.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+  animation: blinded-rise 0.8s ease-out forwards;
+}
+
+@keyframes blinded-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
 /* Cursed symbol styling */
 .curse-symbol {
   position: fixed;
