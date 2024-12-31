@@ -122,6 +122,7 @@ class AnimatedAnxiety {
       const isBurrowing = this.checkBurrowingStatus(actor); // Add this line
       const isDodging = this.checkDodgeStatus(actor); // Add this line
       const isEthereal = this.checkEtherealStatus(actor); // Add this line
+      const isExhausted = this.checkExhaustionStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -149,7 +150,8 @@ class AnimatedAnxiety {
         "dead-effect",
         "burrowing-effect", // Add this line
         "dodge-effect", // Add this line
-        "ethereal-effect" // Add this line
+        "ethereal-effect", // Add this line
+        "exhaustion-effect" // Add this line
       );
 
       // Handle static effects
@@ -227,6 +229,10 @@ class AnimatedAnxiety {
         // Add this block
         appElement.classList.add("ethereal-effect");
         this.createEtherealEffect();
+      } else if (isExhausted) {
+        // Add this block
+        appElement.classList.add("exhaustion-effect");
+        this.createExhaustionEffect();
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
@@ -302,6 +308,10 @@ class AnimatedAnxiety {
       clearInterval(this.etherealInterval);
       this.etherealInterval = null;
     }
+    if (this.exhaustionInterval) { // Add this block
+      clearInterval(this.exhaustionInterval);
+      this.exhaustionInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -354,6 +364,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".dodge-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".trapeze-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".ethereal-overlay").forEach((el) => el.remove()); // Add this line
+    document.querySelectorAll(".exhaustion-overlay").forEach((el) => el.remove()); // Add this line
   }
 
   // New check for unconscious
@@ -735,6 +746,22 @@ class AnimatedAnxiety {
         name.includes("ethereal") || 
         name.includes("etherealness")
       );
+    });
+  }
+
+  static checkExhaustionStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      const isActive = !e.disabled;
+
+      console.log("AnimatedAnxiety | Checking exhaustion effect:", {
+        name,
+        isActive,
+        raw: e
+      });
+
+      return isActive && name.includes("exhaustion");
     });
   }
 
@@ -1234,6 +1261,24 @@ class AnimatedAnxiety {
           this.clearEffects();
           clearInterval(this.etherealInterval);
           this.etherealInterval = null;
+        }
+      }, 1000);
+    }
+  }
+
+  static createExhaustionEffect() {
+    if (!this.exhaustionInterval) {
+      this.clearEffects();
+      
+      const overlay = document.createElement("div");
+      overlay.className = "exhaustion-overlay";
+      document.getElementById("interface").appendChild(overlay);
+      
+      this.exhaustionInterval = setInterval(() => {
+        if (!document.querySelector(".exhaustion-effect")) {
+          this.clearEffects();
+          clearInterval(this.exhaustionInterval);
+          this.exhaustionInterval = null;
         }
       }, 1000);
     }
