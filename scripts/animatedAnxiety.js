@@ -342,6 +342,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".blinded-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".burrowing-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".dodge-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".trapeze-overlay").forEach((el) => el.remove()); // Add this line
   }
 
   // New check for unconscious
@@ -1177,10 +1178,16 @@ class AnimatedAnxiety {
     if (!this.dodgeInterval) {
       this.clearEffects();
       
+      // Bottom overlay
       const overlay = document.createElement("div");
       overlay.className = "dodge-overlay";
       overlay.style.animation = "dodge-rise 0.8s ease-out forwards";
       document.getElementById("interface").appendChild(overlay);
+      
+      // Top overlay (trapeze)
+      const trapeze = document.createElement("div");
+      trapeze.className = "trapeze-overlay";
+      document.getElementById("interface").appendChild(trapeze);
       
       this.dodgeInterval = setInterval(() => {
         if (!document.querySelector(".dodge-effect")) {
