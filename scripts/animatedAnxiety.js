@@ -299,7 +299,9 @@ class AnimatedAnxiety {
     document
       .querySelectorAll(".concentration-particle")
       .forEach((el) => el.remove());
+    document.querySelectorAll(".concentration-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".deafened-ripple").forEach((el) => el.remove());
+    document.querySelectorAll(".deafened-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".disease-particle").forEach((el) => el.remove());
     document.querySelectorAll(".frightened-mark").forEach((el) => el.remove());
     document.querySelectorAll(".grappled-hand").forEach((el) => el.remove());
@@ -795,6 +797,14 @@ class AnimatedAnxiety {
 
   static createConcentrationParticles() {
     if (!this.particleInterval) {
+      this.clearEffects();
+
+      // Add concentration overlay
+      const overlay = document.createElement("div");
+      overlay.className = "concentration-overlay";
+      document.getElementById("interface").appendChild(overlay);
+
+      // Keep existing particle creation logic
       this.particleInterval = setInterval(() => {
         const particle = document.createElement("div");
         particle.className = "concentration-particle";
@@ -821,13 +831,19 @@ class AnimatedAnxiety {
 
   static createDeafenedRipples() {
     if (!this.deafenedInterval) {
+      this.clearEffects();
+
+      // Create deafened overlay
+      const overlay = document.createElement("div");
+      overlay.className = "deafened-overlay";
+      document.getElementById("interface").appendChild(overlay);
+
+      // Keep the existing ripple effect for additional visual feedback
       this.deafenedInterval = setInterval(() => {
-        for (let i = 0; i < 3; i++) {
-          const ripple = document.createElement("div");
-          ripple.className = "deafened-ripple";
-          document.getElementById("interface").appendChild(ripple);
-          setTimeout(() => ripple.remove(), 3000);
-        }
+        const ripple = document.createElement("div");
+        ripple.className = "deafened-ripple";
+        document.getElementById("interface").appendChild(ripple);
+        setTimeout(() => ripple.remove(), 3000);
       }, 1000);
     }
   }
