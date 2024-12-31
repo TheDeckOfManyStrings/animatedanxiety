@@ -1505,3 +1505,33 @@
     transform: translateY(0);
   }
 }
+
+/* Add exhaustion blur effect */
+#interface.exhaustion-effect::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 11;
+  background: radial-gradient(
+    circle at center,
+    transparent var(--exhaustion-clear),
+    rgba(0, 0, 0, var(--exhaustion-opacity)) 100%
+  );
+  backdrop-filter: blur(var(--exhaustion-blur));
+  animation: exhaustion-pulse var(--exhaustion-duration) ease-in-out infinite;
+}
+
+@keyframes exhaustion-pulse {
+  0%,
+  100% {
+    backdrop-filter: blur(var(--exhaustion-blur));
+  }
+  50% {
+    /* backdrop-filter: blur(calc(var(--exhaustion-blur) * 1.2)); */
+    backdrop-filter: blur(0);
+  }
+}

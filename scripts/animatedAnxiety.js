@@ -296,7 +296,8 @@ class AnimatedAnxiety {
       clearInterval(this.deadInterval);
       this.deadInterval = null;
     }
-    if (this.burrowingInterval) { // Add this block
+    if (this.burrowingInterval) {
+      // Add this block
       clearInterval(this.burrowingInterval);
       this.burrowingInterval = null;
     }
@@ -304,11 +305,13 @@ class AnimatedAnxiety {
       clearInterval(this.dodgeInterval);
       this.dodgeInterval = null;
     }
-    if (this.etherealInterval) { // Add this block
+    if (this.etherealInterval) {
+      // Add this block
       clearInterval(this.etherealInterval);
       this.etherealInterval = null;
     }
-    if (this.exhaustionInterval) { // Add this block
+    if (this.exhaustionInterval) {
+      // Add this block
       clearInterval(this.exhaustionInterval);
       this.exhaustionInterval = null;
     }
@@ -328,7 +331,9 @@ class AnimatedAnxiety {
     document
       .querySelectorAll(".concentration-particle")
       .forEach((el) => el.remove());
-    document.querySelectorAll(".concentration-overlay").forEach((el) => el.remove());
+    document
+      .querySelectorAll(".concentration-overlay")
+      .forEach((el) => el.remove());
     document.querySelectorAll(".deafened-ripple").forEach((el) => el.remove());
     document.querySelectorAll(".deafened-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".disease-particle").forEach((el) => el.remove());
@@ -360,11 +365,15 @@ class AnimatedAnxiety {
       .forEach((el) => el.remove());
     document.querySelectorAll(".dead-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".blinded-overlay").forEach((el) => el.remove());
-    document.querySelectorAll(".burrowing-overlay").forEach((el) => el.remove()); // Add this line
+    document
+      .querySelectorAll(".burrowing-overlay")
+      .forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".dodge-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".trapeze-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".ethereal-overlay").forEach((el) => el.remove()); // Add this line
-    document.querySelectorAll(".exhaustion-overlay").forEach((el) => el.remove()); // Add this line
+    document
+      .querySelectorAll(".exhaustion-overlay")
+      .forEach((el) => el.remove()); // Add this line
   }
 
   // New check for unconscious
@@ -725,13 +734,12 @@ class AnimatedAnxiety {
         name,
         statusId,
         isActive,
-        raw: e
+        raw: e,
       });
 
-      return isActive && (
-        name === "dodging" ||
-        statusId === "dodge" ||
-        statusId === "dodging"
+      return (
+        isActive &&
+        (name === "dodging" || statusId === "dodge" || statusId === "dodging")
       );
     });
     console.log("AnimatedAnxiety | Dodge status:", isDodging);
@@ -742,27 +750,29 @@ class AnimatedAnxiety {
     if (!actor?.effects) return false;
     return actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
-      return !e.disabled && (
-        name.includes("ethereal") || 
-        name.includes("etherealness")
+      return (
+        !e.disabled &&
+        (name.includes("ethereal") || name.includes("etherealness"))
       );
     });
   }
 
   static checkExhaustionStatus(actor) {
-    if (!actor?.effects) return false;
-    return actor.effects.some((e) => {
+    if (!actor?.effects) return 0;
+
+    const exhaustionEffect = actor.effects.find((e) => {
       const name = e.name?.toLowerCase() || "";
       const isActive = !e.disabled;
-
-      console.log("AnimatedAnxiety | Checking exhaustion effect:", {
-        name,
-        isActive,
-        raw: e
-      });
-
       return isActive && name.includes("exhaustion");
     });
+
+    if (!exhaustionEffect) return 0;
+
+    // Extract level from effect name (e.g., "Exhaustion 3" -> 3)
+    const level = parseInt(exhaustionEffect.name.match(/\d+/)?.[0] || "1");
+
+    console.log("AnimatedAnxiety | Exhaustion level:", level);
+    return level;
   }
 
   static createCurseSymbols() {
@@ -1189,30 +1199,30 @@ class AnimatedAnxiety {
 
   static createBlindedEffect() {
     if (!this.blindedInterval) {
-        this.clearEffects();
-        
-        const overlay = document.createElement("div");
-        overlay.className = "blinded-overlay";
-        document.getElementById("interface").appendChild(overlay);
-        
-        this.blindedInterval = setInterval(() => {
-            if (!document.querySelector(".blinded-effect")) {
-                this.clearEffects();
-                clearInterval(this.blindedInterval);
-                this.blindedInterval = null;
-            }
-        }, 1000);
+      this.clearEffects();
+
+      const overlay = document.createElement("div");
+      overlay.className = "blinded-overlay";
+      document.getElementById("interface").appendChild(overlay);
+
+      this.blindedInterval = setInterval(() => {
+        if (!document.querySelector(".blinded-effect")) {
+          this.clearEffects();
+          clearInterval(this.blindedInterval);
+          this.blindedInterval = null;
+        }
+      }, 1000);
     }
   }
 
   static createBurrowingEffect() {
     if (!this.burrowingInterval) {
       this.clearEffects();
-      
+
       const overlay = document.createElement("div");
       overlay.className = "burrowing-overlay";
       document.getElementById("interface").appendChild(overlay);
-      
+
       this.burrowingInterval = setInterval(() => {
         if (!document.querySelector(".burrowing-effect")) {
           this.clearEffects();
@@ -1226,18 +1236,18 @@ class AnimatedAnxiety {
   static createDodgeEffect() {
     if (!this.dodgeInterval) {
       this.clearEffects();
-      
+
       // Bottom overlay
       const overlay = document.createElement("div");
       overlay.className = "dodge-overlay";
       overlay.style.animation = "dodge-rise 0.8s ease-out forwards";
       document.getElementById("interface").appendChild(overlay);
-      
+
       // Top overlay (trapeze)
       const trapeze = document.createElement("div");
       trapeze.className = "trapeze-overlay";
       document.getElementById("interface").appendChild(trapeze);
-      
+
       this.dodgeInterval = setInterval(() => {
         if (!document.querySelector(".dodge-effect")) {
           this.clearEffects();
@@ -1251,11 +1261,11 @@ class AnimatedAnxiety {
   static createEtherealEffect() {
     if (!this.etherealInterval) {
       this.clearEffects();
-      
+
       const overlay = document.createElement("div");
       overlay.className = "ethereal-overlay";
       document.getElementById("interface").appendChild(overlay);
-      
+
       this.etherealInterval = setInterval(() => {
         if (!document.querySelector(".ethereal-effect")) {
           this.clearEffects();
@@ -1269,11 +1279,28 @@ class AnimatedAnxiety {
   static createExhaustionEffect() {
     if (!this.exhaustionInterval) {
       this.clearEffects();
-      
+
+      // Create the bottom overlay
       const overlay = document.createElement("div");
       overlay.className = "exhaustion-overlay";
       document.getElementById("interface").appendChild(overlay);
-      
+
+      // Get exhaustion level (1-6)
+      const level = this.checkExhaustionStatus(game.user?.character);
+
+      // Calculate blur values based on level
+      const blurAmount = Math.min(level * 0.5, 3); // 1.5px to 8px blur
+      const clearRadius = Math.max(90 - level * 12, 30); // 78% to 30% clear center
+      const opacity = Math.min(0.1 + level * 0.1, 0.6); // 0.2 to 0.6 opacity
+      const duration = Math.max(7 - level * 1.0, 1); // 6s to 1s pulse
+
+      // Apply the blur effect
+      const appElement = document.getElementById("interface");
+      appElement.style.setProperty("--exhaustion-blur", `${blurAmount}px`);
+      appElement.style.setProperty("--exhaustion-clear", `${clearRadius}%`);
+      appElement.style.setProperty("--exhaustion-opacity", opacity);
+      appElement.style.setProperty("--exhaustion-duration", `${duration}s`);
+
       this.exhaustionInterval = setInterval(() => {
         if (!document.querySelector(".exhaustion-effect")) {
           this.clearEffects();
