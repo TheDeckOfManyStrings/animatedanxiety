@@ -119,6 +119,7 @@ class AnimatedAnxiety {
       const isRestrained = this.checkRestrainedStatus(actor);
       const isIncapacitated = this.checkIncapacitatedStatus(actor); // Add this line
       const isDead = this.checkDeadStatus(actor);
+      const isBurrowing = this.checkBurrowingStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -143,7 +144,8 @@ class AnimatedAnxiety {
         "paralyzed-effect",
         "restrained-effect",
         "incapacitated-effect", // Add this line
-        "dead-effect"
+        "dead-effect",
+        "burrowing-effect" // Add this line
       );
 
       // Handle static effects
@@ -210,6 +212,10 @@ class AnimatedAnxiety {
         // Add this block
         appElement.classList.add("incapacitated-effect");
         this.createIncapacitatedEffect();
+      } else if (isBurrowing) {
+        // Add this block
+        appElement.classList.add("burrowing-effect");
+        this.createBurrowingEffect();
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
@@ -273,6 +279,10 @@ class AnimatedAnxiety {
       clearInterval(this.deadInterval);
       this.deadInterval = null;
     }
+    if (this.burrowingInterval) { // Add this block
+      clearInterval(this.burrowingInterval);
+      this.burrowingInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -319,6 +329,7 @@ class AnimatedAnxiety {
       .forEach((el) => el.remove());
     document.querySelectorAll(".dead-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".blinded-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".burrowing-overlay").forEach((el) => el.remove()); // Add this line
   }
 
   // New check for unconscious
@@ -657,6 +668,14 @@ class AnimatedAnxiety {
     return actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       return !e.disabled && name.includes("dead");
+    });
+  }
+
+  static checkBurrowingStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      return !e.disabled && name.includes("burrow");
     });
   }
 
@@ -1083,6 +1102,24 @@ class AnimatedAnxiety {
                 this.blindedInterval = null;
             }
         }, 1000);
+    }
+  }
+
+  static createBurrowingEffect() {
+    if (!this.burrowingInterval) {
+      this.clearEffects();
+      
+      const overlay = document.createElement("div");
+      overlay.className = "burrowing-overlay";
+      document.getElementById("interface").appendChild(overlay);
+      
+      this.burrowingInterval = setInterval(() => {
+        if (!document.querySelector(".burrowing-effect")) {
+          this.clearEffects();
+          clearInterval(this.burrowingInterval);
+          this.burrowingInterval = null;
+        }
+      }, 1000);
     }
   }
 }
