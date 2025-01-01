@@ -124,7 +124,8 @@ class AnimatedAnxiety {
       const isEthereal = this.checkEtherealStatus(actor); // Add this line
       const isExhausted = this.checkExhaustionStatus(actor); // Add this line
       const isFlying = this.checkFlyingStatus(actor); // Add this line
-      const isHovering = this.checkHoveringStatus(actor); // Add this line
+      const isHovering = this.checkHoveringStatus(actor);
+      const isInvisible = this.checkInvisibleStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -155,7 +156,8 @@ class AnimatedAnxiety {
         "ethereal-effect", // Add this line
         "exhaustion-effect", // Add this line
         "flying-effect", // Add this line
-        "hovering-effect" // Add this line
+        "hovering-effect", // Add this line
+        "invisible-effect" // Add this line
       );
 
       // Handle static effects
@@ -237,6 +239,9 @@ class AnimatedAnxiety {
         // Add this block
         appElement.classList.add("exhaustion-effect");
         this.createExhaustionEffect();
+      } else if (isInvisible) {
+        appElement.classList.add("invisible-effect");
+        this.createInvisibleEffect();
       } else if (isHovering) {
         appElement.classList.add("hovering-effect");
         this.createHoveringEffect();
@@ -336,6 +341,10 @@ class AnimatedAnxiety {
       clearInterval(this.hoveringInterval);
       this.hoveringInterval = null;
     }
+    if (this.invisibleInterval) {
+      clearInterval(this.invisibleInterval);
+      this.invisibleInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -397,6 +406,7 @@ class AnimatedAnxiety {
       .forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".flying-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".hovering-overlay").forEach((el) => el.remove()); // Add this line
+    document.querySelectorAll(".invisible-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -857,6 +867,35 @@ class AnimatedAnxiety {
     
     console.log("AnimatedAnxiety | Hovering status:", isHovering);
     return isHovering;
+}
+
+  static checkInvisibleStatus(actor) {
+    if (!actor?.effects) {
+        console.log("AnimatedAnxiety | No effects found for invisible check");
+        return false;
+    }
+    
+    const isInvisible = actor.effects.some((e) => {
+        const name = e.name?.toLowerCase() || "";
+        const statusId = e.flags?.core?.statusId || "";
+        const isActive = !e.disabled;
+        
+        console.log("AnimatedAnxiety | Checking invisible effect:", {
+            name,
+            statusId,
+            isActive,
+            raw: e
+        });
+        
+        return isActive && (
+            name.includes("invisible") || 
+            name.includes("invisibility") ||
+            statusId === "invisible"
+        );
+    });
+    
+    console.log("AnimatedAnxiety | Invisible status:", isInvisible);
+    return isInvisible;
 }
 
   static createCurseSymbols() {
@@ -1462,6 +1501,42 @@ class AnimatedAnxiety {
                 this.clearEffects();
                 clearInterval(this.hoveringInterval);
                 this.hoveringInterval = null;
+            }
+        }, 1000);
+    }
+}
+
+  static createInvisibleEffect() {
+    if (!this.invisibleInterval) {
+        this.clearEffects();
+        
+        console.log("AnimatedAnxiety | Creating invisible effect");
+        
+        const overlay = document.createElement("div");
+        overlay.className = "invisible-overlay";
+        
+        const imagePath = "modules/animatedanxiety/assets/invisible.png";
+        overlay.style.backgroundImage = `url('${imagePath}')`;
+        
+        console.log("AnimatedAnxiety | Setting invisible background image:", imagePath);
+        
+        // Apply animations directly to ensure they're being set
+        overlay.style.animation = "invisible-rise 0.8s ease-out forwards";
+        setTimeout(() => {
+            overlay.style.animation = "invisible-pulse 4s ease-in-out infinite";
+        }, 800);
+        
+        document.getElementById("interface").appendChild(overlay);
+        
+        console.log("AnimatedAnxiety | Invisible overlay created:", overlay);
+        console.log("AnimatedAnxiety | Overlay animations:", overlay.style.animation);
+        
+        this.invisibleInterval = setInterval(() => {
+            if (!document.querySelector(".invisible-effect")) {
+                console.log("AnimatedAnxiety | Cleaning up invisible effect");
+                this.clearEffects();
+                clearInterval(this.invisibleInterval);
+                this.invisibleInterval = null;
             }
         }, 1000);
     }

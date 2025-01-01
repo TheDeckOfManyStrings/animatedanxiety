@@ -1615,3 +1615,46 @@
     transform: translateY(0);
   }
 }
+
+/* Add invisible overlay styling */
+.invisible-overlay {
+  position: fixed;
+  bottom: -20px;
+  left: -5vw;
+  width: 110vw;
+  height: 140px;
+  background-image: url("../assets/invisible.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+@keyframes invisible-rise {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+@keyframes invisible-pulse {
+  0% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.4;
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
