@@ -126,6 +126,7 @@ class AnimatedAnxiety {
       const isFlying = this.checkFlyingStatus(actor); // Add this line
       const isHovering = this.checkHoveringStatus(actor);
       const isInvisible = this.checkInvisibleStatus(actor); // Add this line
+      const isMarked = this.checkMarkedStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -157,7 +158,8 @@ class AnimatedAnxiety {
         "exhaustion-effect", // Add this line
         "flying-effect", // Add this line
         "hovering-effect", // Add this line
-        "invisible-effect" // Add this line
+        "invisible-effect", // Add this line
+        "marked-effect" // Add this line
       );
 
       // Handle static effects
@@ -239,6 +241,9 @@ class AnimatedAnxiety {
         // Add this block
         appElement.classList.add("exhaustion-effect");
         this.createExhaustionEffect();
+      } else if (isMarked) {
+        appElement.classList.add("marked-effect");
+        this.createMarkedEffect();
       } else if (isInvisible) {
         appElement.classList.add("invisible-effect");
         this.createInvisibleEffect();
@@ -345,6 +350,10 @@ class AnimatedAnxiety {
       clearInterval(this.invisibleInterval);
       this.invisibleInterval = null;
     }
+    if (this.markedInterval) {
+      clearInterval(this.markedInterval);
+      this.markedInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -407,6 +416,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".flying-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".hovering-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".invisible-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".marked-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -896,6 +906,35 @@ class AnimatedAnxiety {
     
     console.log("AnimatedAnxiety | Invisible status:", isInvisible);
     return isInvisible;
+}
+
+  static checkMarkedStatus(actor) {
+    if (!actor?.effects) {
+        console.log("AnimatedAnxiety | No effects found for marked check");
+        return false;
+    }
+    
+    const isMarked = actor.effects.some((e) => {
+        const name = e.name?.toLowerCase() || "";
+        const statusId = e.flags?.core?.statusId || "";
+        const isActive = !e.disabled;
+        
+        console.log("AnimatedAnxiety | Checking marked effect:", {
+            name,
+            statusId,
+            isActive,
+            raw: e
+        });
+        
+        return isActive && (
+            name.includes("mark") || 
+            name.includes("marked") ||
+            statusId === "marked"
+        );
+    });
+    
+    console.log("AnimatedAnxiety | Marked status:", isMarked);
+    return isMarked;
 }
 
   static createCurseSymbols() {
@@ -1537,6 +1576,37 @@ class AnimatedAnxiety {
                 this.clearEffects();
                 clearInterval(this.invisibleInterval);
                 this.invisibleInterval = null;
+            }
+        }, 1000);
+    }
+}
+
+  static createMarkedEffect() {
+    if (!this.markedInterval) {
+        this.clearEffects();
+        
+        console.log("AnimatedAnxiety | Creating marked effect");
+        
+        const overlay = document.createElement("div");
+        overlay.className = "marked-overlay";
+        
+        const imagePath = "modules/animatedanxiety/assets/marked.png";
+        overlay.style.backgroundImage = `url('${imagePath}')`;
+        
+        console.log("AnimatedAnxiety | Setting marked background image:", imagePath);
+        
+        overlay.style.animation = "marked-rise 0.8s ease-out forwards";
+        
+        document.getElementById("interface").appendChild(overlay);
+        
+        console.log("AnimatedAnxiety | Marked overlay created:", overlay);
+        
+        this.markedInterval = setInterval(() => {
+            if (!document.querySelector(".marked-effect")) {
+                console.log("AnimatedAnxiety | Cleaning up marked effect");
+                this.clearEffects();
+                clearInterval(this.markedInterval);
+                this.markedInterval = null;
             }
         }, 1000);
     }
