@@ -399,6 +399,7 @@ class AnimatedAnxiety {
       .querySelectorAll(".paralyzed-overlay")
       .forEach((el) => el.remove());
     document.querySelectorAll(".restrained-web").forEach((el) => el.remove());
+    document.querySelectorAll(".restrained-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".rats-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".poison-bubble").forEach((el) => el.remove());
     document.querySelectorAll(".poison-overlay").forEach((el) => el.remove());
@@ -1310,51 +1311,33 @@ class AnimatedAnxiety {
     if (!this.restrainedInterval) {
       this.clearEffects();
 
-      const corners = [
-        { position: "bottom-left", x: "0%", y: "86%", rotate: "0deg" },
-        { position: "bottom-right", x: "-14%", y: "0%", rotate: "90deg" }, //good
-        { position: "top-right", x: "77%", y: "14%", rotate: "180deg" }, //good
-        { position: "top-left", x: "90%", y: "100%", rotate: "270deg" }, //good
-      ];
+      // Create restrained overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'restrained-overlay';
+      overlay.style.animation = 'restrained-rise 0.8s ease-out forwards';
+      document.getElementById('interface').appendChild(overlay);
 
-      corners.forEach((corner) => {
-        const web = document.createElement("div");
-        web.className = "restrained-web";
-        web.style.position = "fixed";
-        web.style.left = corner.x;
-        web.style.top = corner.y;
-
-        // Set the transform origin to the corner the web is attached to
-        switch (corner.position) {
-          case "bottom-left":
-            web.style.transformOrigin = "left bottom";
-            break;
-          case "bottom-right":
-            web.style.transformOrigin = "right bottom";
-            break;
-          case "top-right":
-            web.style.transformOrigin = "right top";
-            break;
-          case "top-left":
-            web.style.transformOrigin = "left top";
-            break;
-        }
-
-        web.style.setProperty("--initial-rotation", corner.rotate);
-        document.getElementById("interface").appendChild(web);
-
-        // Add rise and sway animations
-        web.style.animation = `web-rise 0.8s ease-out forwards, web-sway 4s ease-in-out infinite 0.8s`;
-      });
-
-      // Store reference to remove later
+      // Store reference to remove later and ensure cleanup happens
       this.restrainedInterval = setInterval(() => {
-        if (!document.querySelector(".restrained-effect")) {
+        const hasEffect = document.querySelector('.restrained-effect');
+        const hasOverlay = document.querySelector('.restrained-overlay');
+        
+        if (!hasEffect || !hasOverlay) {
+          console.log('AnimatedAnxiety | Cleaning up restrained effect');
           this.clearEffects();
           clearInterval(this.restrainedInterval);
           this.restrainedInterval = null;
         }
-      }, 1000);
+      }, 200); // Reduced interval for faster cleanup
+
+      // Add immediate cleanup if effect is removed
+      overlay.addEventListener('animationend', () => {
+        const hasEffect = document.querySelector('.restrained-effect');
+        if (!hasEffect) {
+          console.log('AnimatedAnxiety | Cleaning up restrained effect after animation');
+          this.clearEffects();
+        }
+      });
     }
   }
 
