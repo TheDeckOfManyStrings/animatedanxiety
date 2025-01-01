@@ -127,6 +127,7 @@ class AnimatedAnxiety {
       const isHovering = this.checkHoveringStatus(actor);
       const isInvisible = this.checkInvisibleStatus(actor); // Add this line
       const isMarked = this.checkMarkedStatus(actor); // Add this line
+      const isProne = this.checkProneStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -159,7 +160,8 @@ class AnimatedAnxiety {
         "flying-effect", // Add this line
         "hovering-effect", // Add this line
         "invisible-effect", // Add this line
-        "marked-effect" // Add this line
+        "marked-effect", // Add this line
+        "prone-effect" // Add this line
       );
 
       // Handle static effects
@@ -241,6 +243,9 @@ class AnimatedAnxiety {
         // Add this block
         appElement.classList.add("exhaustion-effect");
         this.createExhaustionEffect();
+      } else if (isProne) {
+        appElement.classList.add("prone-effect");
+        this.createProneEffect();
       } else if (isMarked) {
         appElement.classList.add("marked-effect");
         this.createMarkedEffect();
@@ -354,6 +359,10 @@ class AnimatedAnxiety {
       clearInterval(this.markedInterval);
       this.markedInterval = null;
     }
+    if (this.proneInterval) {
+      clearInterval(this.proneInterval);
+      this.proneInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -417,6 +426,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".hovering-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".invisible-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".marked-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".prone-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -935,6 +945,34 @@ class AnimatedAnxiety {
     
     console.log("AnimatedAnxiety | Marked status:", isMarked);
     return isMarked;
+}
+
+  static checkProneStatus(actor) {
+    if (!actor?.effects) {
+        console.log("AnimatedAnxiety | No effects found for prone check");
+        return false;
+    }
+    
+    const isProne = actor.effects.some((e) => {
+        const name = e.name?.toLowerCase() || "";
+        const statusId = e.flags?.core?.statusId || "";
+        const isActive = !e.disabled;
+        
+        console.log("AnimatedAnxiety | Checking prone effect:", {
+            name,
+            statusId,
+            isActive,
+            raw: e
+        });
+        
+        return isActive && (
+            name.includes("prone") || 
+            statusId === "prone"
+        );
+    });
+    
+    console.log("AnimatedAnxiety | Prone status:", isProne);
+    return isProne;
 }
 
   static createCurseSymbols() {
@@ -1612,6 +1650,36 @@ class AnimatedAnxiety {
     }
 }
 
+  static createProneEffect() {
+    if (!this.proneInterval) {
+        this.clearEffects();
+        
+        console.log("AnimatedAnxiety | Creating prone effect");
+        
+        const overlay = document.createElement("div");
+        overlay.className = "prone-overlay";
+        
+        const imagePath = "modules/animatedanxiety/assets/prone.png";
+        overlay.style.backgroundImage = `url('${imagePath}')`;
+        
+        console.log("AnimatedAnxiety | Setting prone background image:", imagePath);
+        
+        overlay.style.animation = "prone-rise 0.8s ease-out forwards";
+        
+        document.getElementById("interface").appendChild(overlay);
+        
+        console.log("AnimatedAnxiety | Prone overlay created:", overlay);
+        
+        this.proneInterval = setInterval(() => {
+            if (!document.querySelector(".prone-effect")) {
+                console.log("AnimatedAnxiety | Cleaning up prone effect");
+                this.clearEffects();
+                clearInterval(this.proneInterval);
+                this.proneInterval = null;
+            }
+        }, 1000);
+    }
+}
 }
 
 Hooks.once("init", () => {
