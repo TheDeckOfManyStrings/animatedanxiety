@@ -488,6 +488,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".stunned-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".surprised-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".transformed-overlay").forEach((el) => el.remove()); // Add this line
+    document.querySelectorAll('.unconscious-overlay').forEach(el => el.remove());
   }
 
   // New check for unconscious
@@ -503,6 +504,14 @@ class AnimatedAnxiety {
   static createBubbles(mode) {
     if (!this.bubbleInterval) {
       this.clearBubbles();
+
+      // Add unconscious overlay if in black-inward mode
+      if (mode === "black-inward") {
+        const overlay = document.createElement("div");
+        overlay.className = "unconscious-overlay";
+        overlay.style.animation = "unconscious-rise 0.8s ease-out forwards";
+        document.getElementById("interface").appendChild(overlay);
+      }
 
       if (mode === "sway") {
         // Create poison overlay and aura
