@@ -132,6 +132,7 @@ class AnimatedAnxiety {
       const isSleeping = this.checkSleepingStatus(actor); // Add this line
       const isStable = this.checkStableStatus(actor);
       const isStunned = this.checkStunnedStatus(actor); // Add this line
+      const isSurprised = this.checkSurprisedStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -169,7 +170,8 @@ class AnimatedAnxiety {
         "silenced-effect",
         "sleeping-effect", // Add this line
         "stable-effect", // Add this line
-        "stunned-effect" // Add this line
+        "stunned-effect", // Add this line
+        "surprised-effect" // Add this line
       );
 
       // Handle static effects
@@ -279,6 +281,9 @@ class AnimatedAnxiety {
       } else if (isStable) {
         appElement.classList.add("stable-effect");
         this.createStableEffect();
+      } else if (isSurprised) {
+        appElement.classList.add("surprised-effect");
+        this.createSurprisedEffect();
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
@@ -399,6 +404,10 @@ class AnimatedAnxiety {
       clearInterval(this.stunnedInterval);
       this.stunnedInterval = null;
     }
+    if (this.surprisedInterval) {
+      clearInterval(this.surprisedInterval);
+      this.surprisedInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -468,6 +477,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".sleeping-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".stable-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".stunned-overlay").forEach((el) => el.remove()); // Add this line
+    document.querySelectorAll(".surprised-overlay").forEach((el) => el.remove()); // Add this line
   }
 
   // New check for unconscious
@@ -1132,6 +1142,35 @@ class AnimatedAnxiety {
     
     console.log("AnimatedAnxiety | Stunned status:", isStunned);
     return isStunned;
+  }
+
+  static checkSurprisedStatus(actor) {
+    if (!actor?.effects) {
+      console.log("AnimatedAnxiety | No effects found for surprised check");
+      return false;
+    }
+    
+    const isSurprised = actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+      
+      console.log("AnimatedAnxiety | Checking surprised effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e
+      });
+      
+      return isActive && (
+        name === 'surprised' ||
+        statusId === 'surprised' ||
+        e.name === 'Surprised'
+      );
+    });
+    
+    console.log("AnimatedAnxiety | Surprised status:", isSurprised);
+    return isSurprised;
   }
 
   static createCurseSymbols() {
@@ -1940,6 +1979,37 @@ class AnimatedAnxiety {
         const hasEffect = document.querySelector('.stunned-effect');
         if (!hasEffect) {
           console.log('AnimatedAnxiety | Cleaning up stunned effect after animation');
+          this.clearEffects();
+        }
+      });
+    }
+  }
+
+  static createSurprisedEffect() {
+    if (!this.surprisedInterval) {
+      this.clearEffects();
+
+      const overlay = document.createElement('div');
+      overlay.className = 'surprised-overlay';
+      overlay.style.animation = 'surprised-rise 0.8s ease-out forwards';
+      document.getElementById('interface').appendChild(overlay);
+
+      this.surprisedInterval = setInterval(() => {
+        const hasEffect = document.querySelector('.surprised-effect');
+        const hasOverlay = document.querySelector('.surprised-overlay');
+        
+        if (!hasEffect || !hasOverlay) {
+          console.log('AnimatedAnxiety | Cleaning up surprised effect');
+          this.clearEffects();
+          clearInterval(this.surprisedInterval);
+          this.surprisedInterval = null;
+        }
+      }, 200);
+
+      overlay.addEventListener('animationend', () => {
+        const hasEffect = document.querySelector('.surprised-effect');
+        if (!hasEffect) {
+          console.log('AnimatedAnxiety | Cleaning up surprised effect after animation');
           this.clearEffects();
         }
       });
