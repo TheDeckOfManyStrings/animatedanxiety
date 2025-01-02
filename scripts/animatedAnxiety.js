@@ -173,7 +173,36 @@ class AnimatedAnxiety {
         "stable-effect", // Add this line
         "stunned-effect", // Add this line
         "surprised-effect", // Add this line
-        "transformed-effect" // Add this line
+        "transformed-effect", // Add this line
+        "charmed-effect", // Add this line
+        "bleeding-effect", // Add this line
+        "deafened-fade", // Add this line
+        "diseased-fade", // Add this line
+        "frightened-fade", // Add this line
+        "grappled-fade", // Add this line
+        "hiding-fade", // Add this line
+        "petrified-fade", // Add this line
+        "paralyzed-fade", // Add this line
+        "restrained-fade", // Add this line
+        "incapacitated-fade", // Add this line
+        "burrowing-fade", // Add this line
+        "dodge-fade", // Add this line
+        "ethereal-fade", // Add this line
+        "exhaustion-fade", // Add this line
+        "prone-fade", // Add this line
+        "marked-fade", // Add this line
+        "invisible-fade", // Add this line
+        "hovering-fade", // Add this line
+        "flying-fade", // Add this line
+        "silenced-fade", // Add this line
+        "sleeping-fade", // Add this line
+        "stable-fade", // Add this line
+        "stunned-fade", // Add this line
+        "surprised-fade", // Add this line
+        "transformed-fade", // Add this line
+        "charmed-fade", // Add this line
+        "bleeding-fade", // Add this line
+        "dead-fade" // Add this line
       );
 
       // Handle static effects
@@ -289,6 +318,89 @@ class AnimatedAnxiety {
       } else if (isTransformed) {
         appElement.classList.add("transformed-effect");
         this.createTransformedEffect();
+      }
+
+      // Add color fade for statuses without one
+      if (isDeafened) {
+        appElement.classList.add("deafened-fade");
+      }
+      if (isDiseased) {
+        appElement.classList.add("diseased-fade");
+      }
+      if (isFrightened) {
+        appElement.classList.add("frightened-fade");
+      }
+      if (isGrappled) {
+        appElement.classList.add("grappled-fade");
+      }
+      if (isHiding) {
+        appElement.classList.add("hiding-fade");
+      }
+      if (isPetrified) {
+        appElement.classList.add("petrified-fade");
+      }
+      if (isParalyzed) {
+        appElement.classList.add("paralyzed-fade");
+      }
+      if (isRestrained) {
+        appElement.classList.add("restrained-fade");
+      }
+      if (isIncapacitated) {
+        appElement.classList.add("incapacitated-fade");
+      }
+      if (isBurrowing) {
+        appElement.classList.add("burrowing-fade");
+      }
+      if (isDodging) {
+        appElement.classList.add("dodge-fade");
+      }
+      if (isEthereal) {
+        appElement.classList.add("ethereal-fade");
+      }
+      if (isExhausted) {
+        appElement.classList.add("exhaustion-fade");
+      }
+      if (isProne) {
+        appElement.classList.add("prone-fade");
+      }
+      if (isMarked) {
+        appElement.classList.add("marked-fade");
+      }
+      if (isInvisible) {
+        appElement.classList.add("invisible-fade");
+      }
+      if (isHovering) {
+        appElement.classList.add("hovering-fade");
+      }
+      if (isFlying) {
+        appElement.classList.add("flying-fade");
+      }
+      if (isSilenced) {
+        appElement.classList.add("silenced-fade");
+      }
+      if (isSleeping) {
+        appElement.classList.add("sleeping-fade");
+      }
+      if (isStable) {
+        appElement.classList.add("stable-fade");
+      }
+      if (isStunned) {
+        appElement.classList.add("stunned-fade");
+      }
+      if (isSurprised) {
+        appElement.classList.add("surprised-fade");
+      }
+      if (isTransformed) {
+        appElement.classList.add("transformed-fade");
+      }
+      if (isCharmed) {
+        appElement.classList.add("charmed-fade");
+      }
+      if (isBleeding) {
+        appElement.classList.add("bleeding-fade");
+      }
+      if (isDead) {
+        appElement.classList.add("dead-fade");
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
