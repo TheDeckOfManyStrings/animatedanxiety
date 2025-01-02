@@ -128,6 +128,8 @@ class AnimatedAnxiety {
       const isInvisible = this.checkInvisibleStatus(actor); // Add this line
       const isMarked = this.checkMarkedStatus(actor); // Add this line
       const isProne = this.checkProneStatus(actor); // Add this line
+      const isSilenced = this.checkSilencedStatus(actor);
+      const isSleeping = this.checkSleepingStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -161,7 +163,9 @@ class AnimatedAnxiety {
         "hovering-effect", // Add this line
         "invisible-effect", // Add this line
         "marked-effect", // Add this line
-        "prone-effect" // Add this line
+        "prone-effect", // Add this line
+        "silenced-effect",
+        "sleeping-effect" // Add this line
       );
 
       // Handle static effects
@@ -259,6 +263,12 @@ class AnimatedAnxiety {
         // Add this block
         appElement.classList.add("flying-effect");
         this.createFlyingEffect();
+      } else if (isSilenced) {
+        appElement.classList.add("silenced-effect");
+        this.createSilencedEffect();
+      } else if (isSleeping) {
+        appElement.classList.add("sleeping-effect");
+        this.createSleepingEffect();
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
@@ -363,6 +373,14 @@ class AnimatedAnxiety {
       clearInterval(this.proneInterval);
       this.proneInterval = null;
     }
+    if (this.silencedInterval) {
+      clearInterval(this.silencedInterval);
+      this.silencedInterval = null;
+    }
+    if (this.sleepingInterval) {
+      clearInterval(this.sleepingInterval);
+      this.sleepingInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -428,6 +446,8 @@ class AnimatedAnxiety {
     document.querySelectorAll(".invisible-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".marked-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".prone-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".silenced-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".sleeping-overlay").forEach((el) => el.remove()); // Add this line
   }
 
   // New check for unconscious
@@ -975,6 +995,67 @@ class AnimatedAnxiety {
     console.log("AnimatedAnxiety | Prone status:", isProne);
     return isProne;
 }
+
+  static checkSilencedStatus(actor) {
+    if (!actor?.effects) {
+      console.log("AnimatedAnxiety | No effects found for silenced check");
+      return false;
+    }
+    
+    const isSilenced = actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+      
+      console.log("AnimatedAnxiety | Checking silenced effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e
+      });
+      
+      // Updated conditions to match the exact name 'Silenced'
+      return isActive && (
+        name === 'silenced' ||
+        statusId === 'silenced' ||
+        e.name === 'Silenced' // Add exact match for 'Silenced'
+      );
+    });
+    
+    console.log("AnimatedAnxiety | Silenced status:", isSilenced);
+    return isSilenced;
+  }
+
+  static checkSleepingStatus(actor) {
+    if (!actor?.effects) {
+      console.log("AnimatedAnxiety | No effects found for sleeping check");
+      return false;
+    }
+    
+    const isSleeping = actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+      
+      console.log("AnimatedAnxiety | Checking sleeping effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e
+      });
+      
+      return isActive && (
+        name === 'sleep' ||
+        name === 'sleeping' ||
+        name.includes('sleep') ||
+        statusId === 'sleep' ||
+        e.name === 'Sleep'
+      );
+    });
+    
+    console.log("AnimatedAnxiety | Sleeping status:", isSleeping);
+    return isSleeping;
+  }
 
   static createCurseSymbols() {
     if (!this.curseInterval) {
@@ -1663,6 +1744,68 @@ class AnimatedAnxiety {
         }, 1000);
     }
 }
+
+  static createSilencedEffect() {
+    if (!this.silencedInterval) {
+      this.clearEffects();
+
+      const overlay = document.createElement("div");
+      overlay.className = "silenced-overlay";
+      overlay.style.animation = "silenced-rise 0.8s ease-out forwards";
+      document.getElementById("interface").appendChild(overlay);
+
+      this.silencedInterval = setInterval(() => {
+        const hasEffect = document.querySelector(".silenced-effect");
+        const hasOverlay = document.querySelector(".silenced-overlay");
+        
+        if (!hasEffect || !hasOverlay) {
+          console.log("AnimatedAnxiety | Cleaning up silenced effect");
+          this.clearEffects();
+          clearInterval(this.silencedInterval);
+          this.silencedInterval = null;
+        }
+      }, 200);
+
+      overlay.addEventListener("animationend", () => {
+        const hasEffect = document.querySelector(".silenced-effect");
+        if (!hasEffect) {
+          console.log("AnimatedAnxiety | Cleaning up silenced effect after animation");
+          this.clearEffects();
+        }
+      });
+    }
+  }
+
+  static createSleepingEffect() {
+    if (!this.sleepingInterval) {
+      this.clearEffects();
+
+      const overlay = document.createElement('div');
+      overlay.className = 'sleeping-overlay';
+      overlay.style.animation = 'sleeping-rise 0.8s ease-out forwards';
+      document.getElementById('interface').appendChild(overlay);
+
+      this.sleepingInterval = setInterval(() => {
+        const hasEffect = document.querySelector('.sleeping-effect');
+        const hasOverlay = document.querySelector('.sleeping-overlay');
+        
+        if (!hasEffect || !hasOverlay) {
+          console.log('AnimatedAnxiety | Cleaning up sleeping effect');
+          this.clearEffects();
+          clearInterval(this.sleepingInterval);
+          this.sleepingInterval = null;
+        }
+      }, 200);
+
+      overlay.addEventListener('animationend', () => {
+        const hasEffect = document.querySelector('.sleeping-effect');
+        if (!hasEffect) {
+          console.log('AnimatedAnxiety | Cleaning up sleeping effect after animation');
+          this.clearEffects();
+        }
+      });
+    }
+  }
 }
 
 Hooks.once("init", () => {

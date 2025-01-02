@@ -1710,3 +1710,59 @@
     transform: translateY(0);
   }
 }
+
+/* Add silenced overlay styling */
+.silenced-overlay {
+  position: fixed;
+  bottom: 0;
+  left: -5vw;
+  width: 110vw;
+  height: 120px;
+  background-image: url("../assets/silenced.png"); /* Changed from Silenced.png to silenced.png */
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+@keyframes silenced-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+/* Add sleeping overlay styling */
+.sleeping-overlay {
+  position: fixed;
+  bottom: 0;
+  left: -5vw;
+  width: 110vw;
+  height: 120px;
+  background-image: url("../assets/sleep.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+@keyframes sleeping-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
