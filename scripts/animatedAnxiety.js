@@ -131,6 +131,7 @@ class AnimatedAnxiety {
       const isSilenced = this.checkSilencedStatus(actor);
       const isSleeping = this.checkSleepingStatus(actor); // Add this line
       const isStable = this.checkStableStatus(actor);
+      const isStunned = this.checkStunnedStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -167,7 +168,8 @@ class AnimatedAnxiety {
         "prone-effect", // Add this line
         "silenced-effect",
         "sleeping-effect", // Add this line
-        "stable-effect" // Add this line
+        "stable-effect", // Add this line
+        "stunned-effect" // Add this line
       );
 
       // Handle static effects
@@ -204,6 +206,9 @@ class AnimatedAnxiety {
       } else if (isParalyzed) {
         appElement.classList.add("paralyzed-effect");
         this.createParalyzedEffect();
+      } else if (isStunned) {
+        appElement.classList.add("stunned-effect");
+        this.createStunnedEffect();
       } else if (isHiding) {
         appElement.classList.add("hiding-effect");
         this.createHidingEffect();
@@ -390,6 +395,10 @@ class AnimatedAnxiety {
       clearInterval(this.stableInterval);
       this.stableInterval = null;
     }
+    if (this.stunnedInterval) {
+      clearInterval(this.stunnedInterval);
+      this.stunnedInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -458,6 +467,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".silenced-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".sleeping-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".stable-overlay").forEach((el) => el.remove());
+    document.querySelectorAll(".stunned-overlay").forEach((el) => el.remove()); // Add this line
   }
 
   // New check for unconscious
@@ -777,8 +787,7 @@ class AnimatedAnxiety {
       return (
         !e.disabled &&
         (name.includes("paralyzed") ||
-          name.includes("paralysis") ||
-          name.includes("stunned"))
+          name.includes("paralysis"))
       );
     });
   }
@@ -1094,6 +1103,35 @@ class AnimatedAnxiety {
     
     console.log("AnimatedAnxiety | Stable status:", isStable);
     return isStable;
+  }
+
+  static checkStunnedStatus(actor) {
+    if (!actor?.effects) {
+      console.log("AnimatedAnxiety | No effects found for stunned check");
+      return false;
+    }
+    
+    const isStunned = actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+      
+      console.log("AnimatedAnxiety | Checking stunned effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e
+      });
+      
+      return isActive && (
+        name === 'stunned' ||
+        statusId === 'stunned' ||
+        e.name === 'Stunned'
+      );
+    });
+    
+    console.log("AnimatedAnxiety | Stunned status:", isStunned);
+    return isStunned;
   }
 
   static createCurseSymbols() {
@@ -1871,6 +1909,37 @@ class AnimatedAnxiety {
         const hasEffect = document.querySelector('.stable-effect');
         if (!hasEffect) {
           console.log('AnimatedAnxiety | Cleaning up stable effect after animation');
+          this.clearEffects();
+        }
+      });
+    }
+  }
+
+  static createStunnedEffect() {
+    if (!this.stunnedInterval) {
+      this.clearEffects();
+
+      const overlay = document.createElement('div');
+      overlay.className = 'stunned-overlay';
+      overlay.style.animation = 'stunned-rise 0.8s ease-out forwards';
+      document.getElementById('interface').appendChild(overlay);
+
+      this.stunnedInterval = setInterval(() => {
+        const hasEffect = document.querySelector('.stunned-effect');
+        const hasOverlay = document.querySelector('.stunned-overlay');
+        
+        if (!hasEffect || !hasOverlay) {
+          console.log('AnimatedAnxiety | Cleaning up stunned effect');
+          this.clearEffects();
+          clearInterval(this.stunnedInterval);
+          this.stunnedInterval = null;
+        }
+      }, 200);
+
+      overlay.addEventListener('animationend', () => {
+        const hasEffect = document.querySelector('.stunned-effect');
+        if (!hasEffect) {
+          console.log('AnimatedAnxiety | Cleaning up stunned effect after animation');
           this.clearEffects();
         }
       });
