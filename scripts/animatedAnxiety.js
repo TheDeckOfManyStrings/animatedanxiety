@@ -130,6 +130,7 @@ class AnimatedAnxiety {
       const isProne = this.checkProneStatus(actor); // Add this line
       const isSilenced = this.checkSilencedStatus(actor);
       const isSleeping = this.checkSleepingStatus(actor); // Add this line
+      const isStable = this.checkStableStatus(actor);
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -165,7 +166,8 @@ class AnimatedAnxiety {
         "marked-effect", // Add this line
         "prone-effect", // Add this line
         "silenced-effect",
-        "sleeping-effect" // Add this line
+        "sleeping-effect", // Add this line
+        "stable-effect" // Add this line
       );
 
       // Handle static effects
@@ -269,6 +271,9 @@ class AnimatedAnxiety {
       } else if (isSleeping) {
         appElement.classList.add("sleeping-effect");
         this.createSleepingEffect();
+      } else if (isStable) {
+        appElement.classList.add("stable-effect");
+        this.createStableEffect();
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
@@ -381,6 +386,10 @@ class AnimatedAnxiety {
       clearInterval(this.sleepingInterval);
       this.sleepingInterval = null;
     }
+    if (this.stableInterval) {
+      clearInterval(this.stableInterval);
+      this.stableInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -448,6 +457,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".prone-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".silenced-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".sleeping-overlay").forEach((el) => el.remove()); // Add this line
+    document.querySelectorAll(".stable-overlay").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -1055,6 +1065,35 @@ class AnimatedAnxiety {
     
     console.log("AnimatedAnxiety | Sleeping status:", isSleeping);
     return isSleeping;
+  }
+
+  static checkStableStatus(actor) {
+    if (!actor?.effects) {
+      console.log("AnimatedAnxiety | No effects found for stable check");
+      return false;
+    }
+    
+    const isStable = actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+      
+      console.log("AnimatedAnxiety | Checking stable effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e
+      });
+      
+      return isActive && (
+        name === 'stable' ||
+        statusId === 'stable' ||
+        e.name === 'Stable'
+      );
+    });
+    
+    console.log("AnimatedAnxiety | Stable status:", isStable);
+    return isStable;
   }
 
   static createCurseSymbols() {
@@ -1801,6 +1840,37 @@ class AnimatedAnxiety {
         const hasEffect = document.querySelector('.sleeping-effect');
         if (!hasEffect) {
           console.log('AnimatedAnxiety | Cleaning up sleeping effect after animation');
+          this.clearEffects();
+        }
+      });
+    }
+  }
+
+  static createStableEffect() {
+    if (!this.stableInterval) {
+      this.clearEffects();
+
+      const overlay = document.createElement('div');
+      overlay.className = 'stable-overlay';
+      overlay.style.animation = 'stable-rise 0.8s ease-out forwards';
+      document.getElementById('interface').appendChild(overlay);
+
+      this.stableInterval = setInterval(() => {
+        const hasEffect = document.querySelector('.stable-effect');
+        const hasOverlay = document.querySelector('.stable-overlay');
+        
+        if (!hasEffect || !hasOverlay) {
+          console.log('AnimatedAnxiety | Cleaning up stable effect');
+          this.clearEffects();
+          clearInterval(this.stableInterval);
+          this.stableInterval = null;
+        }
+      }, 200);
+
+      overlay.addEventListener('animationend', () => {
+        const hasEffect = document.querySelector('.stable-effect');
+        if (!hasEffect) {
+          console.log('AnimatedAnxiety | Cleaning up stable effect after animation');
           this.clearEffects();
         }
       });
