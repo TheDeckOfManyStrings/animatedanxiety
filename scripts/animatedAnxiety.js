@@ -133,6 +133,7 @@ class AnimatedAnxiety {
       const isStable = this.checkStableStatus(actor);
       const isStunned = this.checkStunnedStatus(actor); // Add this line
       const isSurprised = this.checkSurprisedStatus(actor); // Add this line
+      const isTransformed = this.checkTransformedStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -171,7 +172,8 @@ class AnimatedAnxiety {
         "sleeping-effect", // Add this line
         "stable-effect", // Add this line
         "stunned-effect", // Add this line
-        "surprised-effect" // Add this line
+        "surprised-effect", // Add this line
+        "transformed-effect" // Add this line
       );
 
       // Handle static effects
@@ -284,6 +286,9 @@ class AnimatedAnxiety {
       } else if (isSurprised) {
         appElement.classList.add("surprised-effect");
         this.createSurprisedEffect();
+      } else if (isTransformed) {
+        appElement.classList.add("transformed-effect");
+        this.createTransformedEffect();
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
@@ -408,6 +413,10 @@ class AnimatedAnxiety {
       clearInterval(this.surprisedInterval);
       this.surprisedInterval = null;
     }
+    if (this.transformedInterval) {
+      clearInterval(this.transformedInterval);
+      this.transformedInterval = null;
+    }
 
     // Clear the timeout as well
     if (this.paralyzedTimeout) {
@@ -478,6 +487,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".stable-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".stunned-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".surprised-overlay").forEach((el) => el.remove()); // Add this line
+    document.querySelectorAll(".transformed-overlay").forEach((el) => el.remove()); // Add this line
   }
 
   // New check for unconscious
@@ -1171,6 +1181,36 @@ class AnimatedAnxiety {
     
     console.log("AnimatedAnxiety | Surprised status:", isSurprised);
     return isSurprised;
+  }
+
+  static checkTransformedStatus(actor) {
+    if (!actor?.effects) {
+      console.log("AnimatedAnxiety | No effects found for transformed check");
+      return false;
+    }
+    
+    const isTransformed = actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+      
+      console.log("AnimatedAnxiety | Checking transformed effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e
+      });
+      
+      return isActive && (
+        name === 'transformed' ||
+        name.includes('polymorph') ||
+        name.includes('wild shape') ||
+        statusId === 'transformed'
+      );
+    });
+    
+    console.log("AnimatedAnxiety | Transformed status:", isTransformed);
+    return isTransformed;
   }
 
   static createCurseSymbols() {
@@ -2010,6 +2050,47 @@ class AnimatedAnxiety {
         const hasEffect = document.querySelector('.surprised-effect');
         if (!hasEffect) {
           console.log('AnimatedAnxiety | Cleaning up surprised effect after animation');
+          this.clearEffects();
+        }
+      });
+    }
+  }
+
+  static createTransformedEffect() {
+    if (!this.transformedInterval) {
+      this.clearEffects();
+
+      const overlay = document.createElement('div');
+      overlay.className = 'transformed-overlay';
+      
+      // Add explicit path and logging
+      const imagePath = 'modules/animatedanxiety/assets/transformed.png';
+      overlay.style.backgroundImage = `url('${imagePath}')`;
+      console.log('AnimatedAnxiety | Setting transformed background image:', imagePath);
+      
+      overlay.style.animation = 'transformed-rise 0.8s ease-out forwards';
+      document.getElementById('interface').appendChild(overlay);
+
+      // Log the created element
+      console.log('AnimatedAnxiety | Transformed overlay created:', overlay);
+      console.log('AnimatedAnxiety | Transformed overlay style:', overlay.style.backgroundImage);
+
+      this.transformedInterval = setInterval(() => {
+        const hasEffect = document.querySelector('.transformed-effect');
+        const hasOverlay = document.querySelector('.transformed-overlay');
+        
+        if (!hasEffect || !hasOverlay) {
+          console.log('AnimatedAnxiety | Cleaning up transformed effect');
+          this.clearEffects();
+          clearInterval(this.transformedInterval);
+          this.transformedInterval = null;
+        }
+      }, 200);
+
+      overlay.addEventListener('animationend', () => {
+        const hasEffect = document.querySelector('.transformed-effect');
+        if (!hasEffect) {
+          console.log('AnimatedAnxiety | Cleaning up transformed effect after animation');
           this.clearEffects();
         }
       });
