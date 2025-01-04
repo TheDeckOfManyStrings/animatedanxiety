@@ -688,11 +688,11 @@
 }
 
 .frightened-mark-top {
-  top: -50px;
+  top: -70px;
 }
 
 .frightened-mark-bottom {
-  bottom: -50px;
+  bottom: 20px;
 }
 
 @keyframes frightened-haze {
@@ -1923,6 +1923,7 @@
     transparent 50%,
     rgba(0, 0, 0, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.diseased-fade::before {
@@ -1940,6 +1941,7 @@
     transparent 50%,
     rgba(0, 128, 0, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.frightened-fade::before {
@@ -1957,6 +1959,7 @@
     transparent 50%,
     rgba(128, 0, 128, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.grappled-fade::before {
@@ -1974,6 +1977,7 @@
     transparent 50%,
     rgba(139, 69, 19, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.hiding-fade::before {
@@ -1991,6 +1995,7 @@
     transparent 50%,
     rgba(34, 139, 34, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.petrified-fade::before {
@@ -2008,6 +2013,7 @@
     transparent 50%,
     rgba(169, 169, 169, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.paralyzed-fade::before {
@@ -2025,6 +2031,7 @@
     transparent 50%,
     rgba(0, 0, 255, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.restrained-fade::before {
@@ -2042,6 +2049,7 @@
     transparent 50%,
     rgba(255, 165, 0, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.incapacitated-fade::before {
@@ -2059,6 +2067,7 @@
     transparent 75%,
     rgba(128, 0, 0, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.burrowing-fade::before {
@@ -2076,6 +2085,7 @@
     transparent 75%,
     rgba(139, 69, 19, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.dodge-fade::before {
@@ -2094,6 +2104,7 @@
     transparent 75%,
     rgba(255, 255, 0, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.ethereal-fade::before {
@@ -2111,6 +2122,7 @@
     transparent 75%,
     rgba(0, 255, 255, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.exhaustion-fade::before {
@@ -2128,6 +2140,7 @@
     transparent 50%,
     rgba(128, 128, 128, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.prone-fade::before {
@@ -2145,6 +2158,7 @@
     transparent 75%,
     rgba(139, 69, 19, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.marked-fade::before {
@@ -2162,6 +2176,7 @@
     transparent 75%,
     rgba(255, 0, 0, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.invisible-fade::before {
@@ -2179,6 +2194,7 @@
     transparent 50%,
     rgba(255, 255, 255, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.hovering-fade::before {
@@ -2196,6 +2212,7 @@
     transparent 75%,
     rgba(0, 255, 255, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.flying-fade::before {
@@ -2214,6 +2231,7 @@
     transparent 75%,
     rgba(0, 255, 255, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.silenced-fade::before {
@@ -2231,6 +2249,7 @@
     transparent 50%,
     rgba(128, 128, 128, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.sleeping-fade::before {
@@ -2248,6 +2267,7 @@
     transparent 50%,
     rgba(0, 0, 128, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.stable-fade::before {
@@ -2265,6 +2285,7 @@
     transparent 75%,
     rgba(0, 128, 0, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.stunned-fade::before {
@@ -2282,6 +2303,7 @@
     transparent 50%,
     rgba(255, 255, 0, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.surprised-fade::before {
@@ -2299,6 +2321,7 @@
     transparent 50%,
     rgba(255, 165, 0, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.transformed-fade::before {
@@ -2316,6 +2339,7 @@
     transparent 50%,
     rgba(75, 0, 130, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.charmed-fade::before {
@@ -2333,6 +2357,7 @@
     transparent 50%,
     rgba(255, 105, 180, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.bleeding-fade::before {
@@ -2351,6 +2376,7 @@
     transparent 75%,
     rgba(139, 3, 3, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.dead-fade::before {
@@ -2368,6 +2394,7 @@
     transparent 50%,
     rgba(0, 0, 0, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
 }
 
 #interface.cursed-fade::before {
@@ -2386,4 +2413,20 @@
     transparent 75%,
     rgba(128, 0, 128, 0.2) 100%
   );
+  animation: general-glow 5s ease-in-out infinite;
+}
+
+@keyframes general-glow {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
 }
