@@ -174,8 +174,6 @@ class AnimatedAnxiety {
         "stunned-effect", // Add this line
         "surprised-effect", // Add this line
         "transformed-effect", // Add this line
-        "charmed-effect", // Add this line
-        "bleeding-effect", // Add this line
         "deafened-fade", // Add this line
         "diseased-fade", // Add this line
         "frightened-fade", // Add this line
@@ -202,7 +200,12 @@ class AnimatedAnxiety {
         "transformed-fade", // Add this line
         "charmed-fade", // Add this line
         "bleeding-fade", // Add this line
-        "dead-fade" // Add this line
+        "dead-fade", // Add this line
+        "charmed-effect",
+        "bleeding-effect",
+        "dead-effect",
+        "cursed-effect",
+        "cursed-fade" // Add this line
       );
 
       // Handle static effects
@@ -401,6 +404,9 @@ class AnimatedAnxiety {
       }
       if (isDead) {
         appElement.classList.add("dead-fade");
+      }
+      if (isCursed) {
+        appElement.classList.add("cursed-fade");
       }
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);

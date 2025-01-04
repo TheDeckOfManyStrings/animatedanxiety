@@ -1917,7 +1917,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
 }
 
 #interface.diseased-fade::before {
@@ -1929,7 +1934,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(0, 128, 0, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 128, 0, 0.2) 100%
+  );
 }
 
 #interface.frightened-fade::before {
@@ -1941,7 +1951,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(128, 0, 128, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(128, 0, 128, 0.2) 100%
+  );
 }
 
 #interface.grappled-fade::before {
@@ -1953,7 +1968,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(139, 69, 19, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(139, 69, 19, 0.2) 100%
+  );
 }
 
 #interface.hiding-fade::before {
@@ -1965,7 +1985,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(34, 139, 34, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(34, 139, 34, 0.2) 100%
+  );
 }
 
 #interface.petrified-fade::before {
@@ -1977,7 +2002,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(169, 169, 169, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(169, 169, 169, 0.2) 100%
+  );
 }
 
 #interface.paralyzed-fade::before {
@@ -1989,7 +2019,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(0, 0, 255, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 0, 255, 0.2) 100%
+  );
 }
 
 #interface.restrained-fade::before {
@@ -2001,7 +2036,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(255, 165, 0, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(255, 165, 0, 0.2) 100%
+  );
 }
 
 #interface.incapacitated-fade::before {
@@ -2013,7 +2053,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(128, 0, 0, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(128, 0, 0, 0.2) 100%
+  );
 }
 
 #interface.burrowing-fade::before {
@@ -2025,7 +2070,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(139, 69, 19, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(139, 69, 19, 0.2) 100%
+  );
 }
 
 #interface.dodge-fade::before {
@@ -2037,7 +2087,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(255, 255, 0, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(255, 255, 0, 0.2) 100%
+  );
 }
 
 #interface.ethereal-fade::before {
@@ -2049,7 +2104,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(0, 255, 255, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 255, 255, 0.2) 100%
+  );
 }
 
 #interface.exhaustion-fade::before {
@@ -2061,7 +2121,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(128, 128, 128, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(128, 128, 128, 0.2) 100%
+  );
 }
 
 #interface.prone-fade::before {
@@ -2073,7 +2138,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(139, 69, 19, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(139, 69, 19, 0.2) 100%
+  );
 }
 
 #interface.marked-fade::before {
@@ -2085,7 +2155,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(255, 0, 0, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(255, 0, 0, 0.2) 100%
+  );
 }
 
 #interface.invisible-fade::before {
@@ -2097,7 +2172,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(255, 255, 255, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
 }
 
 #interface.hovering-fade::before {
@@ -2109,7 +2189,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(0, 255, 255, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 255, 255, 0.2) 100%
+  );
 }
 
 #interface.flying-fade::before {
@@ -2121,7 +2206,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(0, 255, 255, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 255, 255, 0.2) 100%
+  );
 }
 
 #interface.silenced-fade::before {
@@ -2133,7 +2223,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(128, 128, 128, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(128, 128, 128, 0.2) 100%
+  );
 }
 
 #interface.sleeping-fade::before {
@@ -2145,7 +2240,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(0, 0, 128, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 0, 128, 0.2) 100%
+  );
 }
 
 #interface.stable-fade::before {
@@ -2157,7 +2257,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(0, 128, 0, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 128, 0, 0.2) 100%
+  );
 }
 
 #interface.stunned-fade::before {
@@ -2169,7 +2274,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(255, 255, 0, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(255, 255, 0, 0.2) 100%
+  );
 }
 
 #interface.surprised-fade::before {
@@ -2181,7 +2291,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(255, 165, 0, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(255, 165, 0, 0.2) 100%
+  );
 }
 
 #interface.transformed-fade::before {
@@ -2193,5 +2308,78 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(circle, transparent 0%, rgba(75, 0, 130, 0.5) 100%);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(75, 0, 130, 0.2) 100%
+  );
+}
+
+#interface.charmed-fade::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(255, 105, 180, 0.2) 100%
+  );
+}
+
+#interface.bleeding-fade::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(139, 3, 3, 0.2) 100%
+  );
+}
+
+#interface.dead-fade::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+}
+
+#interface.cursed-fade::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(128, 0, 128, 0.2) 100%
+  );
 }
