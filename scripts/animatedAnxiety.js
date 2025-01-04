@@ -471,7 +471,6 @@ class AnimatedAnxiety {
       this.deadInterval = null;
     }
     if (this.burrowingInterval) {
-      // Add this block
       clearInterval(this.burrowingInterval);
       this.burrowingInterval = null;
     }
@@ -480,7 +479,6 @@ class AnimatedAnxiety {
       this.dodgeInterval = null;
     }
     if (this.etherealInterval) {
-      // Add this block
       clearInterval(this.etherealInterval);
       this.etherealInterval = null;
     }
@@ -489,17 +487,14 @@ class AnimatedAnxiety {
       this.etherealCleanupInterval = null;
     }
     if (this.exhaustionInterval) {
-      // Add this block
       clearInterval(this.exhaustionInterval);
       this.exhaustionInterval = null;
     }
     if (this.flyingInterval) {
-      // Add this block
       clearInterval(this.flyingInterval);
       this.flyingInterval = null;
     }
     if (this.hoveringInterval) {
-      // Add this block
       clearInterval(this.hoveringInterval);
       this.hoveringInterval = null;
     }
@@ -575,7 +570,9 @@ class AnimatedAnxiety {
       .querySelectorAll(".paralyzed-overlay")
       .forEach((el) => el.remove());
     document.querySelectorAll(".restrained-web").forEach((el) => el.remove());
-    document.querySelectorAll(".restrained-overlay").forEach((el) => el.remove()); // Add this line
+    document
+      .querySelectorAll(".restrained-overlay")
+      .forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".rats-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".poison-bubble").forEach((el) => el.remove());
     document.querySelectorAll(".poison-overlay").forEach((el) => el.remove());
@@ -601,17 +598,30 @@ class AnimatedAnxiety {
       .forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".flying-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".hovering-overlay").forEach((el) => el.remove()); // Add this line
-    document.querySelectorAll(".invisible-overlay").forEach((el) => el.remove());
+    document
+      .querySelectorAll(".invisible-overlay")
+      .forEach((el) => el.remove());
     document.querySelectorAll(".marked-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".prone-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".silenced-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".sleeping-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".stable-overlay").forEach((el) => el.remove());
     document.querySelectorAll(".stunned-overlay").forEach((el) => el.remove()); // Add this line
-    document.querySelectorAll(".surprised-overlay").forEach((el) => el.remove()); // Add this line
-    document.querySelectorAll(".transformed-overlay").forEach((el) => el.remove()); // Add this line
-    document.querySelectorAll('.unconscious-overlay').forEach(el => el.remove());
+    document
+      .querySelectorAll(".surprised-overlay")
+      .forEach((el) => el.remove()); // Add this line
+    document
+      .querySelectorAll(".transformed-overlay")
+      .forEach((el) => el.remove()); // Add this line
+    document
+      .querySelectorAll(".unconscious-overlay")
+      .forEach((el) => el.remove());
     document.querySelectorAll(".ethereal-swirl").forEach((el) => el.remove());
+    document.querySelectorAll(".falling-feather").forEach((el) => el.remove()); // Add this line
+  }
+
+  // New check for unconscious
+  static checkUnconsciousStatus(actor) {
   }
 
   // New check for unconscious
@@ -938,8 +948,7 @@ class AnimatedAnxiety {
       const name = e.name?.toLowerCase() || "";
       return (
         !e.disabled &&
-        (name.includes("paralyzed") ||
-          name.includes("paralysis"))
+        (name.includes("paralyzed") || name.includes("paralysis"))
       );
     });
   }
@@ -1022,177 +1031,179 @@ class AnimatedAnxiety {
 
   static checkFlyingStatus(actor) {
     if (!actor?.effects) {
-        console.log("AnimatedAnxiety | No effects found for flying check");
-        return false;
+      console.log("AnimatedAnxiety | No effects found for flying check");
+      return false;
     }
-    
+
     const isFlying = actor.effects.some((e) => {
-        const name = e.name?.toLowerCase() || "";
-        const statusId = e.flags?.core?.statusId || "";
-        const isActive = !e.disabled;
-        
-        console.log("AnimatedAnxiety | Checking flying effect:", {
-            name,
-            statusId,
-            isActive,
-            raw: e
-        });
-        
-        return isActive && (
-            name.includes("fly") || 
-            name.includes("flying") || 
-            name.includes("levitate") ||
-            statusId === "fly" ||
-            statusId === "flying"
-        );
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+
+      console.log("AnimatedAnxiety | Checking flying effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e,
+      });
+
+      return (
+        isActive &&
+        (name.includes("fly") ||
+          name.includes("flying") ||
+          name.includes("levitate") ||
+          statusId === "fly" ||
+          statusId === "flying")
+      );
     });
-    
+
     console.log("AnimatedAnxiety | Flying status:", isFlying);
     return isFlying;
-}
+  }
 
   static checkHoveringStatus(actor) {
     if (!actor?.effects) {
-        console.log("AnimatedAnxiety | No effects found for hovering check");
-        return false;
+      console.log("AnimatedAnxiety | No effects found for hovering check");
+      return false;
     }
-    
+
     const isHovering = actor.effects.some((e) => {
-        const name = e.name?.toLowerCase() || "";
-        const statusId = e.flags?.core?.statusId || "";
-        const isActive = !e.disabled;
-        
-        console.log("AnimatedAnxiety | Checking hovering effect:", {
-            name,
-            statusId,
-            isActive,
-            raw: e
-        });
-        
-        return isActive && (
-            name.includes("hover") || 
-            name.includes("hovering") ||
-            statusId === "hover" ||
-            statusId === "hovering"
-        );
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+
+      console.log("AnimatedAnxiety | Checking hovering effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e,
+      });
+
+      return (
+        isActive &&
+        (name.includes("hover") ||
+          name.includes("hovering") ||
+          statusId === "hover" ||
+          statusId === "hovering")
+      );
     });
-    
+
     console.log("AnimatedAnxiety | Hovering status:", isHovering);
     return isHovering;
-}
+  }
 
   static checkInvisibleStatus(actor) {
     if (!actor?.effects) {
-        console.log("AnimatedAnxiety | No effects found for invisible check");
-        return false;
+      console.log("AnimatedAnxiety | No effects found for invisible check");
+      return false;
     }
-    
+
     const isInvisible = actor.effects.some((e) => {
-        const name = e.name?.toLowerCase() || "";
-        const statusId = e.flags?.core?.statusId || "";
-        const isActive = !e.disabled;
-        
-        console.log("AnimatedAnxiety | Checking invisible effect:", {
-            name,
-            statusId,
-            isActive,
-            raw: e
-        });
-        
-        return isActive && (
-            name.includes("invisible") || 
-            name.includes("invisibility") ||
-            statusId === "invisible"
-        );
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+
+      console.log("AnimatedAnxiety | Checking invisible effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e,
+      });
+
+      return (
+        isActive &&
+        (name.includes("invisible") ||
+          name.includes("invisibility") ||
+          statusId === "invisible")
+      );
     });
-    
+
     console.log("AnimatedAnxiety | Invisible status:", isInvisible);
     return isInvisible;
-}
+  }
 
   static checkMarkedStatus(actor) {
     if (!actor?.effects) {
-        console.log("AnimatedAnxiety | No effects found for marked check");
-        return false;
+      console.log("AnimatedAnxiety | No effects found for marked check");
+      return false;
     }
-    
+
     const isMarked = actor.effects.some((e) => {
-        const name = e.name?.toLowerCase() || "";
-        const statusId = e.flags?.core?.statusId || "";
-        const isActive = !e.disabled;
-        
-        console.log("AnimatedAnxiety | Checking marked effect:", {
-            name,
-            statusId,
-            isActive,
-            raw: e
-        });
-        
-        return isActive && (
-            name.includes("mark") || 
-            name.includes("marked") ||
-            statusId === "marked"
-        );
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+
+      console.log("AnimatedAnxiety | Checking marked effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e,
+      });
+
+      return (
+        isActive &&
+        (name.includes("mark") ||
+          name.includes("marked") ||
+          statusId === "marked")
+      );
     });
-    
+
     console.log("AnimatedAnxiety | Marked status:", isMarked);
     return isMarked;
-}
+  }
 
   static checkProneStatus(actor) {
     if (!actor?.effects) {
-        console.log("AnimatedAnxiety | No effects found for prone check");
-        return false;
+      console.log("AnimatedAnxiety | No effects found for prone check");
+      return false;
     }
-    
+
     const isProne = actor.effects.some((e) => {
-        const name = e.name?.toLowerCase() || "";
-        const statusId = e.flags?.core?.statusId || "";
-        const isActive = !e.disabled;
-        
-        console.log("AnimatedAnxiety | Checking prone effect:", {
-            name,
-            statusId,
-            isActive,
-            raw: e
-        });
-        
-        return isActive && (
-            name.includes("prone") || 
-            statusId === "prone"
-        );
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+
+      console.log("AnimatedAnxiety | Checking prone effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e,
+      });
+
+      return isActive && (name.includes("prone") || statusId === "prone");
     });
-    
+
     console.log("AnimatedAnxiety | Prone status:", isProne);
     return isProne;
-}
+  }
 
   static checkSilencedStatus(actor) {
     if (!actor?.effects) {
       console.log("AnimatedAnxiety | No effects found for silenced check");
       return false;
     }
-    
+
     const isSilenced = actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       const statusId = e.flags?.core?.statusId || "";
       const isActive = !e.disabled;
-      
+
       console.log("AnimatedAnxiety | Checking silenced effect:", {
         name,
         statusId,
         isActive,
-        raw: e
+        raw: e,
       });
-      
+
       // Updated conditions to match the exact name 'Silenced'
-      return isActive && (
-        name === 'silenced' ||
-        statusId === 'silenced' ||
-        e.name === 'Silenced' // Add exact match for 'Silenced'
+      return (
+        isActive &&
+        (name === "silenced" ||
+          statusId === "silenced" ||
+          e.name === "Silenced") // Add exact match for 'Silenced'
       );
     });
-    
+
     console.log("AnimatedAnxiety | Silenced status:", isSilenced);
     return isSilenced;
   }
@@ -1202,28 +1213,29 @@ class AnimatedAnxiety {
       console.log("AnimatedAnxiety | No effects found for sleeping check");
       return false;
     }
-    
+
     const isSleeping = actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       const statusId = e.flags?.core?.statusId || "";
       const isActive = !e.disabled;
-      
+
       console.log("AnimatedAnxiety | Checking sleeping effect:", {
         name,
         statusId,
         isActive,
-        raw: e
+        raw: e,
       });
-      
-      return isActive && (
-        name === 'sleep' ||
-        name === 'sleeping' ||
-        name.includes('sleep') ||
-        statusId === 'sleep' ||
-        e.name === 'Sleep'
+
+      return (
+        isActive &&
+        (name === "sleep" ||
+          name === "sleeping" ||
+          name.includes("sleep") ||
+          statusId === "sleep" ||
+          e.name === "Sleep")
       );
     });
-    
+
     console.log("AnimatedAnxiety | Sleeping status:", isSleeping);
     return isSleeping;
   }
@@ -1233,26 +1245,25 @@ class AnimatedAnxiety {
       console.log("AnimatedAnxiety | No effects found for stable check");
       return false;
     }
-    
+
     const isStable = actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       const statusId = e.flags?.core?.statusId || "";
       const isActive = !e.disabled;
-      
+
       console.log("AnimatedAnxiety | Checking stable effect:", {
         name,
         statusId,
         isActive,
-        raw: e
+        raw: e,
       });
-      
-      return isActive && (
-        name === 'stable' ||
-        statusId === 'stable' ||
-        e.name === 'Stable'
+
+      return (
+        isActive &&
+        (name === "stable" || statusId === "stable" || e.name === "Stable")
       );
     });
-    
+
     console.log("AnimatedAnxiety | Stable status:", isStable);
     return isStable;
   }
@@ -1262,26 +1273,25 @@ class AnimatedAnxiety {
       console.log("AnimatedAnxiety | No effects found for stunned check");
       return false;
     }
-    
+
     const isStunned = actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       const statusId = e.flags?.core?.statusId || "";
       const isActive = !e.disabled;
-      
+
       console.log("AnimatedAnxiety | Checking stunned effect:", {
         name,
         statusId,
         isActive,
-        raw: e
+        raw: e,
       });
-      
-      return isActive && (
-        name === 'stunned' ||
-        statusId === 'stunned' ||
-        e.name === 'Stunned'
+
+      return (
+        isActive &&
+        (name === "stunned" || statusId === "stunned" || e.name === "Stunned")
       );
     });
-    
+
     console.log("AnimatedAnxiety | Stunned status:", isStunned);
     return isStunned;
   }
@@ -1291,26 +1301,27 @@ class AnimatedAnxiety {
       console.log("AnimatedAnxiety | No effects found for surprised check");
       return false;
     }
-    
+
     const isSurprised = actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       const statusId = e.flags?.core?.statusId || "";
       const isActive = !e.disabled;
-      
+
       console.log("AnimatedAnxiety | Checking surprised effect:", {
         name,
         statusId,
         isActive,
-        raw: e
+        raw: e,
       });
-      
-      return isActive && (
-        name === 'surprised' ||
-        statusId === 'surprised' ||
-        e.name === 'Surprised'
+
+      return (
+        isActive &&
+        (name === "surprised" ||
+          statusId === "surprised" ||
+          e.name === "Surprised")
       );
     });
-    
+
     console.log("AnimatedAnxiety | Surprised status:", isSurprised);
     return isSurprised;
   }
@@ -1320,27 +1331,28 @@ class AnimatedAnxiety {
       console.log("AnimatedAnxiety | No effects found for transformed check");
       return false;
     }
-    
+
     const isTransformed = actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       const statusId = e.flags?.core?.statusId || "";
       const isActive = !e.disabled;
-      
+
       console.log("AnimatedAnxiety | Checking transformed effect:", {
         name,
         statusId,
         isActive,
-        raw: e
+        raw: e,
       });
-      
-      return isActive && (
-        name === 'transformed' ||
-        name.includes('polymorph') ||
-        name.includes('wild shape') ||
-        statusId === 'transformed'
+
+      return (
+        isActive &&
+        (name === "transformed" ||
+          name.includes("polymorph") ||
+          name.includes("wild shape") ||
+          statusId === "transformed")
       );
     });
-    
+
     console.log("AnimatedAnxiety | Transformed status:", isTransformed);
     return isTransformed;
   }
@@ -1681,18 +1693,18 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create restrained overlay
-      const overlay = document.createElement('div');
-      overlay.className = 'restrained-overlay';
-      overlay.style.animation = 'restrained-rise 0.8s ease-out forwards';
-      document.getElementById('interface').appendChild(overlay);
+      const overlay = document.createElement("div");
+      overlay.className = "restrained-overlay";
+      overlay.style.animation = "restrained-rise 0.8s ease-out forwards";
+      document.getElementById("interface").appendChild(overlay);
 
       // Store reference to remove later and ensure cleanup happens
       this.restrainedInterval = setInterval(() => {
-        const hasEffect = document.querySelector('.restrained-effect');
-        const hasOverlay = document.querySelector('.restrained-overlay');
-        
+        const hasEffect = document.querySelector(".restrained-effect");
+        const hasOverlay = document.querySelector(".restrained-overlay");
+
         if (!hasEffect || !hasOverlay) {
-          console.log('AnimatedAnxiety | Cleaning up restrained effect');
+          console.log("AnimatedAnxiety | Cleaning up restrained effect");
           this.clearEffects();
           clearInterval(this.restrainedInterval);
           this.restrainedInterval = null;
@@ -1700,10 +1712,12 @@ class AnimatedAnxiety {
       }, 200); // Reduced interval for faster cleanup
 
       // Add immediate cleanup if effect is removed
-      overlay.addEventListener('animationend', () => {
-        const hasEffect = document.querySelector('.restrained-effect');
+      overlay.addEventListener("animationend", () => {
+        const hasEffect = document.querySelector(".restrained-effect");
         if (!hasEffect) {
-          console.log('AnimatedAnxiety | Cleaning up restrained effect after animation');
+          console.log(
+            "AnimatedAnxiety | Cleaning up restrained effect after animation"
+          );
           this.clearEffects();
         }
       });
@@ -1828,8 +1842,8 @@ class AnimatedAnxiety {
         swirl.style.top = `${Math.random() * 100}%`;
 
         // Random movement direction
-        const moveX = (Math.random() * 200 - 100) + "px";
-        const moveY = (Math.random() * 200 - 100) + "px";
+        const moveX = Math.random() * 200 - 100 + "px";
+        const moveY = Math.random() * 200 - 100 + "px";
         swirl.style.setProperty("--move-x", moveX);
         swirl.style.setProperty("--move-y", moveY);
 
@@ -1893,8 +1907,9 @@ class AnimatedAnxiety {
     const createFeather = () => {
       const fallingFeather = document.createElement("div");
       fallingFeather.className = "falling-feather";
-      fallingFeather.style.width = "50px";
-      fallingFeather.style.height = "50px";
+      const size = Math.random() * 30 + 20; // Random size between 40px and 60px
+      fallingFeather.style.width = `${size}px`;
+      fallingFeather.style.height = `${size}px`;
       fallingFeather.style.top = "-50px"; // Start above the screen
       fallingFeather.style.left = `${Math.random() * 100}%`; // Random horizontal position
       fallingFeather.style.animation = "feather-fall 5s linear";
@@ -1913,144 +1928,163 @@ class AnimatedAnxiety {
     // Add the feathers.png floating at the bottom
     const floatingFeathers = document.createElement("div");
     floatingFeathers.className = "flying-overlay";
-    floatingFeathers.style.backgroundImage = "url('modules/animatedanxiety/assets/feathers.png')";
-    floatingFeathers.style.animation = "flying-rise 0.8s ease-out forwards, flying-float 4s ease-in-out infinite 0.8s";
+    floatingFeathers.style.backgroundImage =
+      "url('modules/animatedanxiety/assets/feathers.png')";
+    floatingFeathers.style.animation =
+      "flying-rise 0.8s ease-out forwards, flying-float 4s ease-in-out infinite 0.8s";
     document.getElementById("interface").appendChild(floatingFeathers);
 
-    console.log("AnimatedAnxiety | Falling feather and floating feathers added to the screen");
+    console.log(
+      "AnimatedAnxiety | Falling feather and floating feathers added to the screen"
+    );
   }
 
   static createHoveringEffect() {
     if (!this.hoveringInterval) {
-        this.clearEffects();
-        
-        console.log("AnimatedAnxiety | Creating hovering effect");
-        
-        const overlay = document.createElement("div");
-        overlay.className = "hovering-overlay";
-        
-        const imagePath = "modules/animatedanxiety/assets/hovering.png";
-        overlay.style.backgroundImage = `url('${imagePath}')`;
-        
-        console.log("AnimatedAnxiety | Setting hovering background image:", imagePath);
-        
-        overlay.style.animation = `
+      this.clearEffects();
+
+      console.log("AnimatedAnxiety | Creating hovering effect");
+
+      const overlay = document.createElement("div");
+      overlay.className = "hovering-overlay";
+
+      const imagePath = "modules/animatedanxiety/assets/hovering.png";
+      overlay.style.backgroundImage = `url('${imagePath}')`;
+
+      console.log(
+        "AnimatedAnxiety | Setting hovering background image:",
+        imagePath
+      );
+
+      overlay.style.animation = `
             hovering-rise 0.8s ease-out forwards,
             hovering-float 4s ease-in-out infinite 0.8s
         `;
-        
-        document.getElementById("interface").appendChild(overlay);
-        
-        console.log("AnimatedAnxiety | Hovering overlay created:", overlay);
-        
-        this.hoveringInterval = setInterval(() => {
-            if (!document.querySelector(".hovering-effect")) {
-                console.log("AnimatedAnxiety | Cleaning up hovering effect");
-                this.clearEffects();
-                clearInterval(this.hoveringInterval);
-                this.hoveringInterval = null;
-            }
-        }, 1000);
+
+      document.getElementById("interface").appendChild(overlay);
+
+      console.log("AnimatedAnxiety | Hovering overlay created:", overlay);
+
+      this.hoveringInterval = setInterval(() => {
+        if (!document.querySelector(".hovering-effect")) {
+          console.log("AnimatedAnxiety | Cleaning up hovering effect");
+          this.clearEffects();
+          clearInterval(this.hoveringInterval);
+          this.hoveringInterval = null;
+        }
+      }, 1000);
     }
-}
+  }
 
   static createInvisibleEffect() {
     if (!this.invisibleInterval) {
-        this.clearEffects();
-        
-        console.log("AnimatedAnxiety | Creating invisible effect");
-        
-        const overlay = document.createElement("div");
-        overlay.className = "invisible-overlay";
-        
-        const imagePath = "modules/animatedanxiety/assets/invisible.png";
-        overlay.style.backgroundImage = `url('${imagePath}')`;
-        
-        console.log("AnimatedAnxiety | Setting invisible background image:", imagePath);
-        
-        // Apply animations directly to ensure they're being set
-        overlay.style.animation = "invisible-rise 0.8s ease-out forwards";
-        setTimeout(() => {
-            overlay.style.animation = "invisible-pulse 4s ease-in-out infinite";
-        }, 800);
-        
-        document.getElementById("interface").appendChild(overlay);
-        
-        console.log("AnimatedAnxiety | Invisible overlay created:", overlay);
-        console.log("AnimatedAnxiety | Overlay animations:", overlay.style.animation);
-        
-        this.invisibleInterval = setInterval(() => {
-            if (!document.querySelector(".invisible-effect")) {
-                console.log("AnimatedAnxiety | Cleaning up invisible effect");
-                this.clearEffects();
-                clearInterval(this.invisibleInterval);
-                this.invisibleInterval = null;
-            }
-        }, 1000);
+      this.clearEffects();
+
+      console.log("AnimatedAnxiety | Creating invisible effect");
+
+      const overlay = document.createElement("div");
+      overlay.className = "invisible-overlay";
+
+      const imagePath = "modules/animatedanxiety/assets/invisible.png";
+      overlay.style.backgroundImage = `url('${imagePath}')`;
+
+      console.log(
+        "AnimatedAnxiety | Setting invisible background image:",
+        imagePath
+      );
+
+      // Apply animations directly to ensure they're being set
+      overlay.style.animation = "invisible-rise 0.8s ease-out forwards";
+      setTimeout(() => {
+        overlay.style.animation = "invisible-pulse 4s ease-in-out infinite";
+      }, 800);
+
+      document.getElementById("interface").appendChild(overlay);
+
+      console.log("AnimatedAnxiety | Invisible overlay created:", overlay);
+      console.log(
+        "AnimatedAnxiety | Overlay animations:",
+        overlay.style.animation
+      );
+
+      this.invisibleInterval = setInterval(() => {
+        if (!document.querySelector(".invisible-effect")) {
+          console.log("AnimatedAnxiety | Cleaning up invisible effect");
+          this.clearEffects();
+          clearInterval(this.invisibleInterval);
+          this.invisibleInterval = null;
+        }
+      }, 1000);
     }
-}
+  }
 
   static createMarkedEffect() {
     if (!this.markedInterval) {
-        this.clearEffects();
-        
-        console.log("AnimatedAnxiety | Creating marked effect");
-        
-        const overlay = document.createElement("div");
-        overlay.className = "marked-overlay";
-        
-        const imagePath = "modules/animatedanxiety/assets/marked.png";
-        overlay.style.backgroundImage = `url('${imagePath}')`;
-        
-        console.log("AnimatedAnxiety | Setting marked background image:", imagePath);
-        
-        overlay.style.animation = "marked-rise 0.8s ease-out forwards";
-        
-        document.getElementById("interface").appendChild(overlay);
-        
-        console.log("AnimatedAnxiety | Marked overlay created:", overlay);
-        
-        this.markedInterval = setInterval(() => {
-            if (!document.querySelector(".marked-effect")) {
-                console.log("AnimatedAnxiety | Cleaning up marked effect");
-                this.clearEffects();
-                clearInterval(this.markedInterval);
-                this.markedInterval = null;
-            }
-        }, 1000);
+      this.clearEffects();
+
+      console.log("AnimatedAnxiety | Creating marked effect");
+
+      const overlay = document.createElement("div");
+      overlay.className = "marked-overlay";
+
+      const imagePath = "modules/animatedanxiety/assets/marked.png";
+      overlay.style.backgroundImage = `url('${imagePath}')`;
+
+      console.log(
+        "AnimatedAnxiety | Setting marked background image:",
+        imagePath
+      );
+
+      overlay.style.animation = "marked-rise 0.8s ease-out forwards";
+
+      document.getElementById("interface").appendChild(overlay);
+
+      console.log("AnimatedAnxiety | Marked overlay created:", overlay);
+
+      this.markedInterval = setInterval(() => {
+        if (!document.querySelector(".marked-effect")) {
+          console.log("AnimatedAnxiety | Cleaning up marked effect");
+          this.clearEffects();
+          clearInterval(this.markedInterval);
+          this.markedInterval = null;
+        }
+      }, 1000);
     }
-}
+  }
 
   static createProneEffect() {
     if (!this.proneInterval) {
-        this.clearEffects();
-        
-        console.log("AnimatedAnxiety | Creating prone effect");
-        
-        const overlay = document.createElement("div");
-        overlay.className = "prone-overlay";
-        
-        const imagePath = "modules/animatedanxiety/assets/prone.png";
-        overlay.style.backgroundImage = `url('${imagePath}')`;
-        
-        console.log("AnimatedAnxiety | Setting prone background image:", imagePath);
-        
-        overlay.style.animation = "prone-rise 0.8s ease-out forwards";
-        
-        document.getElementById("interface").appendChild(overlay);
-        
-        console.log("AnimatedAnxiety | Prone overlay created:", overlay);
-        
-        this.proneInterval = setInterval(() => {
-            if (!document.querySelector(".prone-effect")) {
-                console.log("AnimatedAnxiety | Cleaning up prone effect");
-                this.clearEffects();
-                clearInterval(this.proneInterval);
-                this.proneInterval = null;
-            }
-        }, 1000);
+      this.clearEffects();
+
+      console.log("AnimatedAnxiety | Creating prone effect");
+
+      const overlay = document.createElement("div");
+      overlay.className = "prone-overlay";
+
+      const imagePath = "modules/animatedanxiety/assets/prone.png";
+      overlay.style.backgroundImage = `url('${imagePath}')`;
+
+      console.log(
+        "AnimatedAnxiety | Setting prone background image:",
+        imagePath
+      );
+
+      overlay.style.animation = "prone-rise 0.8s ease-out forwards";
+
+      document.getElementById("interface").appendChild(overlay);
+
+      console.log("AnimatedAnxiety | Prone overlay created:", overlay);
+
+      this.proneInterval = setInterval(() => {
+        if (!document.querySelector(".prone-effect")) {
+          console.log("AnimatedAnxiety | Cleaning up prone effect");
+          this.clearEffects();
+          clearInterval(this.proneInterval);
+          this.proneInterval = null;
+        }
+      }, 1000);
     }
-}
+  }
 
   static createSilencedEffect() {
     if (!this.silencedInterval) {
@@ -2064,7 +2098,7 @@ class AnimatedAnxiety {
       this.silencedInterval = setInterval(() => {
         const hasEffect = document.querySelector(".silenced-effect");
         const hasOverlay = document.querySelector(".silenced-overlay");
-        
+
         if (!hasEffect || !hasOverlay) {
           console.log("AnimatedAnxiety | Cleaning up silenced effect");
           this.clearEffects();
@@ -2076,7 +2110,9 @@ class AnimatedAnxiety {
       overlay.addEventListener("animationend", () => {
         const hasEffect = document.querySelector(".silenced-effect");
         if (!hasEffect) {
-          console.log("AnimatedAnxiety | Cleaning up silenced effect after animation");
+          console.log(
+            "AnimatedAnxiety | Cleaning up silenced effect after animation"
+          );
           this.clearEffects();
         }
       });
@@ -2087,27 +2123,29 @@ class AnimatedAnxiety {
     if (!this.sleepingInterval) {
       this.clearEffects();
 
-      const overlay = document.createElement('div');
-      overlay.className = 'sleeping-overlay';
-      overlay.style.animation = 'sleeping-rise 0.8s ease-out forwards';
-      document.getElementById('interface').appendChild(overlay);
+      const overlay = document.createElement("div");
+      overlay.className = "sleeping-overlay";
+      overlay.style.animation = "sleeping-rise 0.8s ease-out forwards";
+      document.getElementById("interface").appendChild(overlay);
 
       this.sleepingInterval = setInterval(() => {
-        const hasEffect = document.querySelector('.sleeping-effect');
-        const hasOverlay = document.querySelector('.sleeping-overlay');
-        
+        const hasEffect = document.querySelector(".sleeping-effect");
+        const hasOverlay = document.querySelector(".sleeping-overlay");
+
         if (!hasEffect || !hasOverlay) {
-          console.log('AnimatedAnxiety | Cleaning up sleeping effect');
+          console.log("AnimatedAnxiety | Cleaning up sleeping effect");
           this.clearEffects();
           clearInterval(this.sleepingInterval);
           this.sleepingInterval = null;
         }
       }, 200);
 
-      overlay.addEventListener('animationend', () => {
-        const hasEffect = document.querySelector('.sleeping-effect');
+      overlay.addEventListener("animationend", () => {
+        const hasEffect = document.querySelector(".sleeping-effect");
         if (!hasEffect) {
-          console.log('AnimatedAnxiety | Cleaning up sleeping effect after animation');
+          console.log(
+            "AnimatedAnxiety | Cleaning up sleeping effect after animation"
+          );
           this.clearEffects();
         }
       });
@@ -2118,27 +2156,29 @@ class AnimatedAnxiety {
     if (!this.stableInterval) {
       this.clearEffects();
 
-      const overlay = document.createElement('div');
-      overlay.className = 'stable-overlay';
-      overlay.style.animation = 'stable-rise 0.8s ease-out forwards';
-      document.getElementById('interface').appendChild(overlay);
+      const overlay = document.createElement("div");
+      overlay.className = "stable-overlay";
+      overlay.style.animation = "stable-rise 0.8s ease-out forwards";
+      document.getElementById("interface").appendChild(overlay);
 
       this.stableInterval = setInterval(() => {
-        const hasEffect = document.querySelector('.stable-effect');
-        const hasOverlay = document.querySelector('.stable-overlay');
-        
+        const hasEffect = document.querySelector(".stable-effect");
+        const hasOverlay = document.querySelector(".stable-overlay");
+
         if (!hasEffect || !hasOverlay) {
-          console.log('AnimatedAnxiety | Cleaning up stable effect');
+          console.log("AnimatedAnxiety | Cleaning up stable effect");
           this.clearEffects();
           clearInterval(this.stableInterval);
           this.stableInterval = null;
         }
       }, 200);
 
-      overlay.addEventListener('animationend', () => {
-        const hasEffect = document.querySelector('.stable-effect');
+      overlay.addEventListener("animationend", () => {
+        const hasEffect = document.querySelector(".stable-effect");
         if (!hasEffect) {
-          console.log('AnimatedAnxiety | Cleaning up stable effect after animation');
+          console.log(
+            "AnimatedAnxiety | Cleaning up stable effect after animation"
+          );
           this.clearEffects();
         }
       });
@@ -2149,27 +2189,29 @@ class AnimatedAnxiety {
     if (!this.stunnedInterval) {
       this.clearEffects();
 
-      const overlay = document.createElement('div');
-      overlay.className = 'stunned-overlay';
-      overlay.style.animation = 'stunned-rise 0.8s ease-out forwards';
-      document.getElementById('interface').appendChild(overlay);
+      const overlay = document.createElement("div");
+      overlay.className = "stunned-overlay";
+      overlay.style.animation = "stunned-rise 0.8s ease-out forwards";
+      document.getElementById("interface").appendChild(overlay);
 
       this.stunnedInterval = setInterval(() => {
-        const hasEffect = document.querySelector('.stunned-effect');
-        const hasOverlay = document.querySelector('.stunned-overlay');
-        
+        const hasEffect = document.querySelector(".stunned-effect");
+        const hasOverlay = document.querySelector(".stunned-overlay");
+
         if (!hasEffect || !hasOverlay) {
-          console.log('AnimatedAnxiety | Cleaning up stunned effect');
+          console.log("AnimatedAnxiety | Cleaning up stunned effect");
           this.clearEffects();
           clearInterval(this.stunnedInterval);
           this.stunnedInterval = null;
         }
       }, 200);
 
-      overlay.addEventListener('animationend', () => {
-        const hasEffect = document.querySelector('.stunned-effect');
+      overlay.addEventListener("animationend", () => {
+        const hasEffect = document.querySelector(".stunned-effect");
         if (!hasEffect) {
-          console.log('AnimatedAnxiety | Cleaning up stunned effect after animation');
+          console.log(
+            "AnimatedAnxiety | Cleaning up stunned effect after animation"
+          );
           this.clearEffects();
         }
       });
@@ -2180,27 +2222,29 @@ class AnimatedAnxiety {
     if (!this.surprisedInterval) {
       this.clearEffects();
 
-      const overlay = document.createElement('div');
-      overlay.className = 'surprised-overlay';
-      overlay.style.animation = 'surprised-rise 0.8s ease-out forwards';
-      document.getElementById('interface').appendChild(overlay);
+      const overlay = document.createElement("div");
+      overlay.className = "surprised-overlay";
+      overlay.style.animation = "surprised-rise 0.8s ease-out forwards";
+      document.getElementById("interface").appendChild(overlay);
 
       this.surprisedInterval = setInterval(() => {
-        const hasEffect = document.querySelector('.surprised-effect');
-        const hasOverlay = document.querySelector('.surprised-overlay');
-        
+        const hasEffect = document.querySelector(".surprised-effect");
+        const hasOverlay = document.querySelector(".surprised-overlay");
+
         if (!hasEffect || !hasOverlay) {
-          console.log('AnimatedAnxiety | Cleaning up surprised effect');
+          console.log("AnimatedAnxiety | Cleaning up surprised effect");
           this.clearEffects();
           clearInterval(this.surprisedInterval);
           this.surprisedInterval = null;
         }
       }, 200);
 
-      overlay.addEventListener('animationend', () => {
-        const hasEffect = document.querySelector('.surprised-effect');
+      overlay.addEventListener("animationend", () => {
+        const hasEffect = document.querySelector(".surprised-effect");
         if (!hasEffect) {
-          console.log('AnimatedAnxiety | Cleaning up surprised effect after animation');
+          console.log(
+            "AnimatedAnxiety | Cleaning up surprised effect after animation"
+          );
           this.clearEffects();
         }
       });
@@ -2211,37 +2255,45 @@ class AnimatedAnxiety {
     if (!this.transformedInterval) {
       this.clearEffects();
 
-      const overlay = document.createElement('div');
-      overlay.className = 'transformed-overlay';
-      
+      const overlay = document.createElement("div");
+      overlay.className = "transformed-overlay";
+
       // Add explicit path and logging
-      const imagePath = 'modules/animatedanxiety/assets/transformed.png';
+      const imagePath = "modules/animatedanxiety/assets/transformed.png";
       overlay.style.backgroundImage = `url('${imagePath}')`;
-      console.log('AnimatedAnxiety | Setting transformed background image:', imagePath);
-      
-      overlay.style.animation = 'transformed-rise 0.8s ease-out forwards';
-      document.getElementById('interface').appendChild(overlay);
+      console.log(
+        "AnimatedAnxiety | Setting transformed background image:",
+        imagePath
+      );
+
+      overlay.style.animation = "transformed-rise 0.8s ease-out forwards";
+      document.getElementById("interface").appendChild(overlay);
 
       // Log the created element
-      console.log('AnimatedAnxiety | Transformed overlay created:', overlay);
-      console.log('AnimatedAnxiety | Transformed overlay style:', overlay.style.backgroundImage);
+      console.log("AnimatedAnxiety | Transformed overlay created:", overlay);
+      console.log(
+        "AnimatedAnxiety | Transformed overlay style:",
+        overlay.style.backgroundImage
+      );
 
       this.transformedInterval = setInterval(() => {
-        const hasEffect = document.querySelector('.transformed-effect');
-        const hasOverlay = document.querySelector('.transformed-overlay');
-        
+        const hasEffect = document.querySelector(".transformed-effect");
+        const hasOverlay = document.querySelector(".transformed-overlay");
+
         if (!hasEffect || !hasOverlay) {
-          console.log('AnimatedAnxiety | Cleaning up transformed effect');
+          console.log("AnimatedAnxiety | Cleaning up transformed effect");
           this.clearEffects();
           clearInterval(this.transformedInterval);
           this.transformedInterval = null;
         }
       }, 200);
 
-      overlay.addEventListener('animationend', () => {
-        const hasEffect = document.querySelector('.transformed-effect');
+      overlay.addEventListener("animationend", () => {
+        const hasEffect = document.querySelector(".transformed-effect");
         if (!hasEffect) {
-          console.log('AnimatedAnxiety | Cleaning up transformed effect after animation');
+          console.log(
+            "AnimatedAnxiety | Cleaning up transformed effect after animation"
+          );
           this.clearEffects();
         }
       });
