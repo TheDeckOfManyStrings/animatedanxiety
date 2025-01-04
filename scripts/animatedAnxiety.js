@@ -1813,6 +1813,25 @@ class AnimatedAnxiety {
       overlay.className = "ethereal-overlay";
       document.getElementById("interface").appendChild(overlay);
 
+      // Create ethereal swirls
+      this.etherealInterval = setInterval(() => {
+        const swirl = document.createElement("div");
+        swirl.className = "ethereal-swirl";
+
+        // Random starting position
+        swirl.style.left = `${Math.random() * 100}%`;
+        swirl.style.top = `${Math.random() * 100}%`;
+
+        // Random movement direction
+        const moveX = (Math.random() * 200 - 100) + "px";
+        const moveY = (Math.random() * 200 - 100) + "px";
+        swirl.style.setProperty("--move-x", moveX);
+        swirl.style.setProperty("--move-y", moveY);
+
+        document.getElementById("interface").appendChild(swirl);
+        setTimeout(() => swirl.remove(), 5000); // Match animation duration
+      }, 1000);
+
       this.etherealInterval = setInterval(() => {
         if (!document.querySelector(".ethereal-effect")) {
           this.clearEffects();

@@ -1473,6 +1473,35 @@
   }
 }
 
+/* Add ethereal swirl styling */
+.ethereal-swirl {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, rgba(0, 255, 255, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  animation: swirl-rise 5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes swirl-rise {
+  0% {
+    transform: translate(0, 0) scale(0.5) rotate(0deg);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(var(--move-x), var(--move-y)) scale(1.2) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--move-x), var(--move-y)) scale(0.5) rotate(360deg);
+    opacity: 0;
+  }
+}
+
 /* Add exhaustion overlay */
 .exhaustion-overlay {
   position: fixed;
@@ -1838,6 +1867,7 @@
   z-index: 11;
   opacity: 0;
   transform: translateY(100%);
+  animation: surprised-rise 0.8s ease-out forwards;
 }
 
 @keyframes surprised-rise {
