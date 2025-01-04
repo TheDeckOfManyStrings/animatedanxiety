@@ -484,6 +484,10 @@ class AnimatedAnxiety {
       clearInterval(this.etherealInterval);
       this.etherealInterval = null;
     }
+    if (this.etherealCleanupInterval) {
+      clearInterval(this.etherealCleanupInterval);
+      this.etherealCleanupInterval = null;
+    }
     if (this.exhaustionInterval) {
       // Add this block
       clearInterval(this.exhaustionInterval);
@@ -607,6 +611,7 @@ class AnimatedAnxiety {
     document.querySelectorAll(".surprised-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll(".transformed-overlay").forEach((el) => el.remove()); // Add this line
     document.querySelectorAll('.unconscious-overlay').forEach(el => el.remove());
+    document.querySelectorAll(".ethereal-swirl").forEach((el) => el.remove());
   }
 
   // New check for unconscious
@@ -1832,11 +1837,13 @@ class AnimatedAnxiety {
         setTimeout(() => swirl.remove(), 5000); // Match animation duration
       }, 1000);
 
-      this.etherealInterval = setInterval(() => {
+      this.etherealCleanupInterval = setInterval(() => {
         if (!document.querySelector(".ethereal-effect")) {
           this.clearEffects();
           clearInterval(this.etherealInterval);
+          clearInterval(this.etherealCleanupInterval);
           this.etherealInterval = null;
+          this.etherealCleanupInterval = null;
         }
       }, 1000);
     }
