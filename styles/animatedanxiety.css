@@ -2460,3 +2460,32 @@
     transform: scale(1);
   }
 }
+
+/* Add falling feather effect */
+.falling-feather {
+  position: fixed;
+  background: url("../assets/feather.png") no-repeat center center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0.8;
+}
+
+@keyframes feather-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Add simple feather effect */
+.simple-feather {
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 11;
+  pointer-events: none;
+}

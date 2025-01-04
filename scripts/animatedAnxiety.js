@@ -1885,42 +1885,40 @@ class AnimatedAnxiety {
   }
 
   static createFlyingEffect() {
-    if (!this.flyingInterval) {
-        this.clearEffects();
-        
-        console.log("AnimatedAnxiety | Creating flying effect");
-        
-        const overlay = document.createElement("div");
-        overlay.className = "flying-overlay";
-        
-        // Use absolute path and log any errors
-        const imagePath = "modules/animatedanxiety/assets/feathers.png";
-        overlay.style.backgroundImage = `url('${imagePath}')`;
-        
-        console.log("AnimatedAnxiety | Setting background image:", imagePath);
-        
-        // Start rise animation, then switch to subtle float
-        overlay.style.animation = `
-            flying-rise 0.8s ease-out forwards,
-            flying-float 4s ease-in-out infinite 0.8s
-        `;
-        
-        document.getElementById("interface").appendChild(overlay);
-        
-        // Verify the overlay was created and styled correctly
-        console.log("AnimatedAnxiety | Flying overlay created:", overlay);
-        
-        // Store reference to remove later
-        this.flyingInterval = setInterval(() => {
-            if (!document.querySelector(".flying-effect")) {
-                console.log("AnimatedAnxiety | Cleaning up flying effect");
-                this.clearEffects();
-                clearInterval(this.flyingInterval);
-                this.flyingInterval = null;
-            }
-        }, 1000);
-    }
-}
+    this.clearEffects();
+
+    console.log("AnimatedAnxiety | Creating falling feather effect");
+
+    // Function to create a falling feather
+    const createFeather = () => {
+      const fallingFeather = document.createElement("div");
+      fallingFeather.className = "falling-feather";
+      fallingFeather.style.width = "50px";
+      fallingFeather.style.height = "50px";
+      fallingFeather.style.top = "-50px"; // Start above the screen
+      fallingFeather.style.left = `${Math.random() * 100}%`; // Random horizontal position
+      fallingFeather.style.animation = "feather-fall 5s linear";
+      document.getElementById("interface").appendChild(fallingFeather);
+
+      // Remove the feather after the animation ends
+      fallingFeather.addEventListener("animationend", () => {
+        fallingFeather.remove();
+        createFeather(); // Create a new feather after the current one falls
+      });
+    };
+
+    // Create the first feather
+    createFeather();
+
+    // Add the feathers.png floating at the bottom
+    const floatingFeathers = document.createElement("div");
+    floatingFeathers.className = "flying-overlay";
+    floatingFeathers.style.backgroundImage = "url('modules/animatedanxiety/assets/feathers.png')";
+    floatingFeathers.style.animation = "flying-rise 0.8s ease-out forwards, flying-float 4s ease-in-out infinite 0.8s";
+    document.getElementById("interface").appendChild(floatingFeathers);
+
+    console.log("AnimatedAnxiety | Falling feather and floating feathers added to the screen");
+  }
 
   static createHoveringEffect() {
     if (!this.hoveringInterval) {
