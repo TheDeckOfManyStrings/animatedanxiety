@@ -2053,10 +2053,10 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
+  background: linear-gradient(
+    to bottom,
     transparent 0%,
-    transparent 50%,
+    transparent 75%,
     rgba(128, 0, 0, 0.2) 100%
   );
 }
@@ -2070,10 +2070,10 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
+  background: linear-gradient(
+    to bottom,
     transparent 0%,
-    transparent 50%,
+    transparent 75%,
     rgba(139, 69, 19, 0.2) 100%
   );
 }
@@ -2087,10 +2087,11 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
-    transparent 0%,
-    transparent 50%,
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 0, 0.2) 0%,
+    transparent 25%,
+    transparent 75%,
     rgba(255, 255, 0, 0.2) 100%
   );
 }
@@ -2104,10 +2105,10 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
+  background: linear-gradient(
+    to bottom,
     transparent 0%,
-    transparent 50%,
+    transparent 75%,
     rgba(0, 255, 255, 0.2) 100%
   );
 }
@@ -2138,10 +2139,10 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
+  background: linear-gradient(
+    to bottom,
     transparent 0%,
-    transparent 50%,
+    transparent 75%,
     rgba(139, 69, 19, 0.2) 100%
   );
 }
@@ -2155,10 +2156,10 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
+  background: linear-gradient(
+    to bottom,
     transparent 0%,
-    transparent 50%,
+    transparent 75%,
     rgba(255, 0, 0, 0.2) 100%
   );
 }
@@ -2189,10 +2190,10 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
+  background: linear-gradient(
+    to bottom,
     transparent 0%,
-    transparent 50%,
+    transparent 75%,
     rgba(0, 255, 255, 0.2) 100%
   );
 }
@@ -2206,10 +2207,11 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
-    transparent 0%,
-    transparent 50%,
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 255, 255, 0.2) 0%,
+    transparent 25%,
+    transparent 75%,
     rgba(0, 255, 255, 0.2) 100%
   );
 }
@@ -2257,10 +2259,10 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
+  background: linear-gradient(
+    to bottom,
     transparent 0%,
-    transparent 50%,
+    transparent 75%,
     rgba(0, 128, 0, 0.2) 100%
   );
 }
@@ -2342,10 +2344,11 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
-    transparent 0%,
-    transparent 50%,
+  background: linear-gradient(
+    to bottom,
+    rgba(139, 3, 3, 0.2) 0%,
+    transparent 25%,
+    transparent 75%,
     rgba(139, 3, 3, 0.2) 100%
   );
 }
@@ -2376,10 +2379,11 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
-    transparent 0%,
-    transparent 50%,
+  background: linear-gradient(
+    to bottom,
+    rgba(128, 0, 128, 0.2) 0%,
+    transparent 25%,
+    transparent 75%,
     rgba(128, 0, 128, 0.2) 100%
   );
 }
