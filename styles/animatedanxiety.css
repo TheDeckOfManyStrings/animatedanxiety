@@ -415,30 +415,22 @@
 /* Cursed symbol styling */
 .curse-symbol {
   position: fixed;
-  color: rgba(128, 0, 128, 0.8);
-  font-size: 32px;
-  font-weight: bold;
   pointer-events: none;
   z-index: 11;
-  text-shadow: 0 0 5px rgba(128, 0, 128, 0.4);
+  animation: curse-float 10s ease-in-out forwards;
 }
 
 @keyframes curse-float {
   0% {
-    transform: translate(0, 0) rotate(0deg) translateY(var(--orbit-radius));
-    opacity: 0;
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 0.7;
   }
-  10% {
-    opacity: 0.6;
-  }
-  75% {
-    opacity: 0.6;
-    transform: translate(var(--curse-x), var(--curse-y))
-      rotate(var(--curse-rotate)) translateY(calc(var(--orbit-radius) * 0.5));
+  50% {
+    transform: translateY(calc(var(--final-top) - 50vh)) scale(1.2) rotate(180deg); /* Float up to a random position */
+    opacity: 0.7;
   }
   100% {
-    transform: translate(var(--curse-x), var(--curse-y))
-      rotate(var(--curse-rotate)) translateY(0);
+    transform: translateY(calc(var(--final-top) - 50vh)) scale(1.2) rotate(360deg);
     opacity: 0;
   }
 }
@@ -2492,4 +2484,20 @@
   background-repeat: no-repeat;
   z-index: 11;
   pointer-events: none;
+}
+
+/* Add occult fade effect */
+@keyframes occult-fade {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5) rotate(360deg);
+  }
 }

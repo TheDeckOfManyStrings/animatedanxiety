@@ -621,8 +621,7 @@ class AnimatedAnxiety {
   }
 
   // New check for unconscious
-  static checkUnconsciousStatus(actor) {
-  }
+  static checkUnconsciousStatus(actor) {}
 
   // New check for unconscious
   static checkUnconsciousStatus(actor) {
@@ -1366,46 +1365,45 @@ class AnimatedAnxiety {
       overlay.className = "cursed-overlay";
       document.getElementById("interface").appendChild(overlay);
 
-      // Create floating curse symbols
-      const symbols = ["X", "O", "+", "-", ""];
+      // Function to create an occult symbol
+      const createOccultSymbol = () => {
+        const symbol = document.createElement("img");
+        symbol.className = "curse-symbol";
+        symbol.src = "modules/animatedanxiety/assets/pentagram.png";
 
-      this.curseInterval = setInterval(() => {
-        const numSymbols = Math.random() < 0.3 ? 2 : 1;
+        // Remove any border
+        symbol.style.border = "none";
 
-        for (let i = 0; i < numSymbols; i++) {
-          const symbol = document.createElement("div");
-          symbol.className = "curse-symbol";
-          symbol.textContent =
-            symbols[Math.floor(Math.random() * symbols.length)];
+        // Random position at the bottom of the screen
+        symbol.style.left = `${Math.random() * 100}%`;
+        symbol.style.bottom = "-10%"; // Start off the page
 
-          const orbitRadius = 45 + Math.random() * 25; // 45-70% from center
-          const startAngle = Math.random() * Math.PI * 2;
+        // Random size
+        const size = Math.random() * 40 + 60; // Size between 60px and 100px
+        symbol.style.width = `${size}px`;
+        symbol.style.height = `${size}px`;
 
-          const startX = 50;
-          const startY = 50;
+        // Random rotation
+        const rotation = Math.random() * 360;
+        symbol.style.transform = `rotate(${rotation}deg)`;
 
-          symbol.style.left = `${startX}%`;
-          symbol.style.top = `${startY}%`;
-          symbol.style.setProperty("--orbit-radius", `${orbitRadius}vh`);
+        // Slightly transparent
+        symbol.style.opacity = "0.7";
 
-          const rotations = 2 + Math.random();
-          const endAngle = startAngle + Math.PI * 2 * rotations;
-          const endRadius = orbitRadius * (0.6 + Math.random() * 0.2);
+        // Random animation duration
+        const duration = Math.random() * 5 + 5; // Duration between 5s and 10s
 
-          const moveX = Math.cos(endAngle) * endRadius;
-          const moveY = Math.sin(endAngle) * endRadius;
+        // Random final position
+        const finalTop = Math.random() * 50 + 25; // Between 25% and 75% of the screen height
+        symbol.style.animation = `curse-float ${duration}s ease-in-out forwards`;
+        symbol.style.setProperty("--final-top", `${finalTop}%`);
 
-          symbol.style.setProperty("--curse-x", `${moveX}vh`);
-          symbol.style.setProperty("--curse-y", `${moveY}vh`);
-          symbol.style.setProperty("--curse-rotate", `${rotations * 720}deg`);
+        document.getElementById("interface").appendChild(symbol);
+        setTimeout(() => symbol.remove(), duration * 1000);
+      };
 
-          const duration = 30 + Math.random() * 20;
-          symbol.style.animation = `curse-float ${duration}s ease-in-out forwards`;
-
-          document.getElementById("interface").appendChild(symbol);
-          setTimeout(() => symbol.remove(), duration * 1000);
-        }
-      }, 750);
+      // Create occult symbols at intervals
+      this.curseInterval = setInterval(createOccultSymbol, 6000); // Reduced frequency
     }
   }
 
