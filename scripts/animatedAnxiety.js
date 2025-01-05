@@ -221,16 +221,17 @@ class AnimatedAnxiety {
         appElement.classList.add("deafened-effect");
         this.createDeafenedRipples();
       }
+      // Add unconscious handler here as a static effect
+      if (isUnconscious) {
+        appElement.classList.add("unconscious-effect");
+        this.createBubbles("black-inward");
+      }
 
-      // Handle animated effects in order of priority
+      // Handle animated effects in order of priority (moving prone to end)
       if (isDead) {
         appElement.classList.add("dead-effect");
         this.createDeadEffect();
-      } else if (isUnconscious) {
-        appElement.classList.add("unconscious-effect");
-        this.createBubbles("black-inward");
       } else if (isGrappled) {
-        // Add this block before other effects
         appElement.classList.add("grappled-effect");
         this.createGrappledEffect();
       } else if (isRestrained) {
@@ -252,47 +253,35 @@ class AnimatedAnxiety {
         appElement.classList.add("poison-effect");
         this.createBubbles("sway");
       } else if (isDiseased) {
-        // Add this block
         appElement.classList.add("diseased-effect");
         this.createDiseaseParticles();
       } else if (isFrightened) {
-        // Add this block
         appElement.classList.add("frightened-effect");
         this.createFrightenedMarks();
       } else if (isCursed) {
-        console.log("AnimatedAnxiety | Creating curse symbols");
         this.createCurseSymbols();
       } else if (isCharmed) {
-        console.log("AnimatedAnxiety | Creating heart symbols");
         this.createHearts();
       } else if (isBleeding) {
         this.createBloodStreaks();
       } else if (isConcentrating) {
-        console.log("AnimatedAnxiety | Applying concentration effect");
         appElement.classList.add("concentration-effect");
         this.createConcentrationParticles();
       } else if (isDodging) {
         appElement.classList.add("dodge-effect");
         this.createDodgeEffect();
       } else if (isIncapacitated) {
-        // Add this block
         appElement.classList.add("incapacitated-effect");
         this.createIncapacitatedEffect();
       } else if (isBurrowing) {
-        // Add this block
         appElement.classList.add("burrowing-effect");
         this.createBurrowingEffect();
       } else if (isEthereal) {
-        // Add this block
         appElement.classList.add("ethereal-effect");
         this.createEtherealEffect();
       } else if (isExhausted) {
-        // Add this block
         appElement.classList.add("exhaustion-effect");
         this.createExhaustionEffect();
-      } else if (isProne) {
-        appElement.classList.add("prone-effect");
-        this.createProneEffect();
       } else if (isMarked) {
         appElement.classList.add("marked-effect");
         this.createMarkedEffect();
@@ -303,7 +292,6 @@ class AnimatedAnxiety {
         appElement.classList.add("hovering-effect");
         this.createHoveringEffect();
       } else if (isFlying) {
-        // Add this block
         appElement.classList.add("flying-effect");
         this.createFlyingEffect();
       } else if (isSilenced) {
@@ -321,6 +309,10 @@ class AnimatedAnxiety {
       } else if (isTransformed) {
         appElement.classList.add("transformed-effect");
         this.createTransformedEffect();
+      } else if (isProne && !isUnconscious) {
+        // Moved to the end of the chain
+        appElement.classList.add("prone-effect");
+        this.createProneEffect();
       }
 
       // Add color fade for statuses without one
@@ -363,7 +355,7 @@ class AnimatedAnxiety {
       if (isExhausted) {
         appElement.classList.add("exhaustion-fade");
       }
-      if (isProne) {
+      if (isProne && !isUnconscious) {
         appElement.classList.add("prone-fade");
       }
       if (isMarked) {
