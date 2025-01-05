@@ -1386,12 +1386,12 @@ class AnimatedAnxiety {
         symbol.style.bottom = "-10%";
 
         // Much wider size range: between 20px and 60px
-        const size = Math.random() * 40 + 20;
+        const size = Math.random() * 40 + 40;
         symbol.style.width = `${size}px`;
         symbol.style.height = `${size}px`;
 
-        // Random float height between 30vh and 80vh
-        const floatHeight = Math.random() * 50 + 30;
+        // Random float height between 15vh and 33vh (bottom third of screen)
+        const floatHeight = Math.random() * 18 + 25;
         symbol.style.setProperty("--float-height", `${floatHeight}vh`);
 
         // Random duration between 4s and 7s
