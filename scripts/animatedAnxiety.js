@@ -1370,40 +1370,41 @@ class AnimatedAnxiety {
         const symbol = document.createElement("img");
         symbol.className = "curse-symbol";
         symbol.src = "modules/animatedanxiety/assets/pentagram.png";
-
-        // Remove any border
         symbol.style.border = "none";
 
-        // Random position at the bottom of the screen
+        // Random position at the bottom
         symbol.style.left = `${Math.random() * 100}%`;
-        symbol.style.bottom = "-10%"; // Start off the page
+        symbol.style.bottom = "-10%";
 
-        // Random size
-        const size = Math.random() * 40 + 60; // Size between 60px and 100px
+        // Much wider size range: between 20px and 60px
+        const size = Math.random() * 40 + 20;
         symbol.style.width = `${size}px`;
         symbol.style.height = `${size}px`;
 
-        // Random rotation
-        const rotation = Math.random() * 360;
-        symbol.style.transform = `rotate(${rotation}deg)`;
+        // Random float height between 30vh and 80vh
+        const floatHeight = Math.random() * 50 + 30;
+        symbol.style.setProperty("--float-height", `${floatHeight}vh`);
 
-        // Slightly transparent
-        symbol.style.opacity = "0.7";
-
-        // Random animation duration
-        const duration = Math.random() * 5 + 5; // Duration between 5s and 10s
-
-        // Random final position
-        const finalTop = Math.random() * 50 + 25; // Between 25% and 75% of the screen height
+        // Random duration between 4s and 7s
+        const duration = Math.random() * 3 + 4;
         symbol.style.animation = `curse-float ${duration}s ease-in-out forwards`;
-        symbol.style.setProperty("--final-top", `${finalTop}%`);
 
         document.getElementById("interface").appendChild(symbol);
         setTimeout(() => symbol.remove(), duration * 1000);
       };
 
-      // Create occult symbols at intervals
-      this.curseInterval = setInterval(createOccultSymbol, 6000); // Reduced frequency
+      // Create initial batch of symbols
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => createOccultSymbol(), i * 200);
+      }
+
+      // Create occult symbols at intervals, sometimes creating multiple
+      this.curseInterval = setInterval(() => {
+        const count = Math.random() < 0.3 ? 2 : 1; // 30% chance to create 2 symbols
+        for (let i = 0; i < count; i++) {
+          setTimeout(() => createOccultSymbol(), i * 200);
+        }
+      }, 4000); // Reduced interval from 6000 to 4000
     }
   }
 
