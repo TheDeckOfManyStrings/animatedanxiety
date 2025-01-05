@@ -2049,7 +2049,7 @@
     circle,
     transparent 0%,
     transparent 50%,
-    rgba(169, 169, 169, 0.3) 100%
+    rgba(131, 131, 131, 0.758) 100%
   );
   animation: general-glow 5s ease-in-out infinite;
 }
