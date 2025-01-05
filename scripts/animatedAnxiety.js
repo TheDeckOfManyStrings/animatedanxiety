@@ -1365,11 +1365,20 @@ class AnimatedAnxiety {
       overlay.className = "cursed-overlay";
       document.getElementById("interface").appendChild(overlay);
 
+      // Array of available pentagram images
+      const pentagrams = [
+        "modules/animatedanxiety/assets/pentagram1.png",
+        "modules/animatedanxiety/assets/pentagram2.png",
+        "modules/animatedanxiety/assets/pentagram3.png",
+        "modules/animatedanxiety/assets/pentagram4.png",
+      ];
+
       // Function to create an occult symbol
       const createOccultSymbol = () => {
         const symbol = document.createElement("img");
         symbol.className = "curse-symbol";
-        symbol.src = "modules/animatedanxiety/assets/pentagram.png";
+        // Randomly select one of the pentagram images
+        symbol.src = pentagrams[Math.floor(Math.random() * pentagrams.length)];
         symbol.style.border = "none";
 
         // Random position at the bottom
