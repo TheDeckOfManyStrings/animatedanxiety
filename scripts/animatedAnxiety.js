@@ -929,16 +929,35 @@ class AnimatedAnxiety {
   }
 
   static checkPetrifiedStatus(actor) {
-    if (!actor?.effects) return false;
-    return actor.effects.some((e) => {
+    if (!actor?.effects) {
+      console.log("AnimatedAnxiety | No effects found for petrified check");
+      return false;
+    }
+
+    const isPetrified = actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+
+      console.log("AnimatedAnxiety | Checking petrified effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e,
+      });
+
       return (
-        !e.disabled &&
-        (name.includes("petrified") ||
+        isActive &&
+        (name === "petrified" ||
+          statusId === "petrified" ||
+          name.includes("petrify") ||
           name.includes("stone") ||
           name.includes("statue"))
       );
     });
+
+    console.log("AnimatedAnxiety | Petrified status:", isPetrified);
+    return isPetrified;
   }
 
   static checkParalyzedStatus(actor) {

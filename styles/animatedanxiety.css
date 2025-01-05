@@ -2049,9 +2049,10 @@
     circle,
     transparent 0%,
     transparent 50%,
-    rgba(131, 131, 131, 0.758) 100%
+    rgba(97, 97, 97, 0.9) 100%
+      /* Changed color to a lighter grey with higher opacity */
   );
-  animation: general-glow 5s ease-in-out infinite;
+  animation: petrified-glow 5s ease-in-out infinite;
 }
 
 #interface.paralyzed-fade::before {
@@ -2465,6 +2466,21 @@
   }
   100% {
     opacity: 0.3;
+    transform: scale(1);
+  }
+}
+
+@keyframes petrified-glow {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.5;
     transform: scale(1);
   }
 }
