@@ -450,6 +450,28 @@ class AnimatedAnxiety {
       if (isCursed && game.settings.get("animatedanxiety", "enable_cursed")) {
         appElement.classList.add("cursed-fade");
       }
+
+      // Remove existing health effects
+      document.querySelectorAll(".veins-overlay").forEach(el => el.remove());
+      
+      // Set anxiety effect intensity based on health
+      if (healthPercent < 50) {
+        const opacity = (50 - healthPercent) / 100; // 0 at 50%, 0.3 at 20%, 0.5 at 0%
+        const duration = Math.max(5 - ((50 - healthPercent) / 50 * 2), 0.8); // 3s at 50%, 1s at 0%
+        const blur = Math.min(400, (50 - healthPercent) * 8); // Increases blur as health drops
+        
+        appElement.style.setProperty("--anxiety-opacity", opacity);
+        appElement.style.setProperty("--anxiety-duration", `${duration}s`);
+        appElement.style.setProperty("--anxiety-blur", `${blur}px`);
+        
+        // Add veins overlay at critical health
+        if (healthPercent < 20) {
+          const veinsOverlay = document.createElement("div");
+          veinsOverlay.className = "veins-overlay";
+          appElement.appendChild(veinsOverlay);
+        }
+      }
+
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
     }

@@ -2529,3 +2529,62 @@
     transform: scale(0.5) rotate(360deg);
   }
 }
+
+/* Add health-based effects */
+#interface.anxiety-effect::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  border: 0;
+  box-shadow: inset 0 0 var(--anxiety-blur) calc(var(--anxiety-blur) * 0.2)
+    rgba(255, 0, 0, var(--anxiety-opacity));
+  animation: anxiety-pulse var(--anxiety-duration) ease-in-out infinite;
+  z-index: 11;
+}
+
+/* Add veins overlay for critical health */
+.veins-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("../assets/veins.png");
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+  z-index: 12;
+  opacity: 0;
+  animation: heartbeat 5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  20% {
+    opacity: 0.2;
+    transform: scale(1.01);
+  }
+  40% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  60% {
+    opacity: 0.2;
+    transform: scale(1.02);
+  }
+  80% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+}
