@@ -16,6 +16,16 @@ class AnimatedAnxiety {
       default: true,
       onChange: () => this.updateAnxietyEffect(game.user?.character),
     });
+    
+    game.settings.register("animatedanxiety", `enable_anxiety`, {
+      name: `Enable Low Health Effect`,
+      hint: `Toggle the low health effect animation`,
+      scope: "client",
+      config: true,
+      type: Boolean,
+      default: true,
+      onChange: () => this.updateAnxietyEffect(game.user?.character),
+    });
 
     game.settings.register("animatedanxiety", "showVeins", {
       name: "Show Low Health Veins Overlay",
@@ -29,7 +39,7 @@ class AnimatedAnxiety {
 
     // Add individual status toggles
     const statusEffects = {
-      anxiety: "Low Health",
+      // anxiety: "Low Health",
       unconscious: "Unconscious",
       poisoned: "Poisoned",
       bleeding: "Bleeding",
