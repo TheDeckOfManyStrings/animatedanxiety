@@ -16,7 +16,7 @@ class AnimatedAnxiety {
       default: true,
       onChange: () => this.updateAnxietyEffect(game.user?.character),
     });
-    
+
     game.settings.register("animatedanxiety", `enable_anxiety`, {
       name: `Enable Low Health Effect`,
       hint: `Toggle the low health effect animation`,
@@ -27,6 +27,21 @@ class AnimatedAnxiety {
       onChange: () => this.updateAnxietyEffect(game.user?.character),
     });
 
+    game.settings.register("animatedanxiety", "anxietyThreshold", {
+      name: "Anxiety Effect Threshold",
+      hint: "Health percentage at which the anxiety effect begins (1-100)",
+      scope: "client",
+      config: true,
+      type: Number,
+      range: {
+        min: 1,
+        max: 100,
+        step: 1,
+      },
+      default: 50,
+      onChange: () => this.updateAnxietyEffect(game.user?.character),
+    });
+
     game.settings.register("animatedanxiety", "showVeins", {
       name: "Show Low Health Veins Overlay",
       hint: "Show the veins overlay effect when health is critical (below 20%)",
@@ -34,6 +49,21 @@ class AnimatedAnxiety {
       config: true,
       type: Boolean,
       default: true,
+      onChange: () => this.updateAnxietyEffect(game.user?.character),
+    });
+
+    game.settings.register("animatedanxiety", "veinsThreshold", {
+      name: "Critical Health Veins Threshold",
+      hint: "Health percentage at which the veins overlay appears (1-100)",
+      scope: "client",
+      config: true,
+      type: Number,
+      range: {
+        min: 1,
+        max: 100,
+        step: 1,
+      },
+      default: 20,
       onChange: () => this.updateAnxietyEffect(game.user?.character),
     });
 
@@ -637,23 +667,36 @@ class AnimatedAnxiety {
       // Remove existing health effects
       document.querySelectorAll(".veins-overlay").forEach((el) => el.remove());
 
+      // Get thresholds from settings
+      const anxietyThreshold = game.settings.get(
+        "animatedanxiety",
+        "anxietyThreshold"
+      );
+      const veinsThreshold = game.settings.get(
+        "animatedanxiety",
+        "veinsThreshold"
+      );
+
       // Set anxiety effect intensity based on health
       if (
-        healthPercent < 50 &&
+        healthPercent < anxietyThreshold &&
         game.settings.get("animatedanxiety", "enable_anxiety")
       ) {
-        const opacity = (50 - healthPercent) / 100;
-        const duration = Math.max(5 - ((50 - healthPercent) / 50) * 2, 0.8);
-        const blur = Math.min(400, (50 - healthPercent) * 8);
+        const opacity = (anxietyThreshold - healthPercent) / 100;
+        const duration = Math.max(
+          5 - ((anxietyThreshold - healthPercent) / anxietyThreshold) * 2,
+          0.8
+        );
+        const blur = Math.min(400, (anxietyThreshold - healthPercent) * 8);
 
         appElement.classList.add("anxiety-effect");
         appElement.style.setProperty("--anxiety-opacity", opacity);
         appElement.style.setProperty("--anxiety-duration", `${duration}s`);
         appElement.style.setProperty("--anxiety-blur", `${blur}px`);
 
-        // Only show veins if the setting is enabled
+        // Only show veins if the setting is enabled and health is below veins threshold
         if (
-          healthPercent < 20 &&
+          healthPercent < veinsThreshold &&
           game.settings.get("animatedanxiety", "showVeins")
         ) {
           const veinsOverlay = document.createElement("div");
@@ -661,7 +704,7 @@ class AnimatedAnxiety {
           appElement.appendChild(veinsOverlay);
         }
       } else {
-        // Remove anxiety effect if health is above 50% or effect is disabled
+        // Remove anxiety effect if health is above threshold or effect is disabled
         appElement.classList.remove("anxiety-effect");
         appElement.style.removeProperty("--anxiety-opacity");
         appElement.style.removeProperty("--anxiety-duration");
