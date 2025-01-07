@@ -8,8 +8,18 @@ class AnimatedAnxiety {
 
   static registerSettings() {
     game.settings.register("animatedanxiety", "enabled", {
-      name: "Enable Anxiety Effect",
-      hint: "Toggle the anxiety effect on/off",
+      name: "Turn On/Off Anxiety Effects",
+      hint: "Toggle the anxiety effects on/off",
+      scope: "client",
+      config: true,
+      type: Boolean,
+      default: true,
+      onChange: () => this.updateAnxietyEffect(game.user?.character),
+    });
+
+    game.settings.register("animatedanxiety", "showVeins", {
+      name: "Show Low Health Veins Overlay",
+      hint: "Show the veins overlay effect when health is critical (below 20%)",
       scope: "client",
       config: true,
       type: Boolean,
@@ -19,39 +29,39 @@ class AnimatedAnxiety {
 
     // Add individual status toggles
     const statusEffects = {
-      "anxiety": "Low Health",
-      "unconscious": "Unconscious",
-      "poisoned": "Poisoned",
-      "bleeding": "Bleeding",
-      "blinded": "Blinded",
-      "cursed": "Cursed",
-      "charmed": "Charmed",
-      "concentrating": "Concentrating",
-      "deafened": "Deafened",
-      "diseased": "Diseased",
-      "frightened": "Frightened",
-      "grappled": "Grappled",
-      "hiding": "Hiding",
-      "petrified": "Petrified",
-      "paralyzed": "Paralyzed",
-      "restrained": "Restrained",
-      "incapacitated": "Incapacitated",
-      "dead": "Dead",
-      "burrowing": "Burrowing",
-      "dodging": "Dodging",
-      "ethereal": "Ethereal",
-      "exhausted": "Exhausted",
-      "flying": "Flying",
-      "hovering": "Hovering",
-      "invisible": "Invisible",
-      "marked": "Marked",
-      "prone": "Prone",
-      "silenced": "Silenced",
-      "sleeping": "Sleeping",
-      "stable": "Stable",
-      "stunned": "Stunned",
-      "surprised": "Surprised",
-      "transformed": "Transformed"
+      anxiety: "Low Health",
+      unconscious: "Unconscious",
+      poisoned: "Poisoned",
+      bleeding: "Bleeding",
+      blinded: "Blinded",
+      cursed: "Cursed",
+      charmed: "Charmed",
+      concentrating: "Concentrating",
+      deafened: "Deafened",
+      diseased: "Diseased",
+      frightened: "Frightened",
+      grappled: "Grappled",
+      hiding: "Hiding",
+      petrified: "Petrified",
+      paralyzed: "Paralyzed",
+      restrained: "Restrained",
+      incapacitated: "Incapacitated",
+      dead: "Dead",
+      burrowing: "Burrowing",
+      dodging: "Dodging",
+      ethereal: "Ethereal",
+      exhausted: "Exhausted",
+      flying: "Flying",
+      hovering: "Hovering",
+      invisible: "Invisible",
+      marked: "Marked",
+      prone: "Prone",
+      silenced: "Silenced",
+      sleeping: "Sleeping",
+      stable: "Stable",
+      stunned: "Stunned",
+      surprised: "Surprised",
+      transformed: "Transformed",
     };
 
     // Register a setting for each status effect
@@ -96,6 +106,17 @@ class AnimatedAnxiety {
       default: 200,
       onChange: () => this.updateAnxietyEffect(game.user?.character),
     });
+
+    // Add new setting for veins overlay
+    // game.settings.register("animatedanxiety", "showVeins", {
+    //   name: "Show Veins Overlay",
+    //   hint: "Show the veins overlay effect when health is critical (below 20%)",
+    //   scope: "client",
+    //   config: true,
+    //   type: Boolean,
+    //   default: true,
+    //   onChange: () => this.updateAnxietyEffect(game.user?.character),
+    // });
   }
 
   static setupHooks() {
@@ -259,20 +280,29 @@ class AnimatedAnxiety {
       );
 
       // Handle static effects
-      if (healthPercent < 50 && game.settings.get("animatedanxiety", "enable_anxiety")) {
+      if (
+        healthPercent < 50 &&
+        game.settings.get("animatedanxiety", "enable_anxiety")
+      ) {
         appElement.classList.add("anxiety-effect");
       }
       if (isBlinded && game.settings.get("animatedanxiety", "enable_blinded")) {
         appElement.classList.add("blinded-effect");
         this.createBlindedEffect(); // Add this line
       }
-      if (isDeafened && game.settings.get("animatedanxiety", "enable_deafened")) {
+      if (
+        isDeafened &&
+        game.settings.get("animatedanxiety", "enable_deafened")
+      ) {
         // Add this block
         appElement.classList.add("deafened-effect");
         this.createDeafenedRipples();
       }
       // Add unconscious handler here as a static effect
-      if (isUnconscious && game.settings.get("animatedanxiety", "enable_unconscious")) {
+      if (
+        isUnconscious &&
+        game.settings.get("animatedanxiety", "enable_unconscious")
+      ) {
         appElement.classList.add("unconscious-effect");
         this.createBubbles("black-inward");
       }
@@ -281,149 +311,283 @@ class AnimatedAnxiety {
       if (isDead && game.settings.get("animatedanxiety", "enable_dead")) {
         appElement.classList.add("dead-effect");
         this.createDeadEffect();
-      } else if (isGrappled && game.settings.get("animatedanxiety", "enable_grappled")) {
+      } else if (
+        isGrappled &&
+        game.settings.get("animatedanxiety", "enable_grappled")
+      ) {
         appElement.classList.add("grappled-effect");
         this.createGrappledEffect();
-      } else if (isRestrained && game.settings.get("animatedanxiety", "enable_restrained")) {
+      } else if (
+        isRestrained &&
+        game.settings.get("animatedanxiety", "enable_restrained")
+      ) {
         appElement.classList.add("restrained-effect");
         this.createRestrainedEffect();
-      } else if (isPetrified && game.settings.get("animatedanxiety", "enable_petrified")) {
+      } else if (
+        isPetrified &&
+        game.settings.get("animatedanxiety", "enable_petrified")
+      ) {
         appElement.classList.add("petrified-effect");
         this.createPetrifiedEffect();
-      } else if (isParalyzed && game.settings.get("animatedanxiety", "enable_paralyzed")) {
+      } else if (
+        isParalyzed &&
+        game.settings.get("animatedanxiety", "enable_paralyzed")
+      ) {
         appElement.classList.add("paralyzed-effect");
         this.createParalyzedEffect();
-      } else if (isStunned && game.settings.get("animatedanxiety", "enable_stunned")) {
+      } else if (
+        isStunned &&
+        game.settings.get("animatedanxiety", "enable_stunned")
+      ) {
         appElement.classList.add("stunned-effect");
         this.createStunnedEffect();
-      } else if (isHiding && game.settings.get("animatedanxiety", "enable_hiding")) {
+      } else if (
+        isHiding &&
+        game.settings.get("animatedanxiety", "enable_hiding")
+      ) {
         appElement.classList.add("hiding-effect");
         this.createHidingEffect();
-      } else if (isPoisoned && game.settings.get("animatedanxiety", "enable_poisoned")) {
+      } else if (
+        isPoisoned &&
+        game.settings.get("animatedanxiety", "enable_poisoned")
+      ) {
         appElement.classList.add("poison-effect");
         this.createBubbles("sway");
-      } else if (isDiseased && game.settings.get("animatedanxiety", "enable_diseased")) {
+      } else if (
+        isDiseased &&
+        game.settings.get("animatedanxiety", "enable_diseased")
+      ) {
         appElement.classList.add("diseased-effect");
         this.createDiseaseParticles();
-      } else if (isFrightened && game.settings.get("animatedanxiety", "enable_frightened")) {
+      } else if (
+        isFrightened &&
+        game.settings.get("animatedanxiety", "enable_frightened")
+      ) {
         appElement.classList.add("frightened-effect");
         this.createFrightenedMarks();
-      } else if (isCursed && game.settings.get("animatedanxiety", "enable_cursed")) {
+      } else if (
+        isCursed &&
+        game.settings.get("animatedanxiety", "enable_cursed")
+      ) {
         this.createCurseSymbols();
-      } else if (isCharmed && game.settings.get("animatedanxiety", "enable_charmed")) {
+      } else if (
+        isCharmed &&
+        game.settings.get("animatedanxiety", "enable_charmed")
+      ) {
         this.createHearts();
-      } else if (isBleeding && game.settings.get("animatedanxiety", "enable_bleeding")) {
+      } else if (
+        isBleeding &&
+        game.settings.get("animatedanxiety", "enable_bleeding")
+      ) {
         this.createBloodStreaks();
-      } else if (isConcentrating && game.settings.get("animatedanxiety", "enable_concentrating")) {
+      } else if (
+        isConcentrating &&
+        game.settings.get("animatedanxiety", "enable_concentrating")
+      ) {
         appElement.classList.add("concentration-effect");
         this.createConcentrationParticles();
-      } else if (isDodging && game.settings.get("animatedanxiety", "enable_dodging")) {
+      } else if (
+        isDodging &&
+        game.settings.get("animatedanxiety", "enable_dodging")
+      ) {
         appElement.classList.add("dodge-effect");
         this.createDodgeEffect();
-      } else if (isIncapacitated && game.settings.get("animatedanxiety", "enable_incapacitated")) {
+      } else if (
+        isIncapacitated &&
+        game.settings.get("animatedanxiety", "enable_incapacitated")
+      ) {
         appElement.classList.add("incapacitated-effect");
         this.createIncapacitatedEffect();
-      } else if (isBurrowing && game.settings.get("animatedanxiety", "enable_burrowing")) {
+      } else if (
+        isBurrowing &&
+        game.settings.get("animatedanxiety", "enable_burrowing")
+      ) {
         appElement.classList.add("burrowing-effect");
         this.createBurrowingEffect();
-      } else if (isEthereal && game.settings.get("animatedanxiety", "enable_ethereal")) {
+      } else if (
+        isEthereal &&
+        game.settings.get("animatedanxiety", "enable_ethereal")
+      ) {
         appElement.classList.add("ethereal-effect");
         this.createEtherealEffect();
-      } else if (isExhausted && game.settings.get("animatedanxiety", "enable_exhausted")) {
+      } else if (
+        isExhausted &&
+        game.settings.get("animatedanxiety", "enable_exhausted")
+      ) {
         appElement.classList.add("exhaustion-effect");
         this.createExhaustionEffect();
-      } else if (isMarked && game.settings.get("animatedanxiety", "enable_marked")) {
+      } else if (
+        isMarked &&
+        game.settings.get("animatedanxiety", "enable_marked")
+      ) {
         appElement.classList.add("marked-effect");
         this.createMarkedEffect();
-      } else if (isInvisible && game.settings.get("animatedanxiety", "enable_invisible")) {
+      } else if (
+        isInvisible &&
+        game.settings.get("animatedanxiety", "enable_invisible")
+      ) {
         appElement.classList.add("invisible-effect");
         this.createInvisibleEffect();
-      } else if (isHovering && game.settings.get("animatedanxiety", "enable_hovering")) {
+      } else if (
+        isHovering &&
+        game.settings.get("animatedanxiety", "enable_hovering")
+      ) {
         appElement.classList.add("hovering-effect");
         this.createHoveringEffect();
-      } else if (isFlying && game.settings.get("animatedanxiety", "enable_flying")) {
+      } else if (
+        isFlying &&
+        game.settings.get("animatedanxiety", "enable_flying")
+      ) {
         appElement.classList.add("flying-effect");
         this.createFlyingEffect();
-      } else if (isSilenced && game.settings.get("animatedanxiety", "enable_silenced")) {
+      } else if (
+        isSilenced &&
+        game.settings.get("animatedanxiety", "enable_silenced")
+      ) {
         appElement.classList.add("silenced-effect");
         this.createSilencedEffect();
-      } else if (isSleeping && game.settings.get("animatedanxiety", "enable_sleeping")) {
+      } else if (
+        isSleeping &&
+        game.settings.get("animatedanxiety", "enable_sleeping")
+      ) {
         appElement.classList.add("sleeping-effect");
         this.createSleepingEffect();
-      } else if (isStable && game.settings.get("animatedanxiety", "enable_stable")) {
+      } else if (
+        isStable &&
+        game.settings.get("animatedanxiety", "enable_stable")
+      ) {
         appElement.classList.add("stable-effect");
         this.createStableEffect();
-      } else if (isSurprised && game.settings.get("animatedanxiety", "enable_surprised")) {
+      } else if (
+        isSurprised &&
+        game.settings.get("animatedanxiety", "enable_surprised")
+      ) {
         appElement.classList.add("surprised-effect");
         this.createSurprisedEffect();
-      } else if (isTransformed && game.settings.get("animatedanxiety", "enable_transformed")) {
+      } else if (
+        isTransformed &&
+        game.settings.get("animatedanxiety", "enable_transformed")
+      ) {
         appElement.classList.add("transformed-effect");
         this.createTransformedEffect();
-      } else if (isProne && !isUnconscious && game.settings.get("animatedanxiety", "enable_prone")) {
+      } else if (
+        isProne &&
+        !isUnconscious &&
+        game.settings.get("animatedanxiety", "enable_prone")
+      ) {
         // Moved to the end of the chain
         appElement.classList.add("prone-effect");
         this.createProneEffect();
       }
 
       // Add color fade for statuses without one
-      if (isDeafened && game.settings.get("animatedanxiety", "enable_deafened")) {
+      if (
+        isDeafened &&
+        game.settings.get("animatedanxiety", "enable_deafened")
+      ) {
         appElement.classList.add("deafened-fade");
       }
-      if (isDiseased && game.settings.get("animatedanxiety", "enable_diseased")) {
+      if (
+        isDiseased &&
+        game.settings.get("animatedanxiety", "enable_diseased")
+      ) {
         appElement.classList.add("diseased-fade");
       }
-      if (isFrightened && game.settings.get("animatedanxiety", "enable_frightened")) {
+      if (
+        isFrightened &&
+        game.settings.get("animatedanxiety", "enable_frightened")
+      ) {
         appElement.classList.add("frightened-fade");
       }
-      if (isGrappled && game.settings.get("animatedanxiety", "enable_grappled")) {
+      if (
+        isGrappled &&
+        game.settings.get("animatedanxiety", "enable_grappled")
+      ) {
         appElement.classList.add("grappled-fade");
       }
       if (isHiding && game.settings.get("animatedanxiety", "enable_hiding")) {
         appElement.classList.add("hiding-fade");
       }
-      if (isPetrified && game.settings.get("animatedanxiety", "enable_petrified")) {
+      if (
+        isPetrified &&
+        game.settings.get("animatedanxiety", "enable_petrified")
+      ) {
         appElement.classList.add("petrified-fade");
       }
-      if (isParalyzed && game.settings.get("animatedanxiety", "enable_paralyzed")) {
+      if (
+        isParalyzed &&
+        game.settings.get("animatedanxiety", "enable_paralyzed")
+      ) {
         appElement.classList.add("paralyzed-fade");
       }
-      if (isRestrained && game.settings.get("animatedanxiety", "enable_restrained")) {
+      if (
+        isRestrained &&
+        game.settings.get("animatedanxiety", "enable_restrained")
+      ) {
         appElement.classList.add("restrained-fade");
       }
-      if (isIncapacitated && game.settings.get("animatedanxiety", "enable_incapacitated")) {
+      if (
+        isIncapacitated &&
+        game.settings.get("animatedanxiety", "enable_incapacitated")
+      ) {
         appElement.classList.add("incapacitated-fade");
       }
-      if (isBurrowing && game.settings.get("animatedanxiety", "enable_burrowing")) {
+      if (
+        isBurrowing &&
+        game.settings.get("animatedanxiety", "enable_burrowing")
+      ) {
         appElement.classList.add("burrowing-fade");
       }
       if (isDodging && game.settings.get("animatedanxiety", "enable_dodging")) {
         appElement.classList.add("dodge-fade");
       }
-      if (isEthereal && game.settings.get("animatedanxiety", "enable_ethereal")) {
+      if (
+        isEthereal &&
+        game.settings.get("animatedanxiety", "enable_ethereal")
+      ) {
         appElement.classList.add("ethereal-fade");
       }
-      if (isExhausted && game.settings.get("animatedanxiety", "enable_exhausted")) {
+      if (
+        isExhausted &&
+        game.settings.get("animatedanxiety", "enable_exhausted")
+      ) {
         appElement.classList.add("exhaustion-fade");
       }
-      if (isProne && !isUnconscious && game.settings.get("animatedanxiety", "enable_prone")) {
+      if (
+        isProne &&
+        !isUnconscious &&
+        game.settings.get("animatedanxiety", "enable_prone")
+      ) {
         appElement.classList.add("prone-fade");
       }
       if (isMarked && game.settings.get("animatedanxiety", "enable_marked")) {
         appElement.classList.add("marked-fade");
       }
-      if (isInvisible && game.settings.get("animatedanxiety", "enable_invisible")) {
+      if (
+        isInvisible &&
+        game.settings.get("animatedanxiety", "enable_invisible")
+      ) {
         appElement.classList.add("invisible-fade");
       }
-      if (isHovering && game.settings.get("animatedanxiety", "enable_hovering")) {
+      if (
+        isHovering &&
+        game.settings.get("animatedanxiety", "enable_hovering")
+      ) {
         appElement.classList.add("hovering-fade");
       }
       if (isFlying && game.settings.get("animatedanxiety", "enable_flying")) {
         appElement.classList.add("flying-fade");
       }
-      if (isSilenced && game.settings.get("animatedanxiety", "enable_silenced")) {
+      if (
+        isSilenced &&
+        game.settings.get("animatedanxiety", "enable_silenced")
+      ) {
         appElement.classList.add("silenced-fade");
       }
-      if (isSleeping && game.settings.get("animatedanxiety", "enable_sleeping")) {
+      if (
+        isSleeping &&
+        game.settings.get("animatedanxiety", "enable_sleeping")
+      ) {
         appElement.classList.add("sleeping-fade");
       }
       if (isStable && game.settings.get("animatedanxiety", "enable_stable")) {
@@ -432,16 +596,25 @@ class AnimatedAnxiety {
       if (isStunned && game.settings.get("animatedanxiety", "enable_stunned")) {
         appElement.classList.add("stunned-fade");
       }
-      if (isSurprised && game.settings.get("animatedanxiety", "enable_surprised")) {
+      if (
+        isSurprised &&
+        game.settings.get("animatedanxiety", "enable_surprised")
+      ) {
         appElement.classList.add("surprised-fade");
       }
-      if (isTransformed && game.settings.get("animatedanxiety", "enable_transformed")) {
+      if (
+        isTransformed &&
+        game.settings.get("animatedanxiety", "enable_transformed")
+      ) {
         appElement.classList.add("transformed-fade");
       }
       if (isCharmed && game.settings.get("animatedanxiety", "enable_charmed")) {
         appElement.classList.add("charmed-fade");
       }
-      if (isBleeding && game.settings.get("animatedanxiety", "enable_bleeding")) {
+      if (
+        isBleeding &&
+        game.settings.get("animatedanxiety", "enable_bleeding")
+      ) {
         appElement.classList.add("bleeding-fade");
       }
       if (isDead && game.settings.get("animatedanxiety", "enable_dead")) {
@@ -452,26 +625,38 @@ class AnimatedAnxiety {
       }
 
       // Remove existing health effects
-      document.querySelectorAll(".veins-overlay").forEach(el => el.remove());
-      
+      document.querySelectorAll(".veins-overlay").forEach((el) => el.remove());
+
       // Set anxiety effect intensity based on health
-      if (healthPercent < 50) {
-        const opacity = (50 - healthPercent) / 100; // 0 at 50%, 0.3 at 20%, 0.5 at 0%
-        const duration = Math.max(5 - ((50 - healthPercent) / 50 * 2), 0.8); // 3s at 50%, 1s at 0%
-        const blur = Math.min(400, (50 - healthPercent) * 8); // Increases blur as health drops
-        
+      if (
+        healthPercent < 50 &&
+        game.settings.get("animatedanxiety", "enable_anxiety")
+      ) {
+        const opacity = (50 - healthPercent) / 100;
+        const duration = Math.max(5 - ((50 - healthPercent) / 50) * 2, 0.8);
+        const blur = Math.min(400, (50 - healthPercent) * 8);
+
+        appElement.classList.add("anxiety-effect");
         appElement.style.setProperty("--anxiety-opacity", opacity);
         appElement.style.setProperty("--anxiety-duration", `${duration}s`);
         appElement.style.setProperty("--anxiety-blur", `${blur}px`);
-        
-        // Add veins overlay at critical health
-        if (healthPercent < 20) {
+
+        // Only show veins if the setting is enabled
+        if (
+          healthPercent < 20 &&
+          game.settings.get("animatedanxiety", "showVeins")
+        ) {
           const veinsOverlay = document.createElement("div");
           veinsOverlay.className = "veins-overlay";
           appElement.appendChild(veinsOverlay);
         }
+      } else {
+        // Remove anxiety effect if health is above 50% or effect is disabled
+        appElement.classList.remove("anxiety-effect");
+        appElement.style.removeProperty("--anxiety-opacity");
+        appElement.style.removeProperty("--anxiety-duration");
+        appElement.style.removeProperty("--anxiety-blur");
       }
-
     } catch (error) {
       console.error("AnimatedAnxiety | Error:", error);
     }
