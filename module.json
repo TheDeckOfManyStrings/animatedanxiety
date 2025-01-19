@@ -15,6 +15,17 @@
       "flags": {}
     }
   ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "4.1.0"
+        }
+      }
+    ]
+  },
   "scripts": ["scripts/animatedAnxiety.js"],
   "styles": ["styles/animatedanxiety.css"],
   "url": "https://github.com/TheDeckOfManyStrings/animatedanxiety",
