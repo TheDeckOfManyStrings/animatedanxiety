@@ -1121,21 +1121,20 @@
 
 .poison-aura {
   position: fixed;
-  bottom: 0;
+  top: 0;
   left: 0;
   right: 0;
-  height: 120px;
-  background: radial-gradient(
-    ellipse at bottom,
-    rgba(0, 255, 0, 0.3) 0%,
-    rgba(0, 255, 0, 0.1) 50%,
-    transparent 100%
-  );
+  bottom: 0;
   pointer-events: none;
   z-index: 10;
   opacity: 0;
   animation: poison-glow 3s ease-in-out infinite;
   filter: blur(8px); /* Added blur for softer effect */
+  background: radial-gradient(
+    ellipse at center 50% 70%,
+    /* Adjusted center point */ rgba(0, 255, 0, 0.4) 0%,
+    transparent 100%
+  );
 }
 
 @keyframes poison-bubble-rise {
@@ -2764,11 +2763,12 @@
   pointer-events: none;
   z-index: 10;
   background: radial-gradient(
-    circle,
+    ellipse closest-side,
     transparent 0%,
-    transparent 50%,
+    transparent 70%,
     rgba(255, 80, 0, 0.3) 100%
   );
+  transform: translate(-50%, -50%);
   animation: burning-glow 3s ease-in-out infinite;
 }
 
