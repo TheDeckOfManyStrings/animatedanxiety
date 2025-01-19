@@ -2786,3 +2786,193 @@
     transform: scale(1);
   }
 }
+
+/* Add dehydration overlay */
+.dehydration-overlay {
+  position: fixed;
+  bottom: 0;
+  left: -5vw;
+  width: 110vw;
+  height: 120px;
+  background-image: url("../assets/dehydrated.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+  animation: dehydration-rise 0.8s ease-out forwards;
+}
+
+@keyframes dehydration-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+#interface.dehydration-fade::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(139, 69, 19, 0.3) 100%
+  );
+  animation: general-glow 5s ease-in-out infinite;
+}
+
+/* Add falling overlay and effects */
+.falling-overlay {
+  position: fixed;
+  bottom: 0;
+  left: -5vw;
+  width: 110vw;
+  height: 120px;
+  background-image: url("../assets/falling.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+@keyframes falling-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+#interface.falling-fade::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: linear-gradient(
+    to bottom,
+    rgba(128, 128, 128, 0.3) 0%,
+    transparent 25%,
+    transparent 75%,
+    rgba(128, 128, 128, 0.3) 100%
+  );
+  animation: general-glow 5s ease-in-out infinite;
+}
+
+.falling-lines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 20px,
+    rgba(255, 255, 255, 0.1) 20px,
+    rgba(255, 255, 255, 0.1) 40px
+  );
+  background-size: 100% 40px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.5;
+  animation: falling-lines 0.5s linear infinite;
+}
+
+@keyframes falling-lines {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 40px;
+  }
+}
+
+#interface.falling-fade::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 30%,
+    transparent 70%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  animation: falling-glow 3s ease-in-out infinite;
+}
+
+@keyframes falling-glow {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+}
+
+/* Update falling effects styling */
+.falling-line {
+  position: fixed;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.6),
+    rgba(200, 200, 200, 0.3)
+  );
+  pointer-events: none;
+  z-index: 9; /* Behind the overlay */
+  transform-origin: bottom;
+}
+
+@keyframes falling-line-rise {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: inherit;
+  }
+  100% {
+    transform: translateY(-120vh) translateX(var(--drift, 0));
+    opacity: 0;
+  }
+}
+
+/* Update falling overlay to be above lines */
+.falling-overlay {
+  z-index: 11;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}

@@ -159,6 +159,8 @@ class AnimatedAnxiety {
       threeQuartersCover: "Three-Quarters Cover",
       totalCover: "Total Cover",
       burning: "Burning",
+      dehydration: "Dehydration",
+      falling: "Falling",
     };
 
     // Register a setting for each status effect
@@ -306,6 +308,8 @@ class AnimatedAnxiety {
       const isThreeQuartersCover = this.checkThreeQuartersCoverStatus(actor);
       const isTotalCover = this.checkTotalCoverStatus(actor);
       const isBurning = this.checkBurningStatus(actor);
+      const isDehydration = this.checkDehydrationStatus(actor);
+      const isFalling = this.checkFallingStatus(actor);
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -342,7 +346,7 @@ class AnimatedAnxiety {
         "prone-effect", // Add this line
         "silenced-effect",
         "sleeping-effect", // Add this line
-        "stable-effect", // Add this line
+        "stable-effect",
         "stunned-effect", // Add this line
         "surprised-effect", // Add this line
         "transformed-effect", // Add this line
@@ -381,7 +385,11 @@ class AnimatedAnxiety {
         "three-quarters-cover-fade",
         "total-cover-fade",
         "burning-effect",
-        "burning-fade"
+        "burning-fade",
+        "dehydration-effect",
+        "dehydration-fade",
+        "falling-effect",
+        "falling-fade"
       );
 
       // Handle static effects
@@ -576,14 +584,6 @@ class AnimatedAnxiety {
         appElement.classList.add("transformed-effect");
         this.createTransformedEffect();
       } else if (
-        isProne &&
-        !isUnconscious &&
-        game.settings.get("animatedanxiety", "enable_prone")
-      ) {
-        // Moved to the end of the chain
-        appElement.classList.add("prone-effect");
-        this.createProneEffect();
-      } else if (
         isHalfCover &&
         game.settings.get("animatedanxiety", "enable_halfCover")
       ) {
@@ -607,6 +607,26 @@ class AnimatedAnxiety {
       ) {
         appElement.classList.add("burning-effect");
         this.createBurningEffect();
+      } else if (
+        isDehydration &&
+        game.settings.get("animatedanxiety", "enable_dehydration")
+      ) {
+        appElement.classList.add("dehydration-effect");
+        this.createDehydrationEffect();
+      } else if (
+        isFalling &&
+        game.settings.get("animatedanxiety", "enable_falling")
+      ) {
+        appElement.classList.add("falling-effect");
+        this.createFallingEffect();
+      } else if (
+        isProne &&
+        !isUnconscious &&
+        game.settings.get("animatedanxiety", "enable_prone")
+      ) {
+        // Moved to the end of the chain
+        appElement.classList.add("prone-effect");
+        this.createProneEffect();
       }
 
       // Add color fade for statuses without one
@@ -773,6 +793,15 @@ class AnimatedAnxiety {
       if (isBurning && game.settings.get("animatedanxiety", "enable_burning")) {
         appElement.classList.add("burning-fade");
       }
+      if (
+        isDehydration &&
+        game.settings.get("animatedanxiety", "enable_dehydration")
+      ) {
+        appElement.classList.add("dehydration-fade");
+      }
+      if (isFalling && game.settings.get("animatedanxiety", "enable_falling")) {
+        appElement.classList.add("falling-fade");
+      }
 
       // Remove existing health effects
       document.querySelectorAll(".veins-overlay").forEach((el) => el.remove());
@@ -840,6 +869,7 @@ class AnimatedAnxiety {
       "petrifiedInterval",
       "paralyzedInterval",
       "restrainedInterval",
+      "incapacitatedInterval",
       "deadInterval",
       "burrowingInterval",
       "dodgeInterval",
@@ -861,7 +891,9 @@ class AnimatedAnxiety {
       "threeQuartersCoverInterval",
       "totalCoverInterval",
       "burningInterval",
+      "dehydrationInterval",
       "cleanupInterval",
+      "fallingInterval",
     ];
 
     // Clear all intervals
@@ -932,6 +964,8 @@ class AnimatedAnxiety {
       ".cover-overlay",
       ".burning-overlay",
       ".flame-particle",
+      ".dehydration-overlay",
+      ".falling-overlay",
     ].join(",");
 
     document.querySelectorAll(effectClasses).forEach((el) => el.remove());
@@ -1791,6 +1825,128 @@ class AnimatedAnxiety {
     });
   }
 
+  static checkDehydrationStatus(actor) {
+    if (!actor?.effects) {
+      console.log("AnimatedAnxiety | No effects found for dehydration check");
+      return false;
+    }
+
+    // Log all effects for debugging using new field names
+    console.log(
+      "AnimatedAnxiety | All effects:",
+      actor.effects.map((e) => ({
+        name: e.name,
+        id: e.id,
+        img: e.img, // Changed from icon
+        statusId: e.flags?.core?.statusId,
+        disabled: e.disabled,
+      }))
+    );
+
+    const isDehydration = actor.effects.some((e) => {
+      const effectName = String(e.name || "").toLowerCase(); // Changed from e.label
+      const statusId = String(e.flags?.core?.statusId || "");
+      const isActive = !e.disabled;
+
+      console.log("AnimatedAnxiety | Checking dehydration status for effect:", {
+        name: effectName,
+        statusId,
+        isActive,
+        matches: {
+          name: effectName === "dehydration",
+          nameIncludes: effectName.includes("dehydration"),
+          statusId: statusId === "dehydration",
+        },
+      });
+
+      return (
+        isActive &&
+        (effectName === "dehydration" ||
+          effectName.includes("dehydration") ||
+          statusId === "dehydration")
+      );
+    });
+
+    console.log("AnimatedAnxiety | Dehydration status:", isDehydration);
+    return isDehydration;
+  }
+
+  static checkFallingStatus(actor) {
+    if (!actor?.effects) {
+      console.log("AnimatedAnxiety | No effects found for falling check");
+      return false;
+    }
+
+    const isFalling = actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      const isActive = !e.disabled;
+
+      console.log("AnimatedAnxiety | Checking falling effect:", {
+        name,
+        statusId,
+        isActive,
+      });
+
+      return isActive && (name.includes("falling") || statusId === "falling");
+    });
+
+    console.log("AnimatedAnxiety | Falling status:", isFalling);
+    return isFalling;
+  }
+
+  static createFallingEffect() {
+    if (!this.fallingInterval) {
+      this.clearEffects();
+
+      // Create falling overlay
+      const overlay = document.createElement("div");
+      overlay.className = "falling-overlay";
+      overlay.style.animation = "falling-rise 0.8s ease-out forwards";
+      document.getElementById("interface").appendChild(overlay);
+
+      // Create vertical lines that rise
+      const createLine = () => {
+        const line = document.createElement("div");
+        line.className = "falling-line";
+
+        // Random properties
+        const height = Math.random() * 100 + 50; // 50-150px height
+        const position = Math.random() * 100; // Random horizontal position
+        const duration = Math.random() * 1.5 + 1; // 1-2.5s duration
+        const width = Math.random() * 2 + 1; // 1-3px width
+        const opacity = Math.random() * 0.4 + 0.2; // 0.2-0.6 opacity
+
+        line.style.height = `${height}px`;
+        line.style.left = `${position}%`;
+        line.style.width = `${width}px`;
+        line.style.opacity = opacity;
+        line.style.animation = `falling-line-rise ${duration}s linear`;
+
+        document.getElementById("interface").appendChild(line);
+
+        // Remove line after animation
+        setTimeout(() => line.remove(), duration * 1000);
+      };
+
+      // Create initial batch of lines
+      for (let i = 0; i < 20; i++) {
+        setTimeout(() => createLine(), i * 50);
+      }
+
+      // Continue creating lines
+      this.fallingInterval = setInterval(() => {
+        if (!document.querySelector(".falling-effect")) {
+          this.clearEffects();
+          clearInterval(this.fallingInterval);
+          this.fallingInterval = null;
+        } else {
+          createLine();
+        }
+      }, 100); // Create new line every 100ms
+    }
+  }
+
   static createCurseSymbols() {
     if (!this.curseInterval) {
       this.clearEffects();
@@ -1909,8 +2065,28 @@ class AnimatedAnxiety {
         const duration = Math.random() * 1.5 + 1.5;
         streak.style.animation = `blood-drip ${duration}s linear forwards`;
         document.getElementById("interface").appendChild(streak);
-        setTimeout(() => streak.remove(), duration * 1000);
-      }, 200);
+        if (!this.bloodInterval) {
+          this.clearEffects();
+
+          // Create bleeding overlay
+          const overlay = document.createElement("div");
+          overlay.className = "bleeding-overlay";
+          document.getElementById("interface").appendChild(overlay);
+
+          // Keep the blood streaks effect for additional ambiance
+          this.bloodInterval = setInterval(() => {
+            const streak = document.createElement("div");
+            streak.className = "blood-streak";
+            streak.style.left = `${Math.random() * 100}%`;
+            streak.style.opacity = (Math.random() * 0.4 + 0.4).toString();
+            streak.style.width = `${Math.random() * 3 + 1}px`;
+            const duration = Math.random() * 1.5 + 1.5;
+            streak.style.animation = `blood-drip ${duration}s linear forwards`;
+            document.getElementById("interface").appendChild(streak);
+            setTimeout(() => streak.remove(), duration * 1000);
+          }, 200);
+        }
+      });
     }
   }
 
@@ -2812,6 +2988,54 @@ class AnimatedAnxiety {
           this.cleanupInterval = null;
         }
       }, 1000);
+    }
+  }
+
+  static createDehydratedEffect() {
+    if (!this.dehydratedInterval) {
+      this.clearEffects();
+
+      const overlay = document.createElement("div");
+      overlay.className = "dehydrated-overlay";
+      overlay.style.animation = "dehydrated-rise 0.8s ease-out forwards";
+      document.getElementById("interface").appendChild(overlay);
+
+      this.dehydratedInterval = setInterval(() => {
+        const hasEffect = document.querySelector(".dehydrated-effect");
+        const hasOverlay = document.querySelector(".dehydrated-overlay");
+
+        if (!hasEffect || !hasOverlay) {
+          this.clearEffects();
+          clearInterval(this.dehydratedInterval);
+          this.dehydratedInterval = null;
+        }
+      }, 1000);
+    }
+  }
+
+  static createDehydrationEffect() {
+    if (!this.dehydrationInterval) {
+      console.log("AnimatedAnxiety | Creating dehydration effect");
+      this.clearEffects();
+
+      const overlay = document.createElement("div");
+      overlay.className = "dehydration-overlay";
+
+      // Add explicit path and logging
+      const imagePath = "modules/animatedanxiety/assets/dehydrated.png";
+      overlay.style.backgroundImage = `url('${imagePath}')`;
+      console.log(
+        "AnimatedAnxiety | Setting dehydration background image:",
+        imagePath
+      );
+
+      overlay.style.animation = "dehydration-rise 0.8s ease-out forwards";
+
+      console.log("AnimatedAnxiety | Adding dehydration overlay to interface");
+      document.getElementById("interface")?.appendChild(overlay);
+
+      console.log("AnimatedAnxiety | Dehydration overlay created:", overlay);
+      console.log("AnimatedAnxiety | Overlay style:", overlay.style);
     }
   }
 }
