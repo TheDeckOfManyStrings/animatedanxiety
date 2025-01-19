@@ -47,12 +47,12 @@ class AnimatedAnxiety {
       "modules/animatedanxiety/assets/transformed.png",
       "modules/animatedanxiety/assets/trapeze.png",
       "modules/animatedanxiety/assets/unconscious.png",
-      "modules/animatedanxiety/assets/veins.png"
+      "modules/animatedanxiety/assets/veins.png",
     ];
 
     this.preloadedImages = new Map();
 
-    imagePaths.forEach(path => {
+    imagePaths.forEach((path) => {
       const img = new Image();
       img.src = path;
       this.preloadedImages.set(path, img);
@@ -157,7 +157,8 @@ class AnimatedAnxiety {
       transformed: "Transformed",
       halfCover: "Half Cover",
       threeQuartersCover: "Three-Quarters Cover",
-      totalCover: "Total Cover"
+      totalCover: "Total Cover",
+      burning: "Burning",
     };
 
     // Register a setting for each status effect
@@ -304,6 +305,7 @@ class AnimatedAnxiety {
       const isHalfCover = this.checkHalfCoverStatus(actor);
       const isThreeQuartersCover = this.checkThreeQuartersCoverStatus(actor);
       const isTotalCover = this.checkTotalCoverStatus(actor);
+      const isBurning = this.checkBurningStatus(actor);
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -371,17 +373,15 @@ class AnimatedAnxiety {
         "charmed-fade", // Add this line
         "bleeding-fade", // Add this line
         "dead-fade", // Add this line
-        "charmed-effect",
-        "bleeding-effect",
-        "dead-effect",
-        "cursed-effect",
         "cursed-fade", // Add this line
         "half-cover-effect",
         "three-quarters-cover-effect",
         "total-cover-effect",
         "half-cover-fade",
         "three-quarters-cover-fade",
-        "total-cover-fade"
+        "total-cover-fade",
+        "burning-effect",
+        "burning-fade"
       );
 
       // Handle static effects
@@ -583,15 +583,30 @@ class AnimatedAnxiety {
         // Moved to the end of the chain
         appElement.classList.add("prone-effect");
         this.createProneEffect();
-      } else if (isHalfCover && game.settings.get("animatedanxiety", "enable_halfCover")) {
+      } else if (
+        isHalfCover &&
+        game.settings.get("animatedanxiety", "enable_halfCover")
+      ) {
         appElement.classList.add("half-cover-effect");
         this.createCoverEffect("half");
-      } else if (isThreeQuartersCover && game.settings.get("animatedanxiety", "enable_threeQuartersCover")) {
+      } else if (
+        isThreeQuartersCover &&
+        game.settings.get("animatedanxiety", "enable_threeQuartersCover")
+      ) {
         appElement.classList.add("three-quarters-cover-effect");
         this.createCoverEffect("three-quarters");
-      } else if (isTotalCover && game.settings.get("animatedanxiety", "enable_totalCover")) {
+      } else if (
+        isTotalCover &&
+        game.settings.get("animatedanxiety", "enable_totalCover")
+      ) {
         appElement.classList.add("total-cover-effect");
         this.createCoverEffect("total");
+      } else if (
+        isBurning &&
+        game.settings.get("animatedanxiety", "enable_burning")
+      ) {
+        appElement.classList.add("burning-effect");
+        this.createBurningEffect();
       }
 
       // Add color fade for statuses without one
@@ -737,14 +752,26 @@ class AnimatedAnxiety {
       if (isCursed && game.settings.get("animatedanxiety", "enable_cursed")) {
         appElement.classList.add("cursed-fade");
       }
-      if (isHalfCover && game.settings.get("animatedanxiety", "enable_halfCover")) {
+      if (
+        isHalfCover &&
+        game.settings.get("animatedanxiety", "enable_halfCover")
+      ) {
         appElement.classList.add("half-cover-fade");
       }
-      if (isThreeQuartersCover && game.settings.get("animatedanxiety", "enable_threeQuartersCover")) {
+      if (
+        isThreeQuartersCover &&
+        game.settings.get("animatedanxiety", "enable_threeQuartersCover")
+      ) {
         appElement.classList.add("three-quarters-cover-fade");
       }
-      if (isTotalCover && game.settings.get("animatedanxiety", "enable_totalCover")) {
+      if (
+        isTotalCover &&
+        game.settings.get("animatedanxiety", "enable_totalCover")
+      ) {
         appElement.classList.add("total-cover-fade");
+      }
+      if (isBurning && game.settings.get("animatedanxiety", "enable_burning")) {
+        appElement.classList.add("burning-fade");
       }
 
       // Remove existing health effects
@@ -800,19 +827,45 @@ class AnimatedAnxiety {
 
   static clearEffects() {
     const allIntervals = [
-      'bubbleInterval', 'bloodInterval', 'curseInterval', 'heartInterval',
-      'particleInterval', 'deafenedInterval', 'diseaseInterval', 'frightenedInterval',
-      'grappledInterval', 'hidingInterval', 'petrifiedInterval', 'paralyzedInterval',
-      'restrainedInterval', 'deadInterval', 'burrowingInterval', 'dodgeInterval',
-      'etherealInterval', 'etherealCleanupInterval', 'exhaustionInterval',
-      'flyingInterval', 'hoveringInterval', 'invisibleInterval', 'markedInterval',
-      'proneInterval', 'silencedInterval', 'sleepingInterval', 'stableInterval',
-      'stunnedInterval', 'surprisedInterval', 'transformedInterval',
-      'halfCoverInterval', 'threeQuartersCoverInterval', 'totalCoverInterval'
+      "bubbleInterval",
+      "bloodInterval",
+      "curseInterval",
+      "heartInterval",
+      "particleInterval",
+      "deafenedInterval",
+      "diseaseInterval",
+      "frightenedInterval",
+      "grappledInterval",
+      "hidingInterval",
+      "petrifiedInterval",
+      "paralyzedInterval",
+      "restrainedInterval",
+      "deadInterval",
+      "burrowingInterval",
+      "dodgeInterval",
+      "etherealInterval",
+      "etherealCleanupInterval",
+      "exhaustionInterval",
+      "flyingInterval",
+      "hoveringInterval",
+      "invisibleInterval",
+      "markedInterval",
+      "proneInterval",
+      "silencedInterval",
+      "sleepingInterval",
+      "stableInterval",
+      "stunnedInterval",
+      "surprisedInterval",
+      "transformedInterval",
+      "halfCoverInterval",
+      "threeQuartersCoverInterval",
+      "totalCoverInterval",
+      "burningInterval",
+      "cleanupInterval",
     ];
 
     // Clear all intervals
-    allIntervals.forEach(intervalName => {
+    allIntervals.forEach((intervalName) => {
       if (this[intervalName]) {
         clearInterval(this[intervalName]);
         this[intervalName] = null;
@@ -827,65 +880,103 @@ class AnimatedAnxiety {
 
     // Remove all effect elements with one query
     const effectClasses = [
-      '.bubble', '.blood-streak', '.bleeding-overlay', '.curse-symbol',
-      '.charm-heart', '.concentration-particle', '.concentration-overlay',
-      '.deafened-ripple', '.deafened-overlay', '.disease-particle',
-      '.frightened-mark', '.grappled-hand', '.grappled-vignette',
-      '.grappled-overlay', '.hiding-overlay', '.petrified-overlay',
-      '.paralyzed-overlay', '.restrained-web', '.restrained-overlay',
-      '.rats-overlay', '.poison-bubble', '.poison-overlay', '.poison-aura',
-      '.cupid-overlay', '.frightened-overlay', '.cursed-overlay',
-      '.incapacitated-overlay', '.dead-overlay', '.blinded-overlay',
-      '.burrowing-overlay', '.dodge-overlay', '.trapeze-overlay',
-      '.ethereal-overlay', '.exhaustion-overlay', '.flying-overlay',
-      '.hovering-overlay', '.invisible-overlay', '.marked-overlay',
-      '.prone-overlay', '.silenced-overlay', '.sleeping-overlay',
-      '.stable-overlay', '.stunned-overlay', '.surprised-overlay',
-      '.transformed-overlay', '.unconscious-overlay', '.ethereal-swirl',
-      '.falling-feather', '.veins-overlay', '.cover-overlay'
-    ].join(',');
+      ".bubble",
+      ".blood-streak",
+      ".bleeding-overlay",
+      ".curse-symbol",
+      ".charm-heart",
+      ".concentration-particle",
+      ".concentration-overlay",
+      ".deafened-ripple",
+      ".deafened-overlay",
+      ".disease-particle",
+      ".frightened-mark",
+      ".grappled-hand",
+      ".grappled-vignette",
+      ".grappled-overlay",
+      ".hiding-overlay",
+      ".petrified-overlay",
+      ".paralyzed-overlay",
+      ".restrained-web",
+      ".restrained-overlay",
+      ".rats-overlay",
+      ".poison-bubble",
+      ".poison-overlay",
+      ".poison-aura",
+      ".cupid-overlay",
+      ".frightened-overlay",
+      ".cursed-overlay",
+      ".incapacitated-overlay",
+      ".dead-overlay",
+      ".blinded-overlay",
+      ".burrowing-overlay",
+      ".dodge-overlay",
+      ".trapeze-overlay",
+      ".ethereal-overlay",
+      ".exhaustion-overlay",
+      ".flying-overlay",
+      ".hovering-overlay",
+      ".invisible-overlay",
+      ".marked-overlay",
+      ".prone-overlay",
+      ".silenced-overlay",
+      ".sleeping-overlay",
+      ".stable-overlay",
+      ".stunned-overlay",
+      ".surprised-overlay",
+      ".transformed-overlay",
+      ".unconscious-overlay",
+      ".ethereal-swirl",
+      ".falling-feather",
+      ".veins-overlay",
+      ".cover-overlay",
+      ".burning-overlay",
+      ".flame-particle",
+    ].join(",");
 
-    document.querySelectorAll(effectClasses).forEach(el => el.remove());
+    document.querySelectorAll(effectClasses).forEach((el) => el.remove());
 
     // Reset interface element properties
-    const interfaceEl = document.getElementById('interface');
+    const interfaceEl = document.getElementById("interface");
     if (interfaceEl) {
-      interfaceEl.style.removeProperty('--anxiety-opacity');
-      interfaceEl.style.removeProperty('--anxiety-duration');
-      interfaceEl.style.removeProperty('--anxiety-blur');
-      interfaceEl.style.removeProperty('--exhaustion-blur');
-      interfaceEl.style.removeProperty('--exhaustion-clear');
-      interfaceEl.style.removeProperty('--exhaustion-opacity');
-      interfaceEl.style.removeProperty('--exhaustion-duration');
+      interfaceEl.style.removeProperty("--anxiety-opacity");
+      interfaceEl.style.removeProperty("--anxiety-duration");
+      interfaceEl.style.removeProperty("--anxiety-blur");
+      interfaceEl.style.removeProperty("--exhaustion-blur");
+      interfaceEl.style.removeProperty("--exhaustion-clear");
+      interfaceEl.style.removeProperty("--exhaustion-opacity");
+      interfaceEl.style.removeProperty("--exhaustion-duration");
     }
   }
 
   static createOverlay(className, imageName) {
-    const overlay = document.createElement('div');
+    const overlay = document.createElement("div");
     overlay.className = className;
-    
+
     const imagePath = `modules/animatedanxiety/assets/${imageName}`;
     if (this.preloadedImages.has(imagePath)) {
-      overlay.style.backgroundImage = `url('${this.preloadedImages.get(imagePath).src}')`;
+      overlay.style.backgroundImage = `url('${
+        this.preloadedImages.get(imagePath).src
+      }')`;
     }
-    
+
     return overlay;
   }
 
   static createHoveringEffect() {
     if (!this.hoveringInterval) {
       this.clearEffects();
-      
-      const overlay = this.createOverlay('hovering-overlay', 'hovering.png');
+
+      const overlay = this.createOverlay("hovering-overlay", "hovering.png");
       overlay.style.animation = `
         hovering-rise 0.8s ease-out forwards,
         hovering-float 4s ease-in-out infinite 0.8s
       `;
-      
-      document.getElementById('interface')?.appendChild(overlay);
+
+      document.getElementById("interface")?.appendChild(overlay);
 
       this.hoveringInterval = setInterval(() => {
-        if (!document.querySelector('.hovering-effect')) {
+        if (!document.querySelector(".hovering-effect")) {
           this.clearEffects();
           clearInterval(this.hoveringInterval);
           this.hoveringInterval = null;
@@ -1651,28 +1742,52 @@ class AnimatedAnxiety {
 
   static checkHalfCoverStatus(actor) {
     if (!actor?.effects) return false;
-    return actor.effects.some(e => {
+    return actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       const statusId = e.flags?.core?.statusId || "";
-      return !e.disabled && (name.includes("half cover") || statusId === "half-cover");
+      return (
+        !e.disabled &&
+        (name.includes("half cover") || statusId === "half-cover")
+      );
     });
   }
 
   static checkThreeQuartersCoverStatus(actor) {
     if (!actor?.effects) return false;
-    return actor.effects.some(e => {
+    return actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       const statusId = e.flags?.core?.statusId || "";
-      return !e.disabled && (name.includes("three-quarters cover") || statusId === "three-quarters-cover");
+      return (
+        !e.disabled &&
+        (name.includes("three-quarters cover") ||
+          statusId === "three-quarters-cover")
+      );
     });
   }
 
   static checkTotalCoverStatus(actor) {
     if (!actor?.effects) return false;
-    return actor.effects.some(e => {
+    return actor.effects.some((e) => {
       const name = e.name?.toLowerCase() || "";
       const statusId = e.flags?.core?.statusId || "";
-      return !e.disabled && (name.includes("total cover") || statusId === "total-cover");
+      return (
+        !e.disabled &&
+        (name.includes("total cover") || statusId === "total-cover")
+      );
+    });
+  }
+
+  static checkBurningStatus(actor) {
+    if (!actor?.effects) return false;
+    return actor.effects.some((e) => {
+      const name = e.name?.toLowerCase() || "";
+      const statusId = e.flags?.core?.statusId || "";
+      return (
+        !e.disabled &&
+        (name.includes("burning") ||
+          name.includes("fire") ||
+          statusId === "burning")
+      );
     });
   }
 
@@ -2273,7 +2388,7 @@ class AnimatedAnxiety {
 
       console.log("AnimatedAnxiety | Creating hovering effect");
 
-      const overlay = this.createOverlay('hovering-overlay', 'hovering.png');
+      const overlay = this.createOverlay("hovering-overlay", "hovering.png");
       overlay.style.animation = `
         hovering-rise 0.8s ease-out forwards,
         hovering-float 4s ease-in-out infinite 0.8s
@@ -2626,11 +2741,12 @@ class AnimatedAnxiety {
       const overlay = document.createElement("div");
       overlay.className = "cover-overlay";
       overlay.style.animation = "cover-rise 0.8s ease-out forwards";
-      
+
       // Adjust opacity based on cover type
-      const opacity = type === "half" ? 0.4 : type === "three-quarters" ? 0.6 : 0.8;
+      const opacity =
+        type === "half" ? 0.4 : type === "three-quarters" ? 0.6 : 0.8;
       overlay.style.setProperty("--cover-opacity", opacity);
-      
+
       document.getElementById("interface").appendChild(overlay);
 
       this[intervalName] = setInterval(() => {
@@ -2639,6 +2755,61 @@ class AnimatedAnxiety {
           this.clearEffects();
           clearInterval(this[intervalName]);
           this[intervalName] = null;
+        }
+      }, 1000);
+    }
+  }
+
+  static createBurningEffect() {
+    if (!this.burningInterval) {
+      this.clearEffects();
+
+      // Create burning overlay
+      const overlay = document.createElement("div");
+      overlay.className = "burning-overlay";
+      overlay.style.animation = "burning-rise 0.8s ease-out forwards";
+      document.getElementById("interface").appendChild(overlay);
+
+      // Create flame particles
+      this.burningInterval = setInterval(() => {
+        const flame = document.createElement("div");
+        flame.className = `flame-particle ${
+          Math.random() > 0.5 ? "orange" : "red"
+        }`;
+
+        // Random size between 4 and 8 pixels
+        const size = Math.random() * 1 + 2;
+        flame.style.width = `${size}px`;
+        flame.style.height = `${size}px`;
+
+        // Random starting position along bottom
+        flame.style.left = `${Math.random() * 100}%`;
+        flame.style.bottom = "20px";
+
+        // Set random movement patterns
+        const duration = Math.random() * 1 + 2; // 1-2 seconds
+        flame.style.setProperty("--duration", `${duration}s`);
+
+        // Three sets of random movements for bezier-like path
+        for (let i = 1; i <= 3; i++) {
+          const moveX = (Math.random() - 0.5) * 60; // -30px to 30px
+          const moveY = Math.random() * 50 + 50; // 50px to 100px upward
+          flame.style.setProperty(`--move-x-${i}`, `${moveX}px`);
+          flame.style.setProperty(`--move-y-${i}`, `${moveY}px`);
+        }
+
+        document.getElementById("interface").appendChild(flame);
+        setTimeout(() => flame.remove(), duration * 1000);
+      }, 30); // Create particles even more frequently
+
+      // Cleanup interval
+      this.cleanupInterval = setInterval(() => {
+        if (!document.querySelector(".burning-effect")) {
+          this.clearEffects();
+          clearInterval(this.burningInterval);
+          clearInterval(this.cleanupInterval);
+          this.burningInterval = null;
+          this.cleanupInterval = null;
         }
       }, 1000);
     }

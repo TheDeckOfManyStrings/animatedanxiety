@@ -2686,3 +2686,103 @@
   );
   animation: cover-glow 5s ease-in-out infinite;
 }
+
+/* Add burning overlay and effects */
+.burning-overlay {
+  position: fixed;
+  bottom: 0;
+  left: -5vw;
+  width: 110vw;
+  height: 120px;
+  background-image: url("../assets/burning.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+@keyframes burning-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+.flame-particle {
+  position: fixed;
+  width: 5px; /* Increased size */
+  height: 5px; /* Increased size */
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  filter: blur(0.5px);
+  animation: flame-rise var(--duration) ease-out forwards;
+}
+
+.flame-particle.orange {
+  background-color: rgba(255, 140, 0, 0.9);
+}
+
+.flame-particle.red {
+  background-color: rgba(255, 0, 0, 0.9);
+}
+
+@keyframes flame-rise {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  33% {
+    transform: translate(var(--move-x-1), calc(-1 * var(--move-y-1)));
+    opacity: 0.8;
+  }
+  66% {
+    transform: translate(var(--move-x-2), calc(-2 * var(--move-y-2)));
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(var(--move-x-3), calc(-3 * var(--move-y-3)));
+    opacity: 0;
+  }
+}
+
+#interface.burning-fade::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 50%,
+    rgba(255, 80, 0, 0.3) 100%
+  );
+  animation: burning-glow 3s ease-in-out infinite;
+}
+
+@keyframes burning-glow {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+}
