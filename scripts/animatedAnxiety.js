@@ -396,7 +396,8 @@ class AnimatedAnxiety {
         "falling-fade",
         "malnutrition-effect", // Add these lines
         "malnutrition-fade",
-        "suffocation-effect" // Add this line
+        "suffocation-effect", // Add this line
+        "suffocation-fade" // Add this line
       );
 
       // Handle static effects
