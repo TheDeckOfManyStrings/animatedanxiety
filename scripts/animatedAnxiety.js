@@ -161,6 +161,7 @@ class AnimatedAnxiety {
       burning: "Burning",
       dehydration: "Dehydration",
       falling: "Falling",
+      malnutrition: "Malnutrition" // Add this line
     };
 
     // Register a setting for each status effect
@@ -310,6 +311,7 @@ class AnimatedAnxiety {
       const isBurning = this.checkBurningStatus(actor);
       const isDehydration = this.checkDehydrationStatus(actor);
       const isFalling = this.checkFallingStatus(actor);
+      const isMalnutrition = this.checkMalnutritionStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -389,7 +391,9 @@ class AnimatedAnxiety {
         "dehydration-effect",
         "dehydration-fade",
         "falling-effect",
-        "falling-fade"
+        "falling-fade",
+        "malnutrition-effect", // Add these lines
+        "malnutrition-fade"
       );
 
       // Handle static effects
@@ -620,6 +624,12 @@ class AnimatedAnxiety {
         appElement.classList.add("falling-effect");
         this.createFallingEffect();
       } else if (
+        isMalnutrition &&
+        game.settings.get("animatedanxiety", "enable_malnutrition")
+      ) {
+        appElement.classList.add("malnutrition-effect");
+        this.createMalnutritionEffect();
+      } else if (
         isProne &&
         !isUnconscious &&
         game.settings.get("animatedanxiety", "enable_prone")
@@ -802,6 +812,9 @@ class AnimatedAnxiety {
       if (isFalling && game.settings.get("animatedanxiety", "enable_falling")) {
         appElement.classList.add("falling-fade");
       }
+      if (isMalnutrition && game.settings.get("animatedanxiety", "enable_malnutrition")) {
+        appElement.classList.add("malnutrition-fade");
+      }
 
       // Remove existing health effects
       document.querySelectorAll(".veins-overlay").forEach((el) => el.remove());
@@ -894,6 +907,7 @@ class AnimatedAnxiety {
       "dehydrationInterval",
       "cleanupInterval",
       "fallingInterval",
+      "malnutritionInterval" // Add this line
     ];
 
     // Clear all intervals
@@ -966,6 +980,7 @@ class AnimatedAnxiety {
       ".flame-particle",
       ".dehydration-overlay",
       ".falling-overlay",
+      ".malnutrition-overlay" // Add this line
     ].join(",");
 
     document.querySelectorAll(effectClasses).forEach((el) => el.remove());
@@ -1893,6 +1908,36 @@ class AnimatedAnxiety {
 
     console.log("AnimatedAnxiety | Falling status:", isFalling);
     return isFalling;
+  }
+
+  static checkMalnutritionStatus(actor) {
+    if (!actor?.effects) {
+      console.log("AnimatedAnxiety | No effects found for malnutrition check");
+      return false;
+    }
+
+    const isMalnutrition = actor.effects.some((e) => {
+      const name = (e.name || "").toLowerCase();
+      const statusId = (e.flags?.core?.statusId || "").toLowerCase();
+      const isActive = !e.disabled;
+
+      console.log("AnimatedAnxiety | Checking malnutrition effect:", {
+        name,
+        statusId,
+        isActive,
+        raw: e
+      });
+
+      return isActive && (
+        name === "malnutrition" ||
+        statusId === "malnutrition" ||
+        name.includes("malnourished") ||
+        name.includes("starving")
+      );
+    });
+
+    console.log("AnimatedAnxiety | Malnutrition status:", isMalnutrition);
+    return isMalnutrition;
   }
 
   static createFallingEffect() {
@@ -3036,6 +3081,40 @@ class AnimatedAnxiety {
 
       console.log("AnimatedAnxiety | Dehydration overlay created:", overlay);
       console.log("AnimatedAnxiety | Overlay style:", overlay.style);
+    }
+  }
+
+  static createMalnutritionEffect() {
+    if (!this.malnutritionInterval) {
+      this.clearEffects();
+
+      const overlay = document.createElement("div");
+      overlay.className = "malnutrition-overlay";
+      
+      // Set the background image
+      const imagePath = "modules/animatedanxiety/assets/malnutrition.png";
+      overlay.style.backgroundImage = `url('${imagePath}')`;
+      
+      // Add rise animation and yellow-orange aura effect
+      overlay.style.animation = "malnutrition-rise 0.8s ease-out forwards";
+      
+      document.getElementById("interface").appendChild(overlay);
+
+      // Create cleanup interval
+      this.malnutritionInterval = setInterval(() => {
+        if (!document.querySelector(".malnutrition-effect")) {
+          this.clearEffects();
+          clearInterval(this.malnutritionInterval);
+          this.malnutritionInterval = null;
+        }
+      }, 1000);
+
+      // Cleanup on animation end
+      overlay.addEventListener("animationend", () => {
+        if (!document.querySelector(".malnutrition-effect")) {
+          this.clearEffects();
+        }
+      });
     }
   }
 }
