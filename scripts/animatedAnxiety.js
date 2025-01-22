@@ -161,7 +161,8 @@ class AnimatedAnxiety {
       burning: "Burning",
       dehydration: "Dehydration",
       falling: "Falling",
-      malnutrition: "Malnutrition" // Add this line
+      malnutrition: "Malnutrition", // Add this line
+      suffocation: "Suffocation", // Add this line
     };
 
     // Register a setting for each status effect
@@ -312,6 +313,7 @@ class AnimatedAnxiety {
       const isDehydration = this.checkDehydrationStatus(actor);
       const isFalling = this.checkFallingStatus(actor);
       const isMalnutrition = this.checkMalnutritionStatus(actor); // Add this line
+      const isSuffocating = this.checkSuffocationStatus(actor); // Add this line
 
       const appElement = document.getElementById("interface");
       if (!appElement) {
@@ -393,7 +395,8 @@ class AnimatedAnxiety {
         "falling-effect",
         "falling-fade",
         "malnutrition-effect", // Add these lines
-        "malnutrition-fade"
+        "malnutrition-fade",
+        "suffocation-effect" // Add this line
       );
 
       // Handle static effects
@@ -630,6 +633,14 @@ class AnimatedAnxiety {
         appElement.classList.add("malnutrition-effect");
         this.createMalnutritionEffect();
       } else if (
+        isSuffocating &&
+        game.settings.get("animatedanxiety", "enable_suffocation")
+      ) {
+        console.log("AnimatedAnxiety | Creating suffocation effect");
+        appElement.classList.add("suffocation-effect");
+        appElement.classList.add("suffocation-fade"); // Add this line
+        this.createSuffocationEffect();
+      } else if (
         isProne &&
         !isUnconscious &&
         game.settings.get("animatedanxiety", "enable_prone")
@@ -812,7 +823,10 @@ class AnimatedAnxiety {
       if (isFalling && game.settings.get("animatedanxiety", "enable_falling")) {
         appElement.classList.add("falling-fade");
       }
-      if (isMalnutrition && game.settings.get("animatedanxiety", "enable_malnutrition")) {
+      if (
+        isMalnutrition &&
+        game.settings.get("animatedanxiety", "enable_malnutrition")
+      ) {
         appElement.classList.add("malnutrition-fade");
       }
 
@@ -907,7 +921,8 @@ class AnimatedAnxiety {
       "dehydrationInterval",
       "cleanupInterval",
       "fallingInterval",
-      "malnutritionInterval" // Add this line
+      "malnutritionInterval", // Add this line
+      "suffocationInterval", // Add this line
     ];
 
     // Clear all intervals
@@ -980,7 +995,8 @@ class AnimatedAnxiety {
       ".flame-particle",
       ".dehydration-overlay",
       ".falling-overlay",
-      ".malnutrition-overlay" // Add this line
+      ".malnutrition-overlay", // Add this line
+      ".suffocation-overlay", // Add this line
     ].join(",");
 
     document.querySelectorAll(effectClasses).forEach((el) => el.remove());
@@ -1925,19 +1941,44 @@ class AnimatedAnxiety {
         name,
         statusId,
         isActive,
-        raw: e
+        raw: e,
       });
 
-      return isActive && (
-        name === "malnutrition" ||
-        statusId === "malnutrition" ||
-        name.includes("malnourished") ||
-        name.includes("starving")
+      return (
+        isActive &&
+        (name === "malnutrition" ||
+          statusId === "malnutrition" ||
+          name.includes("malnourished") ||
+          name.includes("starving"))
       );
     });
 
     console.log("AnimatedAnxiety | Malnutrition status:", isMalnutrition);
     return isMalnutrition;
+  }
+
+  static checkSuffocationStatus(actor) {
+    if (!actor?.effects) {
+      console.log("AnimatedAnxiety | No effects found for suffocation check");
+      return false;
+    }
+
+    const isSuffocating = actor.effects.some((e) => {
+      const name = (e.name || "").toLowerCase();
+      const statusId = (e.flags?.core?.statusId || "").toLowerCase();
+      const isActive = !e.disabled;
+
+      return (
+        isActive &&
+        (name === "suffocation" ||
+          statusId === "suffocation" ||
+          name.includes("suffocating") ||
+          name.includes("drowning"))
+      );
+    });
+
+    console.log("AnimatedAnxiety | Suffocation status:", isSuffocating);
+    return isSuffocating;
   }
 
   static createFallingEffect() {
@@ -3090,14 +3131,14 @@ class AnimatedAnxiety {
 
       const overlay = document.createElement("div");
       overlay.className = "malnutrition-overlay";
-      
+
       // Set the background image
       const imagePath = "modules/animatedanxiety/assets/malnutrition.png";
       overlay.style.backgroundImage = `url('${imagePath}')`;
-      
+
       // Add rise animation and yellow-orange aura effect
       overlay.style.animation = "malnutrition-rise 0.8s ease-out forwards";
-      
+
       document.getElementById("interface").appendChild(overlay);
 
       // Create cleanup interval
@@ -3115,6 +3156,29 @@ class AnimatedAnxiety {
           this.clearEffects();
         }
       });
+    }
+  }
+
+  static createSuffocationEffect() {
+    if (!this.suffocationInterval) {
+      this.clearEffects();
+      console.log("AnimatedAnxiety | Creating suffocation effect");
+
+      const overlay = document.createElement("div");
+      overlay.className = "suffocation-overlay";
+      overlay.style.animation =
+        "suffocation-rise 0.8s ease-out forwards, suffocation-pulse 8s ease-in-out infinite 0.8s";
+
+      document.getElementById("interface").appendChild(overlay);
+
+      // Create cleanup interval
+      this.suffocationInterval = setInterval(() => {
+        if (!document.querySelector(".suffocation-effect")) {
+          this.clearEffects();
+          clearInterval(this.suffocationInterval);
+          this.suffocationInterval = null;
+        }
+      }, 1000);
     }
   }
 }
