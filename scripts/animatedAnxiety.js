@@ -922,8 +922,8 @@ class AnimatedAnxiety {
       "dehydrationInterval",
       "cleanupInterval",
       "fallingInterval",
-      "malnutritionInterval", 
-      "suffocationInterval", 
+      "malnutritionInterval",
+      "suffocationInterval",
     ];
 
     // Clear all intervals
@@ -1012,6 +1012,16 @@ class AnimatedAnxiety {
       interfaceEl.style.removeProperty("--exhaustion-clear");
       interfaceEl.style.removeProperty("--exhaustion-opacity");
       interfaceEl.style.removeProperty("--exhaustion-duration");
+    }
+
+    // Clean up any remaining death orbs
+    if (this.activeDeathOrbs) {
+      this.activeDeathOrbs.forEach((orb) => {
+        if (orb && orb.parentNode) {
+          orb.remove();
+        }
+      });
+      this.activeDeathOrbs.clear();
     }
   }
 
@@ -2144,7 +2154,7 @@ class AnimatedAnxiety {
       overlay.className = "bleeding-overlay";
       document.getElementById("interface").appendChild(overlay);
 
-      // Keep the blood streaks effect for additional ambiance
+      // Create blood streaks at a slower interval
       this.bloodInterval = setInterval(() => {
         const streak = document.createElement("div");
         streak.className = "blood-streak";
@@ -2154,28 +2164,8 @@ class AnimatedAnxiety {
         const duration = Math.random() * 1.5 + 1.5;
         streak.style.animation = `blood-drip ${duration}s linear forwards`;
         document.getElementById("interface").appendChild(streak);
-        if (!this.bloodInterval) {
-          this.clearEffects();
-
-          // Create bleeding overlay
-          const overlay = document.createElement("div");
-          overlay.className = "bleeding-overlay";
-          document.getElementById("interface").appendChild(overlay);
-
-          // Keep the blood streaks effect for additional ambiance
-          this.bloodInterval = setInterval(() => {
-            const streak = document.createElement("div");
-            streak.className = "blood-streak";
-            streak.style.left = `${Math.random() * 100}%`;
-            streak.style.opacity = (Math.random() * 0.4 + 0.4).toString();
-            streak.style.width = `${Math.random() * 3 + 1}px`;
-            const duration = Math.random() * 1.5 + 1.5;
-            streak.style.animation = `blood-drip ${duration}s linear forwards`;
-            document.getElementById("interface").appendChild(streak);
-            setTimeout(() => streak.remove(), duration * 1000);
-          }, 200);
-        }
-      });
+        setTimeout(() => streak.remove(), duration * 1000);
+      }, 400); // Changed from 200 to 400ms to halve the particle frequency
     }
   }
 
@@ -2460,14 +2450,65 @@ class AnimatedAnxiety {
       overlay.className = "dead-overlay";
       document.getElementById("interface").appendChild(overlay);
 
-      // Store reference to remove later
+      // Keep track of active orbs
+      this.activeDeathOrbs = new Set();
+
+      // Create floating orbs periodically
       this.deadInterval = setInterval(() => {
+        // Check if effect is still active first
         if (!document.querySelector(".dead-effect")) {
+          // Clean up all existing orbs
+          this.activeDeathOrbs.forEach((orb) => {
+            if (orb && orb.parentNode) {
+              orb.remove();
+            }
+          });
+          this.activeDeathOrbs.clear();
+
           this.clearEffects();
           clearInterval(this.deadInterval);
           this.deadInterval = null;
+          return;
         }
-      }, 1000);
+
+        // Create 1-2 orbs at a time
+        const orbCount = Math.floor(Math.random() * 2) + 1;
+
+        for (let i = 0; i < orbCount; i++) {
+          const orb = document.createElement("div");
+          orb.className = "death-orb";
+
+          // Random starting position anywhere on screen
+          orb.style.left = `${Math.random() * 100}%`;
+          orb.style.top = `${Math.random() * 100}%`;
+
+          // Random size between 5 and 15 pixels
+          const size = Math.random() * 10 + 5;
+          orb.style.width = `${size}px`;
+          orb.style.height = `${size}px`;
+
+          // Random movement angles and distances
+          const angle = Math.random() * 360;
+          const distance = Math.random() * 100 + 50;
+          orb.style.setProperty("--move-angle", `${angle}deg`);
+          orb.style.setProperty("--move-distance", `${distance}px`);
+
+          // Random duration between 3 and 6 seconds
+          const duration = Math.random() * 3 + 3;
+          orb.style.animation = `death-orb-float ${duration}s ease-in-out forwards`;
+
+          document.getElementById("interface").appendChild(orb);
+          this.activeDeathOrbs.add(orb);
+
+          // Remove orb after animation completes
+          setTimeout(() => {
+            if (orb && orb.parentNode) {
+              orb.remove();
+            }
+            this.activeDeathOrbs.delete(orb);
+          }, duration * 1000);
+        }
+      }, 400); // Create new orbs every 400ms
     }
   }
 
