@@ -102,8 +102,7 @@ If you experience any issues:
 For support, please:
 
 1. Check the [Issues](your-github-issues-link) page
-2. Join our [Discord](your-discord-link) community
-3. Submit a detailed bug report if needed
+2. Submit a detailed bug report if needed
 
 ## License
 
