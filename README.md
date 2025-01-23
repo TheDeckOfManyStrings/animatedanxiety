@@ -79,12 +79,14 @@ This module includes animations for all base DnD 5e statuses:
 
 ## Performance Considerations
 
-### WARNING: THIS MODULE MAY RUN SLOW ON SOME MACHINES. For users experiencing slowness, consider asking them to turn off the module in their settings using the master toggle. Other players in the game will not be affected.
-
 - All animations are optimized for performance
 - Effects are client-side only
 - Players can individually adjust or disable effects
 - Automatic cleanup of unused animations
+
+### WARNING: THIS MODULE MAY RUN SLOW ON SOME MACHINES.
+
+- For users experiencing slowness, consider asking them to turn off the module in their settings using the master toggle. Other players in the game will not be affected. Please also consider submitting a bug report on the github page!
 
 ## Troubleshooting
 
