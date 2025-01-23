@@ -2298,11 +2298,18 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
+  /* background: radial-gradient(
     circle,
     transparent 0%,
     transparent 50%,
     rgba(128, 128, 128, 0.3) 100%
+  ); */
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 250, 229, 0.3) 0%,
+    transparent 25%,
+    transparent 75%,
+    rgba(0, 250, 229, 0.3) 100%
   );
   animation: general-glow 5s ease-in-out infinite;
 }
@@ -2444,12 +2451,13 @@
   pointer-events: none;
   z-index: 10;
   background: radial-gradient(
-    circle,
+    circle at center,
     transparent 0%,
-    transparent 50%,
-    rgba(0, 0, 0, 0.3) 100%
+    rgba(0, 0, 0, 0.3) 20%,
+    rgba(0, 0, 0, 0.6) 60%,
+    rgba(0, 0, 0, 0.8) 100%
   );
-  animation: general-glow 5s ease-in-out infinite;
+  animation: unconscious-pulse 3s ease-in-out infinite;
 }
 
 #interface.cursed-fade::before {
