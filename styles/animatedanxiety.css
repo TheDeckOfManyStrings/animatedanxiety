@@ -818,7 +818,7 @@
   bottom: 0;
   left: -5vw; /* Extend past screen edges */
   width: 110vw; /* Make wider than screen */
-  height: 120px; /* Changed from 250px */
+  height: 200px; /* Changed from 250px */
   background-image: url("../assets/Hands.png");
   background-repeat: repeat-x;
   background-size: auto 100%;
@@ -1127,14 +1127,31 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  opacity: 0;
+  opacity: 0.4; /* Changed from 0 */
   animation: poison-glow 3s ease-in-out infinite;
   filter: blur(8px); /* Added blur for softer effect */
-  background: radial-gradient(
-    ellipse at center 50% 70%,
-    /* Adjusted center point */ rgba(0, 255, 0, 0.4) 0%,
-    transparent 100%
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 255, 0, 0.1) 0%,
+    transparent 25%,
+    transparent 75%,
+    rgba(0, 255, 0, 0.3) 100%
   );
+}
+
+@keyframes poison-glow {
+  0% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
 }
 
 @keyframes poison-bubble-rise {
@@ -1161,15 +1178,15 @@
 
 @keyframes poison-glow {
   0% {
-    opacity: 0.3;
+    opacity: 0.5;
     transform: scale(1);
   }
   50% {
-    opacity: 0.6;
+    opacity: 0.8;
     transform: scale(1.05);
   }
   100% {
-    opacity: 0.3;
+    opacity: 0.5;
     transform: scale(1);
   }
 }

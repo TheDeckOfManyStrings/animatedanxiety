@@ -922,8 +922,8 @@ class AnimatedAnxiety {
       "dehydrationInterval",
       "cleanupInterval",
       "fallingInterval",
-      "malnutritionInterval", // Add this line
-      "suffocationInterval", // Add this line
+      "malnutritionInterval", 
+      "suffocationInterval", 
     ];
 
     // Clear all intervals
@@ -1080,10 +1080,12 @@ class AnimatedAnxiety {
         // Create poison overlay and aura
         const overlay = document.createElement("div");
         overlay.className = "poison-overlay";
+        overlay.style.animation = "poison-rise 0.8s ease-out forwards";
         document.getElementById("interface").appendChild(overlay);
 
         const aura = document.createElement("div");
         aura.className = "poison-aura";
+        aura.style.animation = "poison-glow 3s ease-in-out infinite";
         document.getElementById("interface").appendChild(aura);
 
         // Create rising bubbles
