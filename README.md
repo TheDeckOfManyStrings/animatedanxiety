@@ -1,6 +1,8 @@
 # Animated Anxiety
 
-A Foundry VTT v12 module that enhances gameplay immersion through dynamic visual effects and status animations.
+Give your players anxiety!!! A Foundry VTT module that changes the players UI based on current status of their character. This module applies animations to players screens when a players character is low on health or has a status effect applied to it. Each of the animations can be turned off and on according to player preferences. This module does not share effects across screens so players can customize their game experience according to what they like.
+
+<a href='https://ko-fi.com/thedeckofmanystrings' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Description
 
