@@ -6,7 +6,7 @@
     "minimum": "12",
     "verified": "12"
   },
-  "description": "Give your players anxiety!!! A Foundry VTT module that changes the players HUD based on current status of their character. This module applies animations to players screens when a players character is low on health or has a status effect applied to it. Each of the animations can be turned off an on according to player preferences.",
+  "description": "Give your players anxiety!!! A Foundry VTT module that changes the players HUD based on current status of their character. This module applies animations to players screens when a players character is low on health or has a status effect applied to it. Each of the animations can be turned off and on according to player preferences. This module does not share effects across screens so players can customize their game experience according to what they like.",
   "authors": [
     {
       "name": "TheDeckOfManyStrings",
