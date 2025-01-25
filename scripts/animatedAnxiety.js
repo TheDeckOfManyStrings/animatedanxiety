@@ -2620,7 +2620,7 @@ class AnimatedAnxiety {
 
       const overlay = document.createElement("div");
       overlay.className = "sleeping-overlay";
-      overlay.style.animation = "sleeping-rise 0.8s ease-out forwards";
+      overlay.style.animation = "sleep-descend 0.8s ease-out forwards";
       document.getElementById("interface").appendChild(overlay);
 
       this.sleepingInterval = setInterval(() => {

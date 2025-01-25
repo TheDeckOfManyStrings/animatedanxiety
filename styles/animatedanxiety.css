@@ -1795,19 +1795,48 @@
 /* Add sleeping overlay styling */
 .sleeping-overlay {
   position: fixed;
-  bottom: 0;
+  top: -120px;
   left: -5vw;
   width: 110vw;
   height: 120px;
   background-image: url("../assets/sleep.png");
   background-repeat: repeat-x;
   background-size: auto 100%;
-  background-position: bottom;
+  /* background-position: bottom; */
+  background-position: top;
   pointer-events: none;
   z-index: 11;
   opacity: 0;
-  transform: translateY(100%);
+  /* transform: translateY(100%); */
+  animation: sleep-descend 0.8s ease-out forwards;
 }
+
+@keyframes sleep-descend {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(120px); /* Move down to show at top of screen */
+  }
+}
+
+/* .cupid-overlay {
+  position: fixed;
+  top: -120px; 
+  left: -5vw;
+  width: 110vw;
+  height: 120px;
+  background-image: url("../assets/Cupid.png");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: top;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  animation: cupid-descend 0.8s ease-out forwards;
+} */
 
 @keyframes sleeping-rise {
   0% {
