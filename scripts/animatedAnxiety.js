@@ -2182,9 +2182,15 @@ class AnimatedAnxiety {
     if (!this.paralyzedInterval) {
       this.clearEffects();
 
-      const overlay = document.createElement("div");
-      overlay.className = "paralyzed-overlay";
-      document.getElementById("interface").appendChild(overlay);
+      // Create left overlay
+      const overlayLeft = document.createElement("div");
+      overlayLeft.className = "paralyzed-overlay paralyzed-overlay-left";
+      document.getElementById("interface").appendChild(overlayLeft);
+
+      // Create right overlay
+      const overlayRight = document.createElement("div");
+      overlayRight.className = "paralyzed-overlay paralyzed-overlay-right";
+      document.getElementById("interface").appendChild(overlayRight);
 
       // Store reference to remove later
       this.paralyzedInterval = setInterval(() => {

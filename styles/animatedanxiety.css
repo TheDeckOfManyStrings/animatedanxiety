@@ -1027,10 +1027,8 @@
 /* Add paralyzed effect styling */
 .paralyzed-overlay {
   position: fixed;
-  bottom: 0;
-  left: -5vw;
   width: 110vw;
-  height: 120px;
+  height: 60px;
   background-image: url("../assets/paralyzed.png");
   background-repeat: repeat-x;
   background-size: auto 100%;
@@ -1038,18 +1036,39 @@
   pointer-events: none;
   z-index: 11;
   opacity: 0;
-  transform: translateY(100%);
-  animation: paralyzed-rise 0.8s ease-out forwards;
 }
 
-@keyframes paralyzed-rise {
+.paralyzed-overlay-left {
+  top: 0;
+  left: -110vw;
+  animation: paralyzed-slideright 0.8s ease-out forwards;
+}
+
+.paralyzed-overlay-right {
+  bottom: 0;
+  left: 100vw;
+  animation: paralyzed-slideleft 0.8s ease-out forwards;
+}
+
+@keyframes paralyzed-slideleft {
   0% {
     opacity: 0;
-    transform: translateY(100%);
+    transform: translateX(0);
   }
   100% {
     opacity: 0.7;
-    transform: translateY(0);
+    transform: translateX(-110vw);
+  }
+}
+
+@keyframes paralyzed-slideright {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateX(110vw);
   }
 }
 
