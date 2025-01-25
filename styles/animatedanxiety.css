@@ -3176,7 +3176,12 @@
 /* Death orb styling */
 .death-orb {
   position: fixed;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 70%, transparent 100%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.2) 70%,
+    transparent 100%
+  );
   border-radius: 50%;
   pointer-events: none;
   z-index: 11;
@@ -3192,27 +3197,28 @@
     opacity: 0.8;
   }
   100% {
-    transform: translateY(-70vh) translateX(calc(sin(var(--random-angle, 0deg)) * 100px));
+    transform: translateY(-70vh)
+      translateX(calc(sin(var(--random-angle, 0deg)) * 100px));
     opacity: 0;
   }
 }
 
 @keyframes death-orb-float {
-    0% {
-        transform: translate(0, 0);
-        opacity: 0;
-    }
-    20% {
-        opacity: 0.8;
-    }
-    80% {
-        opacity: 0.8;
-    }
-    100% {
-        transform: translate(
-            calc(cos(var(--move-angle)) * var(--move-distance)),
-            calc(sin(var(--move-angle)) * var(--move-distance))
-        );
-        opacity: 0;
-    }
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(
+      calc(cos(var(--move-angle)) * var(--move-distance)),
+      calc(sin(var(--move-angle)) * var(--move-distance))
+    );
+    opacity: 0;
+  }
 }
