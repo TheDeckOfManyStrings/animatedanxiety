@@ -894,6 +894,7 @@ class AnimatedAnxiety {
       "proneInterval",
       "silencedInterval",
       "sleepingInterval",
+      "sleepingCleanupInterval",
       "stableInterval",
       "stunnedInterval",
       "surprisedInterval",
@@ -981,6 +982,7 @@ class AnimatedAnxiety {
       ".falling-overlay",
       ".malnutrition-overlay",
       ".suffocation-overlay",
+      ".sleeping-z-group",
     ].join(",");
 
     document.querySelectorAll(effectClasses).forEach((el) => el.remove());
@@ -2618,28 +2620,79 @@ class AnimatedAnxiety {
     if (!this.sleepingInterval) {
       this.clearEffects();
 
+      // Create overlay
       const overlay = document.createElement("div");
       overlay.className = "sleeping-overlay";
       overlay.style.animation = "sleep-descend 0.8s ease-out forwards";
       document.getElementById("interface").appendChild(overlay);
 
-      this.sleepingInterval = setInterval(() => {
-        const hasEffect = document.querySelector(".sleeping-effect");
-        const hasOverlay = document.querySelector(".sleeping-overlay");
+      // Create floating Z group
+      const createZGroup = () => {
+        const group = document.createElement("div");
+        group.className = "sleeping-z-group";
+        group.style.display = "flex"; // Add flex display
+        group.style.alignItems = "baseline"; // Align Z's at their baseline
+        group.style.gap = "4px"; // Add space between Z's
 
-        if (!hasEffect || !hasOverlay) {
+        // Random starting position
+        group.style.left = `${Math.random() * 80 + 10}%`;
+        group.style.bottom = "50px";
+
+        // Random movement for the whole group
+        const moveX = (Math.random() - 0.5) * 100;
+        const moveY = Math.random() * 200 + 150;
+        const rotation = (Math.random() - 0.5) * 45;
+
+        group.style.setProperty("--move-x", `${moveX}px`);
+        group.style.setProperty("--move-y", `${moveY}px`);
+        group.style.setProperty("--rotation", `${rotation}deg`);
+
+        // Base size for largest Z
+        const baseSize = Math.random() * 10 + 30; // 30-40px
+
+        // Create 3 Z's with diminishing sizes
+        for (let i = 0; i < 3; i++) {
+          const z = document.createElement("span");
+          z.className = "sleeping-z";
+          z.textContent = "Z";
+          z.style.fontSize = `${baseSize * (1 - i * 0.2)}px`; // Reduce size by 20% each time
+          z.style.transform = `translateY(${i * 35}px)`; // Slight vertical offset
+          z.style.opacity = `${1 - i * 0.2}`; // Gradually reduce opacity
+          group.appendChild(z);
+        }
+
+        // Add animation
+        const duration = Math.random() * 1 + 4; // 4-5 seconds
+        group.style.animation = `z-float ${duration}s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
+
+        document.getElementById("interface").appendChild(group);
+
+        // Remove group after animation
+        setTimeout(() => group.remove(), duration * 1000);
+      };
+
+      // Create Z groups at interval
+      this.sleepingInterval = setInterval(createZGroup, 2000);
+
+      // Create initial Z group
+      createZGroup();
+
+      // Add cleanup interval
+      this.sleepingCleanupInterval = setInterval(() => {
+        if (!document.querySelector(".sleeping-effect")) {
           this.clearEffects();
           clearInterval(this.sleepingInterval);
+          clearInterval(this.sleepingCleanupInterval);
           this.sleepingInterval = null;
+          this.sleepingCleanupInterval = null;
+
+          // Remove any remaining Z groups
+          document
+            .querySelectorAll(".sleeping-z-group")
+            .forEach((el) => el.remove());
+          // document.querySelectorAll(".sleeping-z").forEach((el) => el.remove());
         }
       }, 200);
-
-      overlay.addEventListener("animationend", () => {
-        const hasEffect = document.querySelector(".sleeping-effect");
-        if (!hasEffect) {
-          this.clearEffects();
-        }
-      });
     }
   }
 
