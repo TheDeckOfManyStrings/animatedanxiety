@@ -2200,10 +2200,11 @@
   bottom: 0;
   pointer-events: none;
   z-index: 10;
-  background: radial-gradient(
-    circle,
-    transparent 0%,
-    transparent 50%,
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 255, 0.3) 0%,
+    transparent 25%,
+    transparent 75%,
     rgba(0, 0, 255, 0.3) 100%
   );
   animation: general-glow 5s ease-in-out infinite;
