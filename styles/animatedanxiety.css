@@ -1758,7 +1758,7 @@
 /* Add prone overlay styling */
 .prone-overlay {
   position: fixed;
-  bottom: -20px;
+  bottom: 0px;
   left: -5vw;
   width: 110vw;
   height: 140px;
@@ -2332,7 +2332,7 @@
     to bottom,
     transparent 0%,
     transparent 75%,
-    rgba(139, 69, 19, 0.3) 100%
+    rgba(251, 255, 0, 0.808) 100%
   );
   animation: general-glow 5s ease-in-out infinite;
 }
