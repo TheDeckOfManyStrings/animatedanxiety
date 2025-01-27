@@ -533,7 +533,7 @@
     width: 100vh;
     height: 100vh;
     border-width: 0.1px;
-    opacity: 0; 
+    opacity: 0;
   }
 }
 
@@ -1730,10 +1730,10 @@
 /* Add marked overlay styling */
 .marked-overlay {
   position: fixed;
-  bottom: -20px;
+  bottom: 0px;
   left: -5vw;
   width: 110vw;
-  height: 140px;
+  height: 120px;
   background-image: url("../assets/marked.png");
   background-repeat: repeat-x;
   background-size: auto 100%;
