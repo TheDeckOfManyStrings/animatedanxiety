@@ -533,7 +533,7 @@
     width: 100vh;
     height: 100vh;
     border-width: 0.1px;
-    opacity: 0;
+    opacity: 0; 
   }
 }
 
