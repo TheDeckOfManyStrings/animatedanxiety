@@ -527,7 +527,7 @@
     width: 50px;
     height: 50px;
     border-width: 1px;
-    opacity: 0.2;
+    opacity: 0.4;
   }
   100% {
     width: 100vh;
@@ -2095,7 +2095,7 @@
     circle,
     transparent 0%,
     transparent 50%,
-    rgba(0, 0, 0, 0.3) 100%
+    rgba(0, 0, 0, 0.7) 100%
   );
   animation: general-glow 5s ease-in-out infinite;
 }
