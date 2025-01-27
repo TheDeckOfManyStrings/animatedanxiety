@@ -564,12 +564,6 @@ class AnimatedAnxiety {
         appElement.classList.add("surprised-effect");
         this.createSurprisedEffect();
       } else if (
-        isTransformed &&
-        game.settings.get("animatedanxiety", "enable_transformed")
-      ) {
-        appElement.classList.add("transformed-effect");
-        this.createTransformedEffect();
-      } else if (
         isHalfCover &&
         game.settings.get("animatedanxiety", "enable_halfCover")
       ) {
@@ -624,6 +618,12 @@ class AnimatedAnxiety {
       ) {
         appElement.classList.add("concentration-effect");
         this.createConcentrationParticles();
+      } else if (
+        isTransformed &&
+        game.settings.get("animatedanxiety", "enable_transformed")
+      ) {
+        appElement.classList.add("transformed-effect");
+        this.createTransformedEffect();
       } else if (
         isProne &&
         !isUnconscious &&

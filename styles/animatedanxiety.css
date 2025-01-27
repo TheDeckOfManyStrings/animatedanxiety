@@ -2332,7 +2332,7 @@
     to bottom,
     transparent 0%,
     transparent 75%,
-    rgba(251, 255, 0, 0.808) 100%
+    rgba(251, 255, 0, 0.7) 100%
   );
   animation: general-glow 5s ease-in-out infinite;
 }
