@@ -60,9 +60,19 @@ class AnimatedAnxiety {
   }
 
   static registerSettings() {
+    // Register menus first
+    game.settings.registerMenu("animatedanxiety", "statusSettings", {
+      name: "Status Effect Settings",
+      label: "Configure Status Effects",
+      icon: "fas fa-diagnoses",
+      type: AnimatedAnxietyStatusMenu,
+      restricted: false,
+    });
+
+    // Main module settings
     game.settings.register("animatedanxiety", "enabled", {
-      name: "Turn On/Off Anxiety Effects",
-      hint: "Toggle the anxiety effects on/off",
+      name: "Enable Module",
+      hint: "Master toggle for all module effects",
       scope: "client",
       config: true,
       type: Boolean,
@@ -70,9 +80,10 @@ class AnimatedAnxiety {
       onChange: () => this.updateAnxietyEffect(game.user?.character),
     });
 
-    game.settings.register("animatedanxiety", `enable_anxiety`, {
-      name: `Enable Low Health Effect`,
-      hint: `Toggle the low health effect animation`,
+    // Health effect settings
+    game.settings.register("animatedanxiety", "enable_anxiety", {
+      name: "Enable Low Health Effect",
+      hint: "Toggle the low health effect animation",
       scope: "client",
       config: true,
       type: Boolean,
@@ -120,8 +131,44 @@ class AnimatedAnxiety {
       onChange: () => this.updateAnxietyEffect(game.user?.character),
     });
 
+    // Animation settings
+    game.settings.register("animatedanxiety", "maxSpeed", {
+      name: "Maximum Animation Speed",
+      hint: "How fast the animation pulses at lowest health (in seconds)",
+      scope: "client",
+      config: true,
+      type: Number,
+      range: {
+        min: 0.1,
+        max: 2.0,
+        step: 0.1,
+      },
+      default: 0.6,
+      onChange: () => this.updateAnxietyEffect(game.user?.character),
+    });
+
+    game.settings.register("animatedanxiety", "blurAmount", {
+      name: "Blur Intensity",
+      hint: "How far the effect bleeds into the screen (in pixels)",
+      scope: "client",
+      config: true,
+      type: Number,
+      range: {
+        min: 20,
+        max: 400,
+        step: 20,
+      },
+      default: 200,
+      onChange: () => this.updateAnxietyEffect(game.user?.character),
+    });
+
+    // Register hidden settings for status effects
+    this.registerStatusSettings();
+  }
+
+  static registerStatusSettings() {
     const statusEffects = {
-      // anxiety: "Low Health",
+      // Status effects
       unconscious: "Unconscious",
       poisoned: "Poisoned",
       bleeding: "Bleeding",
@@ -164,59 +211,24 @@ class AnimatedAnxiety {
       suffocation: "Suffocation",
     };
 
-    // Register a setting for each status effect
+    // Register settings but don't show them in the main menu
     for (const [key, label] of Object.entries(statusEffects)) {
       game.settings.register("animatedanxiety", `enable_${key}`, {
         name: `Enable ${label} Effect`,
-        hint: `Toggle the ${label.toLowerCase()} effect animation`,
         scope: "client",
-        config: true,
+        config: false,
         type: Boolean,
         default: true,
-        onChange: () => this.updateAnxietyEffect(game.user?.character),
       });
 
-      // Add new overlay toggle
       game.settings.register("animatedanxiety", `enable_${key}_overlay`, {
         name: `Show ${label} Overlay Image`,
-        hint: `Toggle the ${label.toLowerCase()} overlay image. If disabled, only shows effects and auras.`,
         scope: "client",
-        config: true,
+        config: false,
         type: Boolean,
         default: true,
-        onChange: () => this.updateAnxietyEffect(game.user?.character),
       });
     }
-
-    game.settings.register("animatedanxiety", "maxSpeed", {
-      name: "Maximum Animation Speed",
-      hint: "How fast the animation pulses at lowest health (in seconds)",
-      scope: "client",
-      config: true,
-      type: Number,
-      range: {
-        min: 0.1,
-        max: 2.0,
-        step: 0.1,
-      },
-      default: 0.6,
-      onChange: () => this.updateAnxietyEffect(game.user?.character),
-    });
-
-    game.settings.register("animatedanxiety", "blurAmount", {
-      name: "Blur Intensity",
-      hint: "How far the effect bleeds into the screen (in pixels)",
-      scope: "client",
-      config: true,
-      type: Number,
-      range: {
-        min: 20,
-        max: 400,
-        step: 20,
-      },
-      default: 200,
-      onChange: () => this.updateAnxietyEffect(game.user?.character),
-    });
   }
 
   static setupHooks() {
@@ -1032,7 +1044,9 @@ class AnimatedAnxiety {
 
     const imagePath = `modules/animatedanxiety/assets/${imageName}`;
     if (this.preloadedImages.has(imagePath)) {
-      overlay.style.backgroundImage = `url('${this.preloadedImages.get(imagePath).src}')`;
+      overlay.style.backgroundImage = `url('${
+        this.preloadedImages.get(imagePath).src
+      }')`;
     }
 
     return overlay;
@@ -1042,7 +1056,11 @@ class AnimatedAnxiety {
     if (!this.hoveringInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("hovering-overlay", "hovering.png", "hovering");
+      const overlay = this.createOverlay(
+        "hovering-overlay",
+        "hovering.png",
+        "hovering"
+      );
       if (overlay) {
         overlay.style.animation = `
           hovering-rise 0.8s ease-out forwards,
@@ -1081,7 +1099,11 @@ class AnimatedAnxiety {
 
       // Add unconscious overlay if in black-inward mode
       if (mode === "black-inward") {
-        const overlay = this.createOverlay("unconscious-overlay", "unconscious.png", "unconscious");
+        const overlay = this.createOverlay(
+          "unconscious-overlay",
+          "unconscious.png",
+          "unconscious"
+        );
         if (overlay) {
           overlay.style.animation = "unconscious-rise 0.8s ease-out forwards";
           document.getElementById("interface").appendChild(overlay);
@@ -1090,12 +1112,16 @@ class AnimatedAnxiety {
 
       if (mode === "sway") {
         // Create poison overlay and aura
-        const overlay = this.createOverlay("poison-overlay", "poisoned.png", "poisoned");
+        const overlay = this.createOverlay(
+          "poison-overlay",
+          "poisoned.png",
+          "poisoned"
+        );
         if (overlay) {
           overlay.style.animation = "poison-rise 0.8s ease-out forwards";
           document.getElementById("interface").appendChild(overlay);
         }
-        
+
         // Always create aura as it's part of the effect animation
         const aura = document.createElement("div");
         aura.className = "poison-aura";
@@ -1126,13 +1152,28 @@ class AnimatedAnxiety {
             const bubble = document.createElement("div");
             bubble.className = "bubble";
             bubble.style.position = "fixed";
-            const edge = ["top", "bottom", "left", "right"][Math.floor(Math.random() * 4)];
-            let startTop = "50%", startLeft = "50%";
+            const edge = ["top", "bottom", "left", "right"][
+              Math.floor(Math.random() * 4)
+            ];
+            let startTop = "50%",
+              startLeft = "50%";
             switch (edge) {
-              case "top": startTop = "0%"; startLeft = `${Math.random() * 100}%`; break;
-              case "bottom": startTop = "100%"; startLeft = `${Math.random() * 100}%`; break;
-              case "left": startLeft = "0%"; startTop = `${Math.random() * 100}%`; break;
-              case "right": startLeft = "100%"; startTop = `${Math.random() * 100}%`; break;
+              case "top":
+                startTop = "0%";
+                startLeft = `${Math.random() * 100}%`;
+                break;
+              case "bottom":
+                startTop = "100%";
+                startLeft = `${Math.random() * 100}%`;
+                break;
+              case "left":
+                startLeft = "0%";
+                startTop = `${Math.random() * 100}%`;
+                break;
+              case "right":
+                startLeft = "100%";
+                startTop = `${Math.random() * 100}%`;
+                break;
             }
             bubble.style.setProperty("--start-top", startTop);
             bubble.style.setProperty("--start-left", startLeft);
@@ -1794,7 +1835,11 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create falling overlay
-      const overlay = this.createOverlay("falling-overlay", "falling.png", "falling");
+      const overlay = this.createOverlay(
+        "falling-overlay",
+        "falling.png",
+        "falling"
+      );
       if (overlay) {
         overlay.style.animation = "falling-rise 0.8s ease-out forwards";
         document.getElementById("interface").appendChild(overlay);
@@ -1847,7 +1892,11 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create cursed overlay
-      const overlay = this.createOverlay("cursed-overlay", "cursed.png", "cursed");
+      const overlay = this.createOverlay(
+        "cursed-overlay",
+        "cursed.png",
+        "cursed"
+      );
       if (overlay) {
         document.getElementById("interface").appendChild(overlay);
       }
@@ -1948,7 +1997,11 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create bleeding overlay
-      const overlay = this.createOverlay("bleeding-overlay", "bleeding.png", "bleeding");
+      const overlay = this.createOverlay(
+        "bleeding-overlay",
+        "bleeding.png",
+        "bleeding"
+      );
       if (overlay) {
         document.getElementById("interface").appendChild(overlay);
       }
@@ -1973,7 +2026,11 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Add concentration overlay
-      const overlay = this.createOverlay("concentration-overlay", "concentration.png", "concentrating");
+      const overlay = this.createOverlay(
+        "concentration-overlay",
+        "concentration.png",
+        "concentrating"
+      );
       if (overlay) {
         document.getElementById("interface").appendChild(overlay);
       }
@@ -2004,17 +2061,27 @@ class AnimatedAnxiety {
   }
 
   static createDeafenedRipples() {
+    // Check if main effect is enabled first
+    if (!game.settings.get("animatedanxiety", "enable_deafened")) return;
+
     if (!this.deafenedInterval) {
       this.clearEffects();
 
-      // Create deafened overlay
-      const overlay = this.createOverlay("deafened-overlay", "deafened.png", "deafened");
+      const overlay = this.createOverlay(
+        "deafened-overlay",
+        "deafened.png",
+        "deafened"
+      );
       if (overlay) {
         document.getElementById("interface").appendChild(overlay);
       }
 
-      // Keep the existing ripple effect for additional visual feedback
+      // Only create ripples if main effect is enabled
       this.deafenedInterval = setInterval(() => {
+        if (!game.settings.get("animatedanxiety", "enable_deafened")) {
+          this.clearEffects();
+          return;
+        }
         const ripple = document.createElement("div");
         ripple.className = "deafened-ripple";
         document.getElementById("interface").appendChild(ripple);
@@ -2024,17 +2091,23 @@ class AnimatedAnxiety {
   }
 
   static createDiseaseParticles() {
+    // Check if main effect is enabled first
+    if (!game.settings.get("animatedanxiety", "enable_diseased")) return;
+
     if (!this.diseaseInterval) {
       this.clearEffects();
 
-      // Create rats overlay
       const rats = this.createOverlay("rats-overlay", "rats.png", "diseased");
       if (rats) {
         document.getElementById("interface").appendChild(rats);
       }
 
-      // Create falling particles
+      // Only create particles if main effect is enabled
       this.diseaseInterval = setInterval(() => {
+        if (!game.settings.get("animatedanxiety", "enable_diseased")) {
+          this.clearEffects();
+          return;
+        }
         const particle = document.createElement("div");
         particle.className = "disease-particle";
         particle.style.left = `${Math.random() * 100}%`;
@@ -2052,7 +2125,11 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create frightened overlay with effectType parameter
-      const overlay = this.createOverlay("frightened-overlay", "Frightened.png", "frightened");
+      const overlay = this.createOverlay(
+        "frightened-overlay",
+        "Frightened.png",
+        "frightened"
+      );
       if (overlay) {
         document.getElementById("interface").appendChild(overlay);
       }
@@ -2101,7 +2178,11 @@ class AnimatedAnxiety {
       document.getElementById("interface").appendChild(vignette);
 
       // Create hands overlay
-      const overlay = this.createOverlay("grappled-overlay", "Hands.png", "grappled");
+      const overlay = this.createOverlay(
+        "grappled-overlay",
+        "Hands.png",
+        "grappled"
+      );
       if (overlay) {
         // Start both animations together but with a delay on the idle
         // Use animation-fill-mode: forwards on both to prevent jumps
@@ -2129,7 +2210,11 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create bushes overlay (removed vignette)
-      const overlay = this.createOverlay("hiding-overlay", "bushesTrimmed.png", "hiding");
+      const overlay = this.createOverlay(
+        "hiding-overlay",
+        "bushesTrimmed.png",
+        "hiding"
+      );
       if (overlay) {
         // Start rise animation, then switch to subtle jiggle
         overlay.style.animation = `
@@ -2155,7 +2240,11 @@ class AnimatedAnxiety {
     if (!this.petrifiedInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("petrified-overlay", "petrified.png", "petrified");
+      const overlay = this.createOverlay(
+        "petrified-overlay",
+        "petrified.png",
+        "petrified"
+      );
       if (overlay) {
         // Rise animation followed by periodic shake
         overlay.style.animation = `
@@ -2182,13 +2271,21 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create left overlay
-      const overlayLeft = this.createOverlay("paralyzed-overlay paralyzed-overlay-left", "paralyzed.png", "paralyzed");
+      const overlayLeft = this.createOverlay(
+        "paralyzed-overlay paralyzed-overlay-left",
+        "paralyzed.png",
+        "paralyzed"
+      );
       if (overlayLeft) {
         document.getElementById("interface").appendChild(overlayLeft);
       }
 
       // Create right overlay
-      const overlayRight = this.createOverlay("paralyzed-overlay paralyzed-overlay-right", "paralyzed.png", "paralyzed");
+      const overlayRight = this.createOverlay(
+        "paralyzed-overlay paralyzed-overlay-right",
+        "paralyzed.png",
+        "paralyzed"
+      );
       if (overlayRight) {
         document.getElementById("interface").appendChild(overlayRight);
       }
@@ -2209,7 +2306,11 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create restrained overlay
-      const overlay = this.createOverlay("restrained-overlay", "restrained.png", "restrained");
+      const overlay = this.createOverlay(
+        "restrained-overlay",
+        "restrained.png",
+        "restrained"
+      );
       if (overlay) {
         overlay.style.animation = "restrained-rise 0.8s ease-out forwards";
         document.getElementById("interface").appendChild(overlay);
@@ -2244,7 +2345,11 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create incapacitated overlay
-      const overlay = this.createOverlay("incapacitated-overlay", "incapacitated.png", "incapacitated");
+      const overlay = this.createOverlay(
+        "incapacitated-overlay",
+        "incapacitated.png",
+        "incapacitated"
+      );
       if (overlay) {
         document.getElementById("interface").appendChild(overlay); // Changed from document.body
       }
@@ -2335,7 +2440,11 @@ class AnimatedAnxiety {
     if (!this.blindedInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("blinded-overlay", "blinded.png", "blinded");
+      const overlay = this.createOverlay(
+        "blinded-overlay",
+        "blinded.png",
+        "blinded"
+      );
       if (overlay) {
         document.getElementById("interface").appendChild(overlay);
       }
@@ -2354,7 +2463,11 @@ class AnimatedAnxiety {
     if (!this.burrowingInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("burrowing-overlay", "burrowing.png", "burrowing");
+      const overlay = this.createOverlay(
+        "burrowing-overlay",
+        "burrowing.png",
+        "burrowing"
+      );
       if (overlay) {
         document.getElementById("interface").appendChild(overlay);
       }
@@ -2374,14 +2487,22 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Bottom overlay
-      const overlay = this.createOverlay("dodge-overlay", "dodge.png", "dodging");
+      const overlay = this.createOverlay(
+        "dodge-overlay",
+        "dodge.png",
+        "dodging"
+      );
       if (overlay) {
         overlay.style.animation = "dodge-rise 0.8s ease-out forwards";
         document.getElementById("interface").appendChild(overlay);
       }
 
       // Top overlay (trapeze)
-      const trapeze = this.createOverlay("trapeze-overlay", "trapeze.png", "dodging");
+      const trapeze = this.createOverlay(
+        "trapeze-overlay",
+        "trapeze.png",
+        "dodging"
+      );
       if (trapeze) {
         document.getElementById("interface").appendChild(trapeze);
       }
@@ -2400,7 +2521,11 @@ class AnimatedAnxiety {
     if (!this.etherealInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("ethereal-overlay", "ethereal.png", "ethereal");
+      const overlay = this.createOverlay(
+        "ethereal-overlay",
+        "ethereal.png",
+        "ethereal"
+      );
       if (overlay) {
         document.getElementById("interface").appendChild(overlay);
       }
@@ -2437,30 +2562,36 @@ class AnimatedAnxiety {
   }
 
   static createExhaustionEffect() {
+    // Check if main effect is enabled first
+    if (!game.settings.get("animatedanxiety", "enable_exhausted")) return;
+
     if (!this.exhaustionInterval) {
       this.clearEffects();
 
       // Create the bottom overlay
-      const overlay = this.createOverlay("exhaustion-overlay", "exhausted.png", "exhausted");
+      const overlay = this.createOverlay(
+        "exhaustion-overlay",
+        "exhausted.png",
+        "exhausted"
+      );
       if (overlay) {
         document.getElementById("interface").appendChild(overlay);
       }
 
-      // Get exhaustion level (1-6)
-      const level = this.checkExhaustionStatus(game.user?.character);
+      // Only apply effects if main effect is enabled
+      if (game.settings.get("animatedanxiety", "enable_exhausted")) {
+        const level = this.checkExhaustionStatus(game.user?.character);
+        const blurAmount = Math.min(level * 0.5, 3);
+        const clearRadius = Math.max(90 - level * 12, 30);
+        const opacity = Math.min(0.1 + level * 0.1, 0.6);
+        const duration = Math.max(7 - level * 1.0, 1);
 
-      // Calculate blur values based on level
-      const blurAmount = Math.min(level * 0.5, 3); // 1.5px to 8px blur
-      const clearRadius = Math.max(90 - level * 12, 30); // 78% to 30% clear center
-      const opacity = Math.min(0.1 + level * 0.1, 0.6); // 0.2 to 0.6 opacity
-      const duration = Math.max(7 - level * 1.0, 1); // 6s to 1s pulse
-
-      // Apply the blur effect
-      const appElement = document.getElementById("interface");
-      appElement.style.setProperty("--exhaustion-blur", `${blurAmount}px`);
-      appElement.style.setProperty("--exhaustion-clear", `${clearRadius}%`);
-      appElement.style.setProperty("--exhaustion-opacity", opacity);
-      appElement.style.setProperty("--exhaustion-duration", `${duration}s`);
+        const appElement = document.getElementById("interface");
+        appElement.style.setProperty("--exhaustion-blur", `${blurAmount}px`);
+        appElement.style.setProperty("--exhaustion-clear", `${clearRadius}%`);
+        appElement.style.setProperty("--exhaustion-opacity", opacity);
+        appElement.style.setProperty("--exhaustion-duration", `${duration}s`);
+      }
 
       this.exhaustionInterval = setInterval(() => {
         if (!document.querySelector(".exhaustion-effect")) {
@@ -2498,7 +2629,11 @@ class AnimatedAnxiety {
     createFeather();
 
     // Add the feathers.png floating at the bottom
-    const floatingFeathers = this.createOverlay("flying-overlay", "feathers.png", "flying");
+    const floatingFeathers = this.createOverlay(
+      "flying-overlay",
+      "feathers.png",
+      "flying"
+    );
     if (floatingFeathers) {
       floatingFeathers.style.animation =
         "flying-rise 0.8s ease-out forwards, flying-float 4s ease-in-out infinite 0.8s";
@@ -2510,7 +2645,11 @@ class AnimatedAnxiety {
     if (!this.hoveringInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("hovering-overlay", "hovering.png", "hovering");
+      const overlay = this.createOverlay(
+        "hovering-overlay",
+        "hovering.png",
+        "hovering"
+      );
       if (overlay) {
         overlay.style.animation = `
           hovering-rise 0.8s ease-out forwards,
@@ -2534,7 +2673,11 @@ class AnimatedAnxiety {
     if (!this.invisibleInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("invisible-overlay", "invisible.png", "invisible");
+      const overlay = this.createOverlay(
+        "invisible-overlay",
+        "invisible.png",
+        "invisible"
+      );
       if (overlay) {
         // Apply animations directly to ensure they're being set
         overlay.style.animation = "invisible-rise 0.8s ease-out forwards";
@@ -2559,7 +2702,11 @@ class AnimatedAnxiety {
     if (!this.markedInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("marked-overlay", "marked.png", "marked");
+      const overlay = this.createOverlay(
+        "marked-overlay",
+        "marked.png",
+        "marked"
+      );
       if (overlay) {
         overlay.style.animation = "marked-rise 0.8s ease-out forwards";
 
@@ -2601,7 +2748,11 @@ class AnimatedAnxiety {
     if (!this.silencedInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("silenced-overlay", "silenced.png", "silenced");
+      const overlay = this.createOverlay(
+        "silenced-overlay",
+        "silenced.png",
+        "silenced"
+      );
       if (overlay) {
         overlay.style.animation = "silenced-rise 0.8s ease-out forwards";
         document.getElementById("interface").appendChild(overlay);
@@ -2630,18 +2781,30 @@ class AnimatedAnxiety {
   }
 
   static createSleepingEffect() {
+    // Check if main effect is enabled first
+    if (!game.settings.get("animatedanxiety", "enable_sleeping")) return;
+
     if (!this.sleepingInterval) {
       this.clearEffects();
 
       // Create overlay
-      const overlay = this.createOverlay("sleeping-overlay", "sleep.png", "sleeping");
+      const overlay = this.createOverlay(
+        "sleeping-overlay",
+        "sleep.png",
+        "sleeping"
+      );
       if (overlay) {
         overlay.style.animation = "sleep-descend 0.8s ease-out forwards";
         document.getElementById("interface").appendChild(overlay);
       }
 
-      // Create floating Z group
+      // Only create Z effects if main effect is enabled
       const createZGroup = () => {
+        if (!game.settings.get("animatedanxiety", "enable_sleeping")) {
+          this.clearEffects();
+          return;
+        }
+        // Create floating Z group
         const group = document.createElement("div");
         group.className = "sleeping-z-group";
         group.style.display = "flex"; // Add flex display
@@ -2714,7 +2877,11 @@ class AnimatedAnxiety {
     if (!this.stableInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("stable-overlay", "stable.png", "stable");
+      const overlay = this.createOverlay(
+        "stable-overlay",
+        "stable.png",
+        "stable"
+      );
       if (overlay) {
         overlay.style.animation = "stable-rise 0.8s ease-out forwards";
         document.getElementById("interface").appendChild(overlay);
@@ -2746,7 +2913,11 @@ class AnimatedAnxiety {
     if (!this.stunnedInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("stunned-overlay", "stunned.png", "stunned");
+      const overlay = this.createOverlay(
+        "stunned-overlay",
+        "stunned.png",
+        "stunned"
+      );
       if (overlay) {
         overlay.style.animation = "stunned-rise 0.8s ease-out forwards";
         document.getElementById("interface").appendChild(overlay);
@@ -2778,7 +2949,11 @@ class AnimatedAnxiety {
     if (!this.surprisedInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("surprised-overlay", "surprised.png", "surprised");
+      const overlay = this.createOverlay(
+        "surprised-overlay",
+        "surprised.png",
+        "surprised"
+      );
       if (overlay) {
         overlay.style.animation = "surprised-rise 0.8s ease-out forwards";
         document.getElementById("interface").appendChild(overlay);
@@ -2810,7 +2985,11 @@ class AnimatedAnxiety {
     if (!this.transformedInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("transformed-overlay", "transformed.png", "transformed");
+      const overlay = this.createOverlay(
+        "transformed-overlay",
+        "transformed.png",
+        "transformed"
+      );
       if (overlay) {
         // Add explicit path and logging
         const imagePath = "modules/animatedanxiety/assets/transformed.png";
@@ -2849,14 +3028,18 @@ class AnimatedAnxiety {
 
       // Map the type to the correct setting name
       const settingTypeMap = {
-        'half': 'halfCover',
-        'three-quarters': 'threeQuartersCover',
-        'total': 'totalCover'
+        half: "halfCover",
+        "three-quarters": "threeQuartersCover",
+        total: "totalCover",
       };
 
       const settingType = settingTypeMap[type] || type;
 
-      const overlay = this.createOverlay("cover-overlay", `${type}Cover.png`, settingType);
+      const overlay = this.createOverlay(
+        "cover-overlay",
+        `${type}Cover.png`,
+        settingType
+      );
       if (overlay) {
         overlay.style.animation = "cover-rise 0.8s ease-out forwards";
 
@@ -2884,7 +3067,11 @@ class AnimatedAnxiety {
       this.clearEffects();
 
       // Create burning overlay
-      const overlay = this.createOverlay("burning-overlay", "burning.png", "burning");
+      const overlay = this.createOverlay(
+        "burning-overlay",
+        "burning.png",
+        "burning"
+      );
       if (overlay) {
         overlay.style.animation = "burning-rise 0.8s ease-out forwards";
         document.getElementById("interface").appendChild(overlay);
@@ -2939,7 +3126,11 @@ class AnimatedAnxiety {
     if (!this.dehydratedInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("dehydrated-overlay", "dehydrated.png", "dehydration");
+      const overlay = this.createOverlay(
+        "dehydrated-overlay",
+        "dehydrated.png",
+        "dehydration"
+      );
       if (overlay) {
         overlay.style.animation = "dehydrated-rise 0.8s ease-out forwards";
         document.getElementById("interface").appendChild(overlay);
@@ -2962,7 +3153,11 @@ class AnimatedAnxiety {
     if (!this.dehydrationInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("dehydration-overlay", "dehydrated.png", "dehydration");
+      const overlay = this.createOverlay(
+        "dehydration-overlay",
+        "dehydrated.png",
+        "dehydration"
+      );
       if (overlay) {
         overlay.style.animation = "dehydration-rise 0.8s ease-out forwards";
 
@@ -2975,7 +3170,11 @@ class AnimatedAnxiety {
     if (!this.malnutritionInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("malnutrition-overlay", "malnutrition.png", "malnutrition");
+      const overlay = this.createOverlay(
+        "malnutrition-overlay",
+        "malnutrition.png",
+        "malnutrition"
+      );
       if (overlay) {
         // Set the background image
         const imagePath = "modules/animatedanxiety/assets/malnutrition.png";
@@ -3011,7 +3210,11 @@ class AnimatedAnxiety {
     if (!this.suffocationInterval) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("suffocation-overlay", "suffocation.png", "suffocation");
+      const overlay = this.createOverlay(
+        "suffocation-overlay",
+        "suffocation.png",
+        "suffocation"
+      );
       if (overlay) {
         overlay.style.animation =
           "suffocation-rise 0.8s ease-out forwards, suffocation-pulse 8s ease-in-out infinite 0.8s";
@@ -3028,6 +3231,136 @@ class AnimatedAnxiety {
         }
       }, 1000);
     }
+  }
+}
+
+// Add these classes at the end of the file
+class AnimatedAnxietyStatusMenu extends FormApplication {
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      title: "Status Effect Settings",
+      id: "animatedanxiety-status-settings",
+      template: "modules/animatedanxiety/templates/status-settings.html",
+      width: 600,
+      height: "auto",
+      tabs: [
+        {
+          navSelector: ".tabs",
+          contentSelector: ".content",
+          initial: "common",
+        },
+      ],
+      scrollY: [".tab"],
+    });
+  }
+
+  getData(options) {
+    // Organize all effects into categories
+    const tabs = {
+      common: [
+        { key: "unconscious", label: "Unconscious" },
+        { key: "poisoned", label: "Poisoned" },
+        { key: "bleeding", label: "Bleeding" },
+        { key: "blinded", label: "Blinded" },
+        { key: "cursed", label: "Cursed" },
+        { key: "charmed", label: "Charmed" },
+        { key: "sleeping", label: "Sleeping" },
+      ],
+      conditions: [
+        { key: "deafened", label: "Deafened" },
+
+        { key: "frightened", label: "Frightened" },
+
+        { key: "grappled", label: "Grappled" },
+        { key: "paralyzed", label: "Paralyzed" },
+        { key: "petrified", label: "Petrified" },
+        { key: "restrained", label: "Restrained" },
+        { key: "incapacitated", label: "Incapacitated" },
+        { key: "dead", label: "Dead" },
+      ],
+      magical: [
+        { key: "concentrating", label: "Concentrating" },
+        { key: "ethereal", label: "Ethereal" },
+        { key: "invisible", label: "Invisible" },
+        { key: "transformed", label: "Transformed" },
+        { key: "marked", label: "Marked" },
+      ],
+      movement: [
+        { key: "prone", label: "Prone" },
+        { key: "flying", label: "Flying" },
+        { key: "hovering", label: "Hovering" },
+        { key: "burrowing", label: "Burrowing" },
+        { key: "falling", label: "Falling" },
+      ],
+      combat: [
+        { key: "dodging", label: "Dodging" },
+        { key: "hiding", label: "Hiding" },
+        { key: "surprised", label: "Surprised" },
+        { key: "stunned", label: "Stunned" },
+        { key: "silenced", label: "Silenced" },
+        { key: "stable", label: "Stable" },
+      ],
+      environmental: [
+        { key: "burning", label: "Burning" },
+        { key: "dehydration", label: "Dehydration" },
+        { key: "diseased", label: "Diseased" },
+        { key: "exhausted", label: "Exhausted" },
+        { key: "malnutrition", label: "Malnutrition" },
+        { key: "suffocation", label: "Suffocation" },
+      ],
+      cover: [
+        { key: "halfCover", label: "Half Cover" },
+        { key: "threeQuartersCover", label: "Three-Quarters Cover" },
+        { key: "totalCover", label: "Total Cover" },
+      ],
+    };
+
+    // Add the enabled/overlay status for each effect
+    for (let category of Object.values(tabs)) {
+      category.forEach((effect) => {
+        effect.enabled = game.settings.get(
+          "animatedanxiety",
+          `enable_${effect.key}`
+        );
+        effect.overlay = game.settings.get(
+          "animatedanxiety",
+          `enable_${effect.key}_overlay`
+        );
+      });
+    }
+
+    return { tabs };
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    // Add instant-update listeners for all checkboxes
+    html.find('input[type="checkbox"]').change(async (event) => {
+      const input = event.currentTarget;
+      await game.settings.set("animatedanxiety", input.name, input.checked);
+
+      // Trigger effect update
+      AnimatedAnxiety.updateAnxietyEffect(game.user?.character);
+    });
+  }
+
+  async _updateObject(event, formData) {
+    event.preventDefault();
+
+    // Save all form data to settings
+    for (let [key, value] of Object.entries(formData)) {
+      await game.settings.set("animatedanxiety", key, value);
+    }
+
+    // Update effects
+    AnimatedAnxiety.updateAnxietyEffect(game.user?.character);
+  }
+
+  async close(options = {}) {
+    // Ensure settings are saved when closing
+    await this._updateObject(new Event("submit"), this._getSubmitData());
+    return super.close(options);
   }
 }
 

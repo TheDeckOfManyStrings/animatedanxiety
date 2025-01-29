@@ -28,6 +28,7 @@
   },
   "scripts": ["scripts/animatedAnxiety.js"],
   "styles": ["styles/animatedanxiety.css"],
+  "templates": ["templates/status-settings.html"],
   "url": "https://github.com/TheDeckOfManyStrings/animatedanxiety",
   "download": "https://github.com/TheDeckOfManyStrings/animatedanxiety/archive/refs/tags/1.0.1.zip",
   "readme": "https://raw.githubusercontent.com/TheDeckOfManyStrings/animatedanxiety/refs/tags/1.0.1/README.md"
