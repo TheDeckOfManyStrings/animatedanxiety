@@ -1,0 +1,35 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+  <nav class="tabs" data-group="sections">
+    <a class="item" data-tab="common"><i class="fas fa-star"></i> Common</a>
+    <a class="item" data-tab="conditions"><i class="fas fa-skull"></i> Conditions</a>
+    <a class="item" data-tab="magical"><i class="fas fa-magic"></i> Magical</a>
+    <a class="item" data-tab="movement"><i class="fas fa-running"></i> Movement</a>
+    <a class="item" data-tab="combat"><i class="fas fa-sword"></i> Combat</a>
+    <a class="item" data-tab="environmental"><i class="fas fa-cloud-sun"></i> Environmental</a>
+    <a class="item" data-tab="cover"><i class="fas fa-shield-alt"></i> Cover</a>
+  </nav>
+
+  <section class="content">
+    {{#each tabs}}
+    <div class="tab" data-tab="{{@key}}">
+      {{#each this}}
+      <div class="form-group">
+        <label>{{label}}</label>
+        <div class="form-fields">
+          <input type="checkbox" name="enable_{{key}}" {{#if enabled}}checked{{/if}}>
+          <label>Enable Effect</label>
+          <input type="checkbox" name="enable_{{key}}_overlay" {{#if overlay}}checked{{/if}}>
+          <label>Show Overlay</label>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    {{/each}}
+  </section>
+
+  <footer class="sheet-footer flexrow">
+    <button type="submit" name="submit">
+      <i class="far fa-save"></i> Save Changes
+    </button>
+  </footer>
+</form>
