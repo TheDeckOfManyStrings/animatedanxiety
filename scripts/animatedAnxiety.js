@@ -2847,7 +2847,16 @@ class AnimatedAnxiety {
     if (!this[intervalName]) {
       this.clearEffects();
 
-      const overlay = this.createOverlay("cover-overlay", `${type}Cover.png`, type);
+      // Map the type to the correct setting name
+      const settingTypeMap = {
+        'half': 'halfCover',
+        'three-quarters': 'threeQuartersCover',
+        'total': 'totalCover'
+      };
+
+      const settingType = settingTypeMap[type] || type;
+
+      const overlay = this.createOverlay("cover-overlay", `${type}Cover.png`, settingType);
       if (overlay) {
         overlay.style.animation = "cover-rise 0.8s ease-out forwards";
 
