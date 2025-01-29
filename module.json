@@ -1,7 +1,7 @@
 {
   "id": "animatedanxiety",
   "title": "AnimatedAnxiety",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "compatibility": {
     "minimum": "12",
     "verified": "12"
@@ -29,6 +29,6 @@
   "scripts": ["scripts/animatedAnxiety.js"],
   "styles": ["styles/animatedanxiety.css"],
   "url": "https://github.com/TheDeckOfManyStrings/animatedanxiety",
-  "download": "https://github.com/TheDeckOfManyStrings/animatedanxiety/archive/refs/tags/1.0.0.zip",
-  "readme": "https://raw.githubusercontent.com/TheDeckOfManyStrings/animatedanxiety/refs/tags/1.0.0/README.md"
+  "download": "https://github.com/TheDeckOfManyStrings/animatedanxiety/archive/refs/tags/1.0.1.zip",
+  "readme": "https://raw.githubusercontent.com/TheDeckOfManyStrings/animatedanxiety/refs/tags/1.0.1/README.md"
 }
